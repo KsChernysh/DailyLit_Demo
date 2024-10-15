@@ -1,0 +1,30 @@
+
+  /* src/app/book-detail/book-detail.component.css */
+.book-detail {
+  max-width: 600px; /* Максимальна ширина контейнера */
+  margin: 100px auto; /* Центрування по горизонталі */
+  padding: 50px; /* Внутрішні відступи */
+  background-color: #f9f9f9; /* Колір фону */
+  border: 1px solid #ddd; /* Обрис */
+  border-radius: 8px; /* Закруглені краї */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Тінь */
+}
+
+.book-detail h1 {
+  font-size: 24px; /* Розмір заголовка */
+  margin-bottom: 10px; /* Відстань нижче заголовка */
+  color: #333; /* Колір тексту */
+}
+
+.book-detail p {
+  font-size: 16px; /* Розмір тексту */
+  margin: 5px 0; /* Відстань між абзацами */
+  color: #555; /* Колір тексту */
+}
+
+.book-detail img {
+  max-width: 100%; /* Ширина зображення не перевищує ширину контейнера */
+  height: auto; /* Автоматична висота для збереження пропорцій */
+  border-radius: 4px; /* Закруглені краї зображення */
+  margin-bottom: 15px; /* Відстань нижче зображення */
+}

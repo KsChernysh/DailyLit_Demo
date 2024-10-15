@@ -1,0 +1,18 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <mat-nav-list>
+      <mat-list-item *ngFor="let genre of genres" class="sidenav-item">
+        <button mat-button disableRipple (click)="goTo(genre)" class="genre-button" >
+          {{ genre }}</button>
+
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="sidenav-content">
+     <div class="book-list-container" scrollable>
+      <app-book-list></app-book-list>
+    </div>
+  </mat-sidenav-content>
+  
+</mat-sidenav-container>

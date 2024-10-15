@@ -1,0 +1,8 @@
+<div *ngIf="book" class="book-detail">
+  <h1>{{ book.title }}</h1>
+  <p><strong>Author:</strong> {{ book.author || 'Unknown Author' }}</p>
+  <img [src]="book.cover_url" alt="{{ book.title }}">
+  <p><strong>Publish Year:</strong> {{ book.publisher }}</p>
+  <p><strong>Edition Count:</strong> {{ book.edition_count || 'N/A' }}</p>
+  <p><strong>Description:</strong> {{ book.description || 'No description available.' }}</p>
+</div>

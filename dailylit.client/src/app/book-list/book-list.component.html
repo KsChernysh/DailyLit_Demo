@@ -1,0 +1,15 @@
+<!-- src/app/book-list/book-list.component.html -->
+<div class="book-list">
+  <div *ngFor="let book of books" class="book-item" (click)="apicall(book.works)">
+    <!--[routerLink]="['/works', book.works]-->
+    <img [src]="book.cover_url" alt="{{ book.title }}">
+    <div class="book-title">{{ book.title }}</div>
+    <div class="book-author">{{ book.author }}</div>
+
+    <div class="book-actions">
+      <button class="want-to-read-btn">Want to Read</button>
+     
+      <div class="not-interested">Not interested</div>
+    </div>
+  </div>
+</div>

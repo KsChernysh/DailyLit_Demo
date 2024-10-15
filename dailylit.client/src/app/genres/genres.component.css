@@ -1,0 +1,79 @@
+/* Стилі для контейнера та бічної панелі */
+.sidenav-container {
+  height: 100vh;
+  background-color: #f0f4f8; /* Ніжний фон */
+}
+
+.sidenav {
+  width: 260px;
+  background-color: #2b3a42; /* Темний фон для бічної панелі */
+  color: white;
+  padding-top: 20px;
+  position: fixed;
+  top: 80px;
+}
+
+.sidenav-item {
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+  padding: 10px 0;
+  text-align: center;
+  border-bottom: 1px solid #444f57;
+}
+
+.sidenav-item:hover {
+  background-color: #3c4b54;
+
+}
+.scrollable {
+  overflow-y: auto; /* Додаємо вертикальну прокрутку, якщо вміст виходить за межі */
+  margin-top: 75px;
+  max-height: 90vh; /* Контролюємо висоту контейнера, щоб не займав весь екран */
+}
+.genre-button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.mat-ripple-element {
+  display: none !important;
+}
+
+
+.genre-button:hover {
+  background-color: #526b77;
+}
+
+/* Стилі для контенту сайту */
+.sidenav-content {
+  margin-left: 260px;
+  padding: 20px;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.book-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+ 
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.book-list-container {
+  width: calc(100% - 20px); /* Контейнер на всю ширину */
+  margin-top: 75px;
+}
+
+.sidenav-container {
+  height: 100%;
+  position: relative;
+}
+
+

@@ -1,0 +1,33 @@
+﻿<mat-toolbar color="primary">
+    <span>DailyLit</span>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/">Home</button>
+    <button mat-button > My Books</button>
+    <button mat-button routerLink="/genre/genre">Genres</button>
+    <button mat-button routerLink="/reader">eReader</button>
+    
+    <div class="search-container">
+      <input 
+        type="text" 
+        id="query" 
+        placeholder="Введіть назву книги" 
+        (keyup)="onKey($event)"  
+        [(ngModel)]="searchQuery"
+        class="search-input"
+      />
+     
+    
+      <!-- Спадний список -->
+      <ul *ngIf="books.length > 0" class="dropdown-results">
+        <li *ngFor="let book of books" class="dropdown-item">
+          <img [src]="book.cover_url" alt="Book cover" width="50" />
+          <div class="book-info">
+            <span class="book-title">{{ book.title }}</span>
+            <span class="book-author">{{ book.author_name?.[0] || 'Unknown Author' }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </mat-toolbar>
+  <router-outlet></router-outlet> 
+ 

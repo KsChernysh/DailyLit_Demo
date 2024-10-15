@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+app-root {
+    width: 100%; /* або інша ширина */
+  
+}
+body {
+    width: 100%;  /* Зробіть body рівним ширині екрану або контейнера */
+    margin: 0;
+    padding: 0;
+   
+}
