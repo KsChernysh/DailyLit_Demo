@@ -9,17 +9,18 @@ import ePub from 'epubjs';
     <button (click)="nextPage()">Next Page</button>
   `
 })
-export class BookViewerComponent implements OnInit {
+export class BookViewerComponent implements AfterViewInit {
   @ViewChild('epubViewer') epubViewer!: ElementRef;
   private book: any;
   private rendition: any;
 
-  ngOnInit() {
+  // Use ngAfterViewInit to ensure the DOM is fully ready
+  ngAfterViewInit() {
     this.initReader();
   }
 
   async initReader() {
-    // Замініть URL на шлях до вашого EPUB файлу
+    // Replace the URL with the path to your EPUB file
     this.book = ePub('/assets/ebook.epub');
     this.rendition = this.book.renderTo(this.epubViewer.nativeElement, {
       width: '100%',

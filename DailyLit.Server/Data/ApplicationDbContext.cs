@@ -1,15 +1,17 @@
 ﻿using DailyLit.Server.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DailyLit.Server.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
-        public DbSet<Users> Users { get; set; }
+       // public DbSet<Users> Users { get; set; }
         public DbSet<Goals> Goals { get; set; }
         public DbSet<Friends> Friends { get; set; }
         public DbSet<GroupMembers> GroupMembers { get; set; }

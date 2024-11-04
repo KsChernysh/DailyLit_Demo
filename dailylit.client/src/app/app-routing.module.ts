@@ -5,13 +5,15 @@ import { AppComponent } from './app.component';
 import { GenresComponent } from './genres/genres.component';
 import { BookViewerComponent } from './book-viewer/book-viewer.component';
 import { BookDetailComponent } from './book-detail/book-detail.component';
+import { RegisterComponent } from './register/register.component';
 
 export const routes: Routes = [
   { path: 'list', component: BookListComponent },
   { path: 'ss', component: AppComponent },
   { path: 'genre/:genre', component: GenresComponent },
   { path: 'reader', component: BookViewerComponent },
-  { path: 'book/:id', component: BookDetailComponent }
+  { path: 'book/:id', component: BookDetailComponent },
+  { path: 'register', component: RegisterComponent },
   
 ];
 

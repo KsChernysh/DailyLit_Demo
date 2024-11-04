@@ -5,6 +5,7 @@ import { GlobalVariablesService } from './global.variables.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ export class AppComponent implements OnInit {
 
 
 
-  constructor(private http: HttpClient, private global : GlobalVariablesService, private bookService : BookService, private router: RouterModule) {} 
+  constructor(private http: HttpClient, private global : GlobalVariablesService, private bookService : BookService, private router: RouterModule, private authService: AuthService ) { } 
 
   ngOnInit() {
     
@@ -64,6 +65,28 @@ export class AppComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap(response => of(response))
+    );
+  }
+  logout(){
+   return this.authService.logout().subscribe(
+      response => {
+        console.log(response);
+
+      },
+      error => {
+        console.log(error);
+      }
+   )
+  }
+  Auth()
+  {
+    return this.authService.login('Vasyl', 'Hello1234-').subscribe(
+      response => {
+        console.log(response);
+      },
+      error => {
+        console.log(error);
+      }
     );
   }
 }
