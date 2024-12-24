@@ -1,29 +1,34 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private loggedIn = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) { }
 
   api = "https://localhost:7172/api/Auth";
 
-  login(name: string, password: string) 
-  {
+  login(name: string, password: string): Observable<any> {
     return this.http.post(this.api + "/login", { username: name, password: password }, { withCredentials: true });
   }
 
-  register(name: string, password: string)
-  {
+  register(name: string, password: string): Observable<any> {
     return this.http.post(this.api + "/register", { username: name, password: password }, { withCredentials: true });
   }
 
-  logout()
-  {
-    return this.http.get(this.api + "/logout", {withCredentials: true}); // Assuming the logout API uses a POST method
+  logout(): Observable<any> {
+    return this.http.get(this.api + "/logout", { withCredentials: true });
   }
-  //додаєм withCredentials: true для того щоб передавати куки на сервер, або отримувати їх
+
+  setLoggedIn(value: boolean) {
+    this.loggedIn.next(value);
+  }
+
+  get isLoggedIn(): Observable<boolean> {
+    return this.loggedIn.asObservable();
+  }
 }

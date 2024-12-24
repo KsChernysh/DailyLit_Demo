@@ -7,7 +7,7 @@
       </div>
     </div>
     <div>
-        <label for="password">Name:</label>
+        <label for="password">Password:</label>
         <input id="password" formControlName="password" type="text">
         <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
           Password is required

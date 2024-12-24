@@ -1,18 +1,21 @@
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav mode="side" opened class="sidenav">
-    <mat-nav-list>
-      <mat-list-item *ngFor="let genre of genres" class="sidenav-item">
-        <button mat-button disableRipple (click)="goTo(genre)" class="genre-button" >
-          {{ genre }}</button>
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
+      <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item" *ngFor="let genre of genres">
+            <button class="btn btn-link nav-link" (click)="goTo(genre)">
+              {{ genre }}
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
-      </mat-list-item>
-    </mat-nav-list>
-  </mat-sidenav>
-
-  <mat-sidenav-content class="sidenav-content">
-     <div class="book-list-container" scrollable>
-      <app-book-list></app-book-list>
-    </div>
-  </mat-sidenav-content>
-  
-</mat-sidenav-container>
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <div class="book-list-container" style="overflow-y: auto;">
+        <app-book-list></app-book-list>
+      </div>
+    </main>
+  </div>
+</div>

@@ -16,6 +16,9 @@ import { BookDetailComponent } from './book-detail/book-detail.component';
 import { RegisterComponent } from './register/register.component';
 import { routes } from './app-routing.module';
 import { MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
+import { LoginComponent } from './login/login.component';
+import { AppRoutingModule } from './app-routing.module';
+import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +27,8 @@ import { MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
     GenresComponent,
     BookViewerComponent,
     BookDetailComponent,
-    RegisterComponent
+    RegisterComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +40,8 @@ import { MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
     CommonModule,
     RouterModule.forRoot(routes),
     HttpClientModule, // Ensure HttpClientModule is imported here
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AppRoutingModule
   ],
   providers: [
     { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useValue: { disabled: true } }

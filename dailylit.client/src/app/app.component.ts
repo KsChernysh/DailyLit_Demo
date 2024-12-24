@@ -4,7 +4,7 @@ import { BookService } from './book.service';
 import { GlobalVariablesService } from './global.variables.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -13,30 +13,33 @@ import { AuthService } from './auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  query: string = '';
   books: any[] = [];
   searchQuery: string = '';
+  loggedIn: boolean = false;
 
-
-
-  constructor(private http: HttpClient, private global : GlobalVariablesService, private bookService : BookService, private router: RouterModule, private authService: AuthService ) { } 
+  constructor(private http: HttpClient, private global : GlobalVariablesService, private bookService : BookService, private router: Router, private authService: AuthService ) { } 
 
   ngOnInit() {
-    
+    this.authService.isLoggedIn.subscribe(value => {
+      this.loggedIn = value;
+    });
   }
   
   title = 'dailylit.client';
 
-
+  logout() {
+    this.authService.logout().subscribe(() => {
+      this.authService.setLoggedIn(false);
+      this.router.navigate(['/login']);
+    });
+  }
 
 // Функція обробки keyup
-  onKey(event: KeyboardEvent) {
-    const target = event.target as HTMLInputElement;
-    const query = target?.value;
-
-    console.log('Query:', query);
-
-    if (query && query.length > 2) {
-      this.searchBooks(query).subscribe(
+  onKey(event: any) {
+    this.query = event.target.value;
+    if (this.query && this.query.length > 2) {
+      this.searchBooks(this.query).subscribe(
         (response: any) => {
           console.log('Response from API:', response);
 
@@ -47,11 +50,9 @@ export class AppComponent implements OnInit {
               ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
               : 'assets/no-cover.jpg'
           }));
-
-          console.log('Processed books:', this.books);
         },
-        error => {
-          console.error('Error fetching books:', error);
+        (error: any) => {
+          console.error('Error fetching search results:', error);
         }
       );
     } else {
@@ -61,32 +62,9 @@ export class AppComponent implements OnInit {
 
   // Метод для пошуку книг
   searchBooks(query: string): Observable<any> {
-    return this.http.get(`https://openlibrary.org/search.json?title=${query}`).pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(response => of(response))
-    );
+    const url = `https://openlibrary.org/search.json?q=${query}`;
+    return this.http.get(url);
   }
-  logout(){
-   return this.authService.logout().subscribe(
-      response => {
-        console.log(response);
-
-      },
-      error => {
-        console.log(error);
-      }
-   )
-  }
-  Auth()
-  {
-    return this.authService.login('Vasyl', 'Hello1234-').subscribe(
-      response => {
-        console.log(response);
-      },
-      error => {
-        console.log(error);
-      }
-    );
-  }
+  
+ 
 }

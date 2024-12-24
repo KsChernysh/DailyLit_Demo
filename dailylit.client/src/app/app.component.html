@@ -1,35 +1,59 @@
-﻿<mat-toolbar color="primary">
-    <span>DailyLit</span>
-    <span class="spacer"></span>
-    <button mat-button routerLink="/">Home</button>
-    <button mat-button > My Books</button>
-    <button mat-button routerLink="/genre/genre">Genres</button>
-    <button mat-button routerLink="/reader">eReader</button>
-    <button (click)="Auth()">Auth</button>
-    <button (click)="logout()">Log</button>
-    
-    <div class="search-container">
-      <input 
-        type="text" 
-        id="query" 
-        placeholder="Введіть назву книги" 
-        (keyup)="onKey($event)"  
-        [(ngModel)]="searchQuery"
-        class="search-input"
-      />
-     
-    
-      <!-- Спадний список -->
-      <ul *ngIf="books.length > 0" class="dropdown-results">
-        <li *ngFor="let book of books" class="dropdown-item">
-          <img [src]="book.cover_url" alt="Book cover" width="50" />
-          <div class="book-info">
-            <span class="book-title">{{ book.title }}</span>
-            <span class="book-author">{{ book.author_name?.[0] || 'Unknown Author' }}</span>
+﻿<!-- Your existing navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-dark">
+  <img src="assets/logo.png" alt="DailyLit Logo" style="height: 40px;">
+ <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link text-white"  routerLink="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" *ngIf="loggedIn" href="#">My Books</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" routerLink="/genre/genre">Genres</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white"  *ngIf="loggedIn" routerLink="/reader">eReader</a>
+      </li>
+    </ul>
+      <!-- Search form with results -->
+      <form class="form-inline my-2 my-lg-0">
+        <input
+          class="form-control mr-sm-2"
+          type="search"
+          placeholder="Search for books"
+          aria-label="Search"
+          (keyup)="onKey($event)"
+          [(ngModel)]="query"
+          name="searchQuery"
+        />
+        <!-- Search Results -->
+        <div *ngIf="books.length > 0" class="search-results">
+          <div *ngFor="let book of books" class="book-item">
+            <img [src]="book.cover_url" [alt]="book.title" class="book-cover">
+            <div class="book-info">
+              <h5>{{ book.title }}</h5>
+              <p>{{ book.author_name }}</p>
+            </div>
           </div>
-        </li>
-      </ul>
-    </div>
-  </mat-toolbar>
-  <router-outlet></router-outlet> 
- 
+        </div>
+      </form>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item " *ngIf="!loggedIn">
+        <button class="btn btn-outline-success my-2 my-sm-0" routerLink="/register">Register</button>
+      </li>
+      <li class="nav-item" *ngIf="!loggedIn">
+        <button class="btn btn-outline-danger my-2 my-sm-0" routerLink="/login">Login</button>
+      </li>
+      <li class="nav-item" *ngIf="loggedIn">
+        <button class="btn btn-outline-danger my-2 my-sm-0" (click)="logout()">Logout</button>
+      </li>
+    </ul>
+  
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

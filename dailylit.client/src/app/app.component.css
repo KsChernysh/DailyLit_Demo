@@ -1,222 +1,62 @@
-﻿/* Стилі для навігаційної панелі */
-mat-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #00cc9c !important; /* Примусовий зелений фон */
-    color: #a7fcd0 !important; /* Темно-синій текст */
-    font-family: 'Roboto', sans-serif;
-    font-size: 32px;
-    font-weight: 600;
-    text-transform: uppercase;
-    padding: 0 20px;
-    margin-bottom: 0.2rem;
-    height: 80px; /* Висота навбару */
-    position: fixed; /* Фіксація навбару */
-    top: 0;
-    width: 100%; /* Займає всю ширину */
-    z-index: 1000; /* Поверх усіх елементів */
-    text-align: center;
-    word-break: break-word;
-    opacity: 100% !important;
-    transition: box-shadow 0.15s ease-in-out !important;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Легка тінь */
-    border: none !important;
+﻿/* Add these styles to your CSS file */
+.form-inline {
+  position: relative;
 }
 
-mat-toolbar button {
-    background-color: transparent !important; /* Прозорий фон для кнопок */
-    color: #69efaa !important; /* Темно-синій текст */
-    border: none !important;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 5px 10px;
-    margin-left: 15px;
-}
-
-mat-toolbar button:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important; /* Легка підсвітка при наведенні */
-    border-radius: 4px;
-    color: #e1ffe3 !important; /* Легке підсвічування кольором при наведенні */
-}
-
-/* Стилі для бічної панелі */
-mat-sidenav {
-    width: 300px;
-    height: 100%;
-    background-color: #f5f5f5; /* Світло-сірий фон */
-    color: #333;
-    padding-top: 20px;
-    position: fixed;
-    top: 80px; /* Відступ для врахування фіксованого навбару */
-}
-
-mat-list-item {
-    font-size: 16px;
-    font-family: 'Roboto', sans-serif;
-    color: #333;
-    padding: 10px 20px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-mat-list-item:hover {
-    background-color: #e0e0e0; /* Світліша підсвітка при наведенні */
-}
-
-/* Стилі для контейнера */
-mat-sidenav-container {
-    height: 100vh;
-    margin-top: 80px; /* Відступ для врахування фіксованого навбару */
-}
-
-mat-sidenav-content {
-    padding: 20px;
-    background-color: #fff;
-}
-
-/* Стилі для списку книг */
-.book-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 4px;
 }
 
 .book-item {
-    width: 180px;
-    background-color: #f5f5f5;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
 }
 
-.book-item img {
-    width: 100px;
-    height: 150px;
-    object-fit: cover;
-    margin-bottom: 10px;
+.book-item:last-child {
+  border-bottom: none;
 }
 
-.book-title {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
+.book-item:hover {
+  background-color: #f8f9fa;
 }
 
-.book-author {
-    font-size: 12px;
-    color: #666;
+.book-cover {
+  width: 50px;
+  height: 75px;
+  object-fit: cover;
+  margin-right: 15px;
 }
 
-.book-actions {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 10px;
+.book-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.want-to-read-btn {
-    background-color: #89a9a5;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
+.book-info h5 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
 }
 
-.want-to-read-btn:hover {
-    background-color: #6e847f;
+.book-info p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
 }
 
-.not-interested {
-    color: #d32f2f;
-    cursor: pointer;
+.navbar-brand img {
+  height: 40px; /* Adjust the height as needed */
 }
-
-.not-interested:hover {
-    text-decoration: underline;
-}
-.search-container {
-    margin-bottom: 20px;
-  }
-  .results-container {
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  .card {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-  img {
-    max-width: 100px;
-    height: auto;
-  }
-/* Контейнер для пошуку */
-.search-container {
-    position: relative;
-    width: 300px;
-    margin: 0 auto;
-  }
-  
-  /* Стилі для поля вводу */
-  .search-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  
-  /* Спадний список результатів */
-  .dropdown-results {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    position: absolute;
-    width: 100%;
-    max-height: 500px;
-    overflow-y: auto;
-    z-index: 1000;
-  }
-  
-  /* Кожен елемент у списку */
-  .dropdown-item {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-  
-  .dropdown-item:hover {
-    background-color: #f9f9f9;
-  }
-  
-  /* Інформація про книгу */
-  .book-info {
-    margin-left: 10px;
-  }
-  
-  .book-title {
-    font-weight: bold;
-    display: block;
-  }
-  
-  .book-author {
-    color: #666;
-    font-size: 12px;
-  }
-  
-  /* Обмеження висоти зображення */
-  .dropdown-item img {
-    max-width: 50px;
-    max-height: 75px;
-    border-radius: 5px;
-  }
-  

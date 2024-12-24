@@ -6,6 +6,8 @@ import { GenresComponent } from './genres/genres.component';
 import { BookViewerComponent } from './book-viewer/book-viewer.component';
 import { BookDetailComponent } from './book-detail/book-detail.component';
 import { RegisterComponent } from './register/register.component';
+import { LoginComponent } from './login/login.component';
+import { LogoutComponent } from './logout/logout.component';
 
 export const routes: Routes = [
   { path: 'list', component: BookListComponent },
@@ -14,6 +16,8 @@ export const routes: Routes = [
   { path: 'reader', component: BookViewerComponent },
   { path: 'book/:id', component: BookDetailComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent },
+  {path:'logout', component:LogoutComponent}
   
 ];
 
