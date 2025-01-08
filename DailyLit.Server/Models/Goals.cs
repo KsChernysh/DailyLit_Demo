@@ -11,7 +11,7 @@ namespace DailyLit.Server.Models
         public int Reading { get; set; }
         public int Finished { get; set; }
 
-        public virtual Users User { get; set; }
+        public virtual UserProfile User { get; set; }
         
 
     }

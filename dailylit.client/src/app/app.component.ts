@@ -36,33 +36,30 @@ export class AppComponent implements OnInit {
   }
 
 // Функція обробки keyup
-  onKey(event: any) {
-    this.query = event.target.value;
-    if (this.query && this.query.length > 2) {
-      this.searchBooks(this.query).subscribe(
-        (response: any) => {
-          console.log('Response from API:', response);
-
-          this.books = response.docs.map((book: any) => ({
-            title: book.title,
-            author_name: book.author_name,
-            cover_url: book.cover_i
-              ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-              : 'assets/no-cover.jpg'
-          }));
-        },
-        (error: any) => {
-          console.error('Error fetching search results:', error);
-        }
-      );
-    } else {
-      this.books = [];
-    }
+onKey(event: any) {
+  const query = this.query.trim();
+  if (query) {
+    this.searchBooks(query).subscribe(
+      (result) => {
+        this.books = result.items.map((item: any) => ({
+          title: item.volumeInfo.title || 'No Title',
+          author_name: item.volumeInfo.authors?.join(', ') || 'No Author',
+          cover_url: item.volumeInfo.imageLinks?.thumbnail || 'assets/no-cover.png',
+        }));
+      },
+      (error: any) => {
+        console.error('Error fetching search results:', error);
+        this.books = [];
+      }
+    );
+  } else {
+    this.books = [];
   }
+}
 
   // Метод для пошуку книг
   searchBooks(query: string): Observable<any> {
-    const url = `https://openlibrary.org/search.json?q=${query}`;
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=${this.global.apiKey}`;
     return this.http.get(url);
   }
   

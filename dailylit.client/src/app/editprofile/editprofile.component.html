@@ -1,0 +1,34 @@
+<div class="container mt-5">
+    <h3>Edit Profile</h3>
+    <form (ngSubmit)="onSubmit()" #editProfileForm="ngForm">
+      <div class="form-group">
+        <label for="userName">User Name</label>
+        <input type="text" class="form-control" id="userName" [(ngModel)]="profile.userName" name="userName" required readonly>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" [(ngModel)]="profile.email" name="email">
+      </div>
+      <div class="form-group">
+        <label for="nickName">Nick Name</label>
+        <input type="text" class="form-control" id="nickName" [(ngModel)]="profile.nickName" name="nickName">
+      </div>
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea class="form-control" id="bio" [(ngModel)]="profile.bio" name="bio"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="goal">Goal</label>
+        <input type="number" class="form-control" id="goal" [(ngModel)]="profile.goal" name="goal">
+      </div>
+      <div class="form-group">
+        <label for="read">Read</label>
+        <input type="number" class="form-control" id="read" [(ngModel)]="profile.read" name="read">
+      </div>
+      
+      <button type="submit" class="btn btn-primary" [disabled]="editProfileForm.form.invalid">Save</button>
+      <br>  <br>  <br><br>  <br>  <br>
+    </form>
+    <p *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</p>
+  </div>
+  

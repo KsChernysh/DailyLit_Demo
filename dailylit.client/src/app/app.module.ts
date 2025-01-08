@@ -19,6 +19,8 @@ import { MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LogoutComponent } from './logout/logout.component';
+import { ProfileComponent } from './profile/profile.component';
+import { EditprofileComponent } from './editprofile/editprofile.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { LogoutComponent } from './logout/logout.component';
     BookViewerComponent,
     BookDetailComponent,
     RegisterComponent,
-    LogoutComponent
+    LogoutComponent,
+    ProfileComponent,
+    EditprofileComponent
   ],
   imports: [
     BrowserModule,

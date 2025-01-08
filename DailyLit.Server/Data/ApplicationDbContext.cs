@@ -11,7 +11,7 @@ namespace DailyLit.Server.Data
             : base(options)
         {
         }
-       // public DbSet<Users> Users { get; set; }
+        public DbSet<UserProfile> Profiles { get; set; }
         public DbSet<Goals> Goals { get; set; }
         public DbSet<Friends> Friends { get; set; }
         public DbSet<GroupMembers> GroupMembers { get; set; }

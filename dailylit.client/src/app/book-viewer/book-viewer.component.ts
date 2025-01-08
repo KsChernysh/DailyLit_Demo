@@ -4,9 +4,9 @@ import ePub from 'epubjs';
 @Component({
   selector: 'book-viewer',
   template: `
-    <div #epubViewer style="width: 100%; height: 600px;"></div>
-    <button (click)="prevPage()">Previous Page</button>
-    <button (click)="nextPage()">Next Page</button>
+    <div #epubViewer style="width: 80%; height: 500px"></div>
+    <button class="btn-info" (click)="prevPage()">Previous Page</button>
+    <button class="btn-info" (click)="nextPage()">Next Page</button>
   `
 })
 export class BookViewerComponent implements AfterViewInit {

@@ -1,0 +1,22 @@
+<div class="container mt-5">
+    <h3>User Profile</h3>
+    <div *ngIf="userProfile">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ userProfile.userName }}</h5>
+          <p class="card-text"><strong>Email:</strong> {{ userProfile.email }}</p>
+          <p class="card-text"><strong>NickName:</strong> {{ userProfile.nickName }}</p>
+          <p class="card-text"><strong>Bio:</strong> {{ userProfile.bio }}</p>
+          <p class="card-text"><strong>Goal:</strong> {{ userProfile.goal }}</p>
+          <p class="card-text"><strong>Read:</strong> {{ userProfile.read }}</p>
+          <div *ngIf="userProfile.profilePicture">
+            <img [src]="'data:image;base64,' + userProfile.profilePicture" class="img-fluid" alt="Profile Picture" />
+          </div>
+          <button class="btn btn-primary" routerLink="/editprofile" >Edit Profile</button>
+    
+        </div>
+        
+            </div>
+    </div>
+  </div>
+  

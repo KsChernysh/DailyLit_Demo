@@ -19,4 +19,5 @@ export class GlobalVariablesService {
   get selectedGenre(): string {
     return this._selectedGenre.value;
   }
+  public apiKey : string = "AIzaSyD3j5xgRn1CzXJPM9PWb4HoyMviziBhHks";
 }

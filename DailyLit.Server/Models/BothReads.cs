@@ -11,12 +11,12 @@ namespace DailyLit.Server.Models
         public int UserId { get; set; }
         [ForeignKey("UserId")]
         [DeleteBehavior(DeleteBehavior.Restrict)]
-        public virtual Users User { get; set; }
+        public virtual UserProfile User { get; set; }
 
         public int FriendId { get; set; }
         [ForeignKey("FriendId")]
         [DeleteBehavior(DeleteBehavior.Restrict)]
-        public virtual Users Friend { get; set; }
+        public virtual UserProfile Friend { get; set; }
 
         public int BookId { get; set; }
         public string BookTitle { get; set; }

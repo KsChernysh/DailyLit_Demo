@@ -8,6 +8,8 @@ import { BookDetailComponent } from './book-detail/book-detail.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
+import { ProfileComponent } from './profile/profile.component';
+import { EditprofileComponent } from './editprofile/editprofile.component';
 
 export const routes: Routes = [
   { path: 'list', component: BookListComponent },
@@ -17,7 +19,9 @@ export const routes: Routes = [
   { path: 'book/:id', component: BookDetailComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  {path:'logout', component:LogoutComponent}
+  {path:'logout', component:LogoutComponent},
+  {path:'profile', component:ProfileComponent},
+  {path:'editprofile', component:EditprofileComponent}
   
 ];
 

@@ -9,7 +9,7 @@ namespace DailyLit.Server.Models
         public int UserId { get; set; }
         [ForeignKey("User")]
         public int FriendId { get; set; }
-        public virtual Users User { get; set; }
+        public virtual UserProfile User { get; set; }
 
     }
 }

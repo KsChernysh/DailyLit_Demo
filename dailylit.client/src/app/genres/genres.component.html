@@ -1,10 +1,12 @@
 <div class="container-fluid">
   <div class="row">
-    <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
-      <div class="sidebar-sticky">
+     <!-- Sidebar -->
+     <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block  sidebar collapse">
+      <div class="sidebar-sticky pt-3">
+        <h5 class="text-white text-center mb-4">Genres</h5>
         <ul class="nav flex-column">
           <li class="nav-item" *ngFor="let genre of genres">
-            <button class="btn btn-link nav-link" (click)="goTo(genre)">
+            <button class="btn btn-outline-success navbar-expand-lg text-left mb-2" (click)="goTo(genre)">
               {{ genre }}
             </button>
           </li>
@@ -12,8 +14,15 @@
       </div>
     </nav>
 
+    <!-- Main Content -->
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-      <div class="book-list-container" style="overflow-y: auto;">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <!-- Можна додати додаткові кнопки тут -->
+        </div>
+      </div>
+      <div class="book-list-container">
         <app-book-list></app-book-list>
       </div>
     </main>

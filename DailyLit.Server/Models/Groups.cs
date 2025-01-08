@@ -9,8 +9,8 @@ namespace DailyLit.Server.Models
         public int UserId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public virtual Users User { get; set; }
-        public virtual ICollection<Users> Members { get; set; }
+        public virtual UserProfile User { get; set; }
+        public virtual ICollection<UserProfile> Members { get; set; }
         public byte[] Image { get; set; }
         
 
