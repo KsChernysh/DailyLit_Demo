@@ -1,6 +1,6 @@
 <!-- src/app/book-list/book-list.component.html -->
 <div class="book-list">
-  <div *ngFor="let book of books" class="book-item" (click)="apicall(book.works)">
+  <div *ngFor="let book of books" class="book-item" (click)="apicall(book.id)">
     <!--[routerLink]="['/works', book.works]-->
     <img [src]="book.cover_url" alt="{{ book.title }}">
     <div class="book-title">{{ book.title }}</div>

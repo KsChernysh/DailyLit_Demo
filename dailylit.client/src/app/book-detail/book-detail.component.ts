@@ -20,39 +20,32 @@ export class BookDetailComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(paramMap => {
       const id = paramMap.get('id');
-      this.corectId = '/works' + id;
+      this.corectId = id?.toString() || '';
       console.log('ID книги:', id); // Логування ID
    
       if (this.corectId) {
         // Отримуємо деталі книги за допомогою id і title
         this.bookService.getBookDetails(this.corectId).subscribe(
           (book: BookDetails) => {
-            console.log('Отримані дані про книгу:', book.description); // Логування отриманих даних
+            console.log('Отримані дані про книгу:', book.description); // Логування опису книги
             if (book) {
               this.book = {
-                title: book.title,
-                author: book.author,
-                covers: book.covers,
-                cover_id: book.cover_id,
-                cover_url:
-                   "https://covers.openlibrary.org/b/id/" + book.covers[0] + "-M.jpg",
-                publisher: book.publisher,
-                edition_count: book.edition_count,
-                description: book.description
+                
+                title: book.title || 'No Title',
+                author_name: book.author_name || 'No Author',
+                cover_url: book.cover_url || 'assets/no-cover.png',
+                description: book.description || 'No Description Available'
               };
             } else {
-              console.error('Книга не знайдена або дані відсутні.');
-              this.book = null; // У разі відсутності книги
+              this.book = null;
+              console.warn('Не вдалося знайти деталі книги з ID:', this.corectId);
             }
           },
-          error => {
-            console.error('Помилка при отриманні даних: ', error);
-            this.book = null; // У разі помилки
+          (error: any) => {
+            console.error('Error fetching book details:', error);
+            this.book = null;
           }
         );
-      } else {
-        console.error('ID або назва книги не знайдено.');
-        this.book = null; // Якщо ID або title не знайдено
       }
     });
     

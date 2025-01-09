@@ -1,8 +1,18 @@
-<div *ngIf="book" class="book-detail">
-  <h1>{{ book.title }}</h1>
-  <p><strong>Author:</strong> {{ book.author || 'Unknown Author' }}</p>
-  <img [src]="book.cover_url" alt="{{ book.title }}">
-  <p><strong>Publish Year:</strong> {{ book.publisher }}</p>
-  <p><strong>Edition Count:</strong> {{ book.edition_count || 'N/A' }}</p>
-  <p><strong>Description:</strong> {{ book.description || 'No description available.' }}</p>
+<div *ngIf="book; else noBook" class="container mt-5">
+  <div class="row">
+    <div class="col-md-4">
+      <img [src]="book.cover_url" [alt]="book.title" class="img-fluid">
+    </div>
+    <div class="col-md-8">
+      <h2>{{ book.title }}</h2>
+      <h4>Author: {{ book.author_name }}</h4>
+      <p>{{ book.description }}</p>
+    </div>
+  </div>
 </div>
+
+<ng-template #noBook>
+  <div class="container mt-5">
+    <p>Book details not available.</p>
+  </div>
+</ng-template>
