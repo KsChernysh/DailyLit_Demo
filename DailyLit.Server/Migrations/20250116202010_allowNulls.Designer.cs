@@ -4,6 +4,7 @@ using DailyLit.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DailyLit.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250116202010_allowNulls")]
+    partial class allowNulls
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,42 +84,6 @@ namespace DailyLit.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Books");
-                });
-
-            modelBuilder.Entity("DailyLit.Server.Models.BookUrls", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Author")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Cover_Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ShelfId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShelfId");
-
-                    b.ToTable("BooksCollection");
                 });
 
             modelBuilder.Entity("DailyLit.Server.Models.BothReads", b =>
@@ -554,17 +521,6 @@ namespace DailyLit.Server.Migrations
                     b.Navigation("Shelf");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DailyLit.Server.Models.BookUrls", b =>
-                {
-                    b.HasOne("DailyLit.Server.Models.Shelfs", "Shelf")
-                        .WithMany()
-                        .HasForeignKey("ShelfId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Shelf");
                 });
 
             modelBuilder.Entity("DailyLit.Server.Models.BothReads", b =>

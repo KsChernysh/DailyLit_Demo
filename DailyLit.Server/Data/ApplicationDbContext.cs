@@ -19,6 +19,7 @@ namespace DailyLit.Server.Data
         public DbSet<Shelfs> Shelfs { get; set; }
         public DbSet<BothReads> BothReads { get; set; }
         public DbSet<Book> Books { get; set; }
+        public DbSet<BookUrls> BooksCollection { get; set; }
 
 
 

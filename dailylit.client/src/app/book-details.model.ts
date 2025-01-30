@@ -3,6 +3,7 @@ export interface BookDetails {
   author_name: string;     // Список авторів
   cover_url: string;       // URL обкладинки
   description: string;     // Опис книги
+  key: string;             // Ключ книги  
 }
 
 export class Author {

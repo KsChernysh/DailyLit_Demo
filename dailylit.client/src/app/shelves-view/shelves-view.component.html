@@ -1,0 +1,21 @@
+<h2>Shelves</h2>
+<ul>
+  <li *ngFor="let shelf of shelves" routerLink="/shelf">{{ shelf.title }}</li>
+</ul>
+
+<button (click)="openDialog()">Create Shelf</button>
+
+<!-- Dialog for adding a new shelf -->
+<div *ngIf="isDialogOpen" class="dialog">
+  <h2>Add New Shelf</h2>
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="shelfName">Shelf Name:</label>
+      <input type="text" id="shelfName" [(ngModel)]="shelfName" name="shelfName" required>
+    </div>
+    <button type="submit">Add Shelf</button>
+    <button type="button" (click)="closeDialog()">Cancel</button>
+  </form>
+</div>
+
+<p>{{ message }}</p>

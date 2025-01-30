@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Room4U.Server.Models.Auth;
 using Room4U.Server.Models;
 using DailyLit.Server.Data;
+using Microsoft.Net.Http.Headers;
 
 namespace DailyLit.Server.Repository
 {
@@ -93,7 +94,10 @@ namespace DailyLit.Server.Repository
                         IsPersistent = true,
                         AllowRefresh = true,
                         ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24),
+                        Items = { { ".AspNetCore.Cookies", "None" } }
+
                     });
+                
             }
 
             return "";

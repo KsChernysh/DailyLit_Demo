@@ -1,0 +1,19 @@
+<div class="chat-container">
+  <div class="messages">
+    <div *ngFor="let msg of messages" [ngClass]="msg.role">
+      <strong>{{ msg.role === 'user' ? 'Ви' : 'AI' }}:</strong> {{ msg.content }}
+    </div>
+    <div *ngIf="isLoading" class="bot">
+      <strong>AI:</strong> Відповідь генерується...
+    </div>
+  </div>
+  <div class="input-area">
+    <input
+      type="text"
+      [(ngModel)]="userInput"
+      (keypress)="handleKeyPress($event)"
+      placeholder="Введіть ваше повідомлення..."
+    />
+    <button (click)="sendMessage()" [disabled]="isLoading">Надіслати</button>
+  </div>
+</div>

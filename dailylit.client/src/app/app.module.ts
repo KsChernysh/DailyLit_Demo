@@ -21,6 +21,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { LogoutComponent } from './logout/logout.component';
 import { ProfileComponent } from './profile/profile.component';
 import { EditprofileComponent } from './editprofile/editprofile.component';
+import { ShelvesViewComponent } from './shelves-view/shelves-view.component';
+import { ShelfDetailComponent } from './shelf-detail/shelf-detail.component';
+import { AichatComponent } from './aichat/aichat.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,10 @@ import { EditprofileComponent } from './editprofile/editprofile.component';
     RegisterComponent,
     LogoutComponent,
     ProfileComponent,
-    EditprofileComponent
+    EditprofileComponent,
+    ShelvesViewComponent,
+    ShelfDetailComponent,
+    AichatComponent
   ],
   imports: [
     BrowserModule,

@@ -55,13 +55,14 @@ export class BookService {
     return apiUrl;
   }
   searchBooks(query: string): Observable<any> {
-    return this.http.get(`${this.baseApiUrl}search.json?title=${query}`);
+    return this.http.get(`${this.baseApiUrl}search.json?title=${query}&maxResults=20`);
   }
   // src/app/book.service.ts
   getBookDetails(id: string): Observable<BookDetails> {
-      return this.http.get<any>(`${this.ApiUrl}${id}&key=${this.global.apiKey}`).pipe(
+      return this.http.get<any>(`${this.ApiUrl}${id}`).pipe(
         map(response => {
           const bookDetails: BookDetails = {
+            key: response.id,
             title: response.volumeInfo.title,
             author_name: response.volumeInfo.authors.join(', '),
             cover_url: response.volumeInfo.imageLinks.thumbnail,

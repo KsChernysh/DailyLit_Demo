@@ -10,6 +10,9 @@ import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { ProfileComponent } from './profile/profile.component';
 import { EditprofileComponent } from './editprofile/editprofile.component';
+import { ShelvesViewComponent } from './shelves-view/shelves-view.component';
+import { ShelfDetailComponent } from './shelf-detail/shelf-detail.component';
+import { AichatComponent } from './aichat/aichat.component';
 
 export const routes: Routes = [
   { path: 'list', component: BookListComponent },
@@ -21,7 +24,10 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   {path:'logout', component:LogoutComponent},
   {path:'profile', component:ProfileComponent},
-  {path:'editprofile', component:EditprofileComponent}
+  {path:'editprofile', component:EditprofileComponent},
+  {path: 'shelves', component: ShelvesViewComponent},
+  {path: 'shelf', component: ShelfDetailComponent},
+  {path: 'aichat', component: AichatComponent}
   
 ];
 

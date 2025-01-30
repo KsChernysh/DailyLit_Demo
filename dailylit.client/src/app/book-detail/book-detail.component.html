@@ -10,7 +10,30 @@
     </div>
   </div>
 </div>
+<div *ngIf="book">
+  <h2>{{ book.title }}</h2>
+  <p>{{ book.description }}</p>
+  <button (click)="openDialog()">Want to Read</button>
+</div>
 
+<!-- Dialog for adding a book to a shelf -->
+<div *ngIf="isDialogOpen" class="dialog" style="margin-bottom: 50px;">
+  <h2>Select Shelf</h2>
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="shelfSelect">Shelf:</label>
+      <select id="shelfSelect" [(ngModel)]="selectedShelfId" name="shelfSelect" required>
+        <option *ngFor="let shelf of shelves" [value]="shelf.id">{{ shelf.title }}</option>
+      </select>
+    </div>
+    <button type="submit">Add to Shelf</button>
+    <button type="button" (click)="closeDialog()">Cancel</button>
+   
+  </form>
+</div>
+<br> <br> <br> <br>
+
+<p>{{ message }}</p>
 <ng-template #noBook>
   <div class="container mt-5">
     <p>Book details not available.</p>

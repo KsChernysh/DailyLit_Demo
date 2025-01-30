@@ -21,6 +21,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<IUserManagerRepository, UserManagerRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBooksManager, BooksManager>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -61,7 +62,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                 }
                 return Task.CompletedTask;
             }
+
         };
+        options.Cookie.SameSite = SameSiteMode.None;
     });
 
 builder.Services.AddHttpContextAccessor();
