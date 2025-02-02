@@ -26,7 +26,7 @@ export const routes: Routes = [
   {path:'profile', component:ProfileComponent},
   {path:'editprofile', component:EditprofileComponent},
   {path: 'shelves', component: ShelvesViewComponent},
-  {path: 'shelf', component: ShelfDetailComponent},
+  {path: 'shelf/:title', component: ShelfDetailComponent},
   {path: 'aichat', component: AichatComponent}
   
 ];

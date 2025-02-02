@@ -8,6 +8,6 @@ namespace DailyLit.Server.Repository
        public  Task<Shelfs> AddShelfsAsync(string name);
        public  Task<BookUrls> AddBookAsync(BooksViewModel book, int key);
         public Task<List<Shelfs>> GetShelvesAsync();
-        public Task<List<Book>> GetBooksAsync(string name);
+        public Task<List<BookUrls>> GetBooksAsync(string name);
     }
 }

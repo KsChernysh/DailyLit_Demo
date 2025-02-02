@@ -1,6 +1,6 @@
 <h2>Shelves</h2>
 <ul>
-  <li *ngFor="let shelf of shelves" routerLink="/shelf">{{ shelf.title }}</li>
+  <li *ngFor="let shelf of shelves"  (click) = "apicall(shelf.title)">{{ shelf.title }}</li>
 </ul>
 
 <button (click)="openDialog()">Create Shelf</button>

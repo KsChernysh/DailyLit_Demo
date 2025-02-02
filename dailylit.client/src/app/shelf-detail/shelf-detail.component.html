@@ -1,1 +1,15 @@
-<p>shelf-detail works!</p>
+<h1>{{title}}</h1>
+<div class="book-list">
+    <div *ngFor="let book of books" class="book-item" (click)="apicall(book.key)">
+      <!--[routerLink]="['/works', book.works]-->
+      <img [src]="book.cover_url" alt="{{ book.title }}">
+      <div class="book-title">{{ book.title }}</div>
+      <div class="book-author">{{ book.author_name }}</div>
+      <div class="book-status">{{book.status}}</div>
+      <div class="book-rating">{{book.rating}}</div>
+      <div class="book-booksadded">{{book.booksadded}}</div>
+      <div class="book-dateread">{{book.dateread}}</div>
+     
+    </div>
+  </div>
+  

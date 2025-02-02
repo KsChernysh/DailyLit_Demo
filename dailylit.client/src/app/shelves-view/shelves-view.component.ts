@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-shelves-view',
@@ -13,15 +14,17 @@ export class ShelvesViewComponent implements OnInit {
   isDialogOpen: boolean = false;
   api: string = "https://localhost:7172/api/Books";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.loadShelves();
   }
 
   loadShelves() {
+    console.log('Loading shelves...');
     this.http.get<string[]>(`${this.api}/shelves`, { withCredentials: true }).subscribe(
       (data) => {
+        console.log('Shelves loaded:', data);
         this.shelves = data;
       },
       (error) => {
@@ -67,27 +70,20 @@ export class ShelvesViewComponent implements OnInit {
           this.message = 'Помилка при додаванні полиці.';
         }
       );
-    
-    /*
-    Якщо сервер очікує об'єкт з властивістю `name`, використовуйте наступний підхід:
+  }
 
-    const newShelf = { name: trimmedShelfName };
-    this.http.post<any>(`${this.api}/add-shelf`, newShelf, { headers })
-      .subscribe(
-        (response) => {
-          this.message = 'Поличка успішно додана!';
-          this.shelfName = '';
-          this.isDialogOpen = false;
-          this.loadShelves();
-        },
-        (error) => {
-          console.error('Error adding shelf:', error);
-          this.message = 'Помилка при додаванні полиці.';
-        }
-      );
-    */
-   interface Shelf {
-    name: string;
-   }
+  apicall(title: string) {
+    const encodedTitle = encodeURIComponent(title);
+    this.shelfName = title;
+    this.http.get(`${this.api}/books?shelfName=${encodedTitle}`, { withCredentials: true }).subscribe(
+      data => {
+        console.log(data);
+        this.router.navigate([`/shelf`, title]);
+      },
+      error => {
+        console.error('Error fetching books:', error);
+        this.message = 'Помилка при завантаженні книг.';
+      }
+    );
   }
 }

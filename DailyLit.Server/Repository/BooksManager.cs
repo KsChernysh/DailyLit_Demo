@@ -11,6 +11,7 @@ namespace DailyLit.Server.Repository
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        string[] defaultShelfs = ["Want to Read", "Currently reading", "Read"];
 
         public BooksManager(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
@@ -37,7 +38,10 @@ namespace DailyLit.Server.Repository
             {
                 throw new InvalidOperationException("Shelf not found.");
             }
-
+            if(defaultShelfs.Contains(shelf.Title) && book.Status=="")
+            {
+               book.Status = shelf.Title;
+            }
             var bookDomain = new BookUrls()
             {
                 Id = Guid.NewGuid(),
@@ -46,11 +50,18 @@ namespace DailyLit.Server.Repository
                 Author = book.Author,
                 Cover_Url = book.Cover_Url,
                 Key = book.Key,
+                Status = book.Status == null ? "Want to Read" : book.Status,
+                Rating = book.Rating,
+                BooksAdded = book.BooksAdded,
+                DateRead = book.DateRead,
                 ShelfId = shelfId,
                 Shelf = shelf
 
             };
-
+            if(bookDomain == _context.BooksCollection.FirstOrDefault(x => x.Key == book.Key && x.ShelfId == shelfId))
+            {
+                throw new InvalidOperationException("Book already exists.");
+            }
             _context.BooksCollection.Add(bookDomain);
             await _context.SaveChangesAsync();
             return bookDomain;
@@ -69,7 +80,13 @@ namespace DailyLit.Server.Repository
             {
                 throw new InvalidOperationException("User profile not found.");
             }
-
+            var shelfslist = await _context.Shelfs.Where(x => x.UserId == profile.Id).ToListAsync();
+        
+            if (shelfslist.Any(x => x.Title == name))
+            {
+                throw new InvalidOperationException("Shelf already exists.");
+            }
+           
             var shelf = new Shelfs
             {
                 Title = name,
@@ -80,27 +97,27 @@ namespace DailyLit.Server.Repository
             return shelf;
         }
 
-        public async Task<List<Book>> GetBooksAsync(string name)
+        public async Task<List<BookUrls>> GetBooksAsync(string name)
         {
             var user = _httpContextAccessor.HttpContext?.User;
             if (user == null || user.Identity?.Name == null)
             {
                 throw new InvalidOperationException("User is not authenticated.");
             }
-
-            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            
+           var profile = await _context.Profiles.FirstOrDefaultAsync(x => x.UserName == user.Identity.Name);
+            if (profile == null)
             {
-                throw new InvalidOperationException("User ID not found.");
+                throw new InvalidOperationException("User is not found.");
             }
 
-            var shelf = await _context.Shelfs.FirstOrDefaultAsync(x => x.Title == name && x.UserId == int.Parse(userId));
+            var shelf = await _context.Shelfs.FirstOrDefaultAsync(x => x.Title == name && x.UserId == profile.Id);
             if (shelf == null)
             {
-                return new List<Book>();
+                return new List<BookUrls>();
             }
 
-            return await _context.Books.Where(x => x.ShelfId == shelf.Id && x.UserId == int.Parse(userId)).ToListAsync();
+            return await _context.BooksCollection.Where(x => x.ShelfId == shelf.Id).ToListAsync();
         }
 
         public async Task<List<Shelfs>> GetShelvesAsync()
@@ -115,6 +132,21 @@ namespace DailyLit.Server.Repository
             if (profile == null)
             {
                 return new List<Shelfs>();
+            }
+            var shelfslist = await _context.Shelfs.Where(x => x.UserId == profile.Id).ToListAsync();
+            if (shelfslist.Count == 0)
+            {
+                  foreach (var item in defaultShelfs)
+                {
+                    var defShelf = new Shelfs
+                    {
+                        Title = item,
+                        UserId = profile.Id
+                    };
+                   await _context.Shelfs.AddAsync(defShelf);
+                   await _context.SaveChangesAsync();
+
+                }
             }
 
             return await _context.Shelfs.Where(x => x.UserId == profile.Id).ToListAsync();

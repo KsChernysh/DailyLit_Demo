@@ -8,4 +8,9 @@ export interface Book {
   description: string; // додано опис
   publisher: string; // додано видавництво
   works: string; // додано роботи
+  status: string; // додано статус
+  rating: number; // додано рейтинг
+  booksadded: Date; // додано дату додавання
+  dateread: Date; // додано дату прочитання
+  
 }

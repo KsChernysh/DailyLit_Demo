@@ -29,12 +29,10 @@ export class BookDetailComponent implements OnInit {
     this.route.paramMap.subscribe(paramMap => {
       const id = paramMap.get('id');
       this.corectId = id?.toString() || '';
-      console.log('ID книги:', id);
-
+    
       if (this.corectId) {
         this.bookService.getBookDetails(this.corectId).subscribe(
           (book: BookDetails) => {
-            console.log('Отримані дані про книгу:', book.description);
             if (book) {
               this.book = {
                 key: this.corectId || 'No Key',
@@ -88,6 +86,10 @@ export class BookDetailComponent implements OnInit {
         author: this.book.author_name || 'No Author',
         cover_url:  this.book.cover_url || 'assets/no-cover.png',
         key: this.corectId || 'No Key',
+        status: '',
+        rating: '',
+        booksadded: new Date(),
+        
       };
       this.http.post(`${this.api}/add-book?shelfNameKey=${this.selectedShelfId}`, newBook, { withCredentials: true }).subscribe(
         (response: any) => {
