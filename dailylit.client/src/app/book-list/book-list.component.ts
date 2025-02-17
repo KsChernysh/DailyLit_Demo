@@ -45,6 +45,7 @@ export class BookListComponent implements OnInit, OnDestroy {
           this.books = result.map((item: any) => ({
             id: item.id,
             title: item.volumeInfo.title || 'No Title',
+            genre: item.volumeInfo.categories || 'No Genre',
             author_name: item.volumeInfo.authors?.join(', ') || 'No Author',
             cover_url: item.volumeInfo.imageLinks?.thumbnail || 'assets/no-cover.png',
           }));

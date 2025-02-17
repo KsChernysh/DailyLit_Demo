@@ -54,5 +54,46 @@ namespace DailyLit.Server.Controllers
             var books = await _booksManager.GetBooksAsync(shelfName);
             return Ok(books);
         }
+        [HttpGet("delete-book")]
+        public async Task<IActionResult> DeleteBook([FromQuery] string shelfName, [FromQuery] string key)
+        {
+            var result = await _booksManager.DeleteBookFromShelfAsync(shelfName, key);
+            if (result == null)
+            {
+                return BadRequest("Error deleting book.");
+            }
+            return Ok(result);
+        }
+        [HttpGet("delete-shelf")]
+        public async Task<IActionResult> DeleteShelf([FromQuery] string name)
+        {
+            var result = await _booksManager.DeleteShelfAsync(name);
+            if (result == null)
+            {
+                return BadRequest("Error deleting shelf.");
+            }
+            return Ok(result);
+        }
+        [HttpPost("update-book")]
+        public async Task<IActionResult> UpdateBook([FromBody] BooksEdit book, [FromQuery] string shelfName, [FromQuery] string key)
+        {
+            var updatedBook = await _booksManager.UpdateBookAsync(book, shelfName,key);
+            if (updatedBook == null)
+            {
+                return BadRequest("Error updating book.");
+            }
+            return Ok(updatedBook);
+        }
+        [HttpGet("book")]
+        public async Task<IActionResult> GetBook([FromQuery] string key, [FromQuery] string shelfName)
+        {
+            var book = await _booksManager.GetBookAsync(key, shelfName);
+            if (book == null)
+            {
+                return BadRequest("Error getting book.");
+            }
+            return Ok(book);
+        }
+
     }
 }

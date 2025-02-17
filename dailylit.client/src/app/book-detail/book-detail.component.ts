@@ -38,6 +38,7 @@ export class BookDetailComponent implements OnInit {
                 key: this.corectId || 'No Key',
                 title: book.title || 'No Title',
                 author_name: book.author_name || 'No Author',
+                genre: book.genre || 'No Genre',
                 cover_url: book.cover_url || 'assets/no-cover.png',
                 description: book.description || 'No Description Available'
               };
@@ -88,6 +89,7 @@ export class BookDetailComponent implements OnInit {
         key: this.corectId || 'No Key',
         status: '',
         rating: '',
+        genre: this.book.genre || 'No Genre',
         booksadded: new Date(),
         
       };

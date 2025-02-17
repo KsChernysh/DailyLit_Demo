@@ -11,7 +11,10 @@ import { Router } from '@angular/router';
 })
 export class GenresComponent implements OnInit {
   books: any[] = [];
-  genres: string[] = ['Fantasy', 'Science Fiction', 'Mystery', 'Non-fiction', 'Romance'];
+  genres: string[] = [
+    'Fantasy', 'Science Fiction', 'Mystery', 'Non Fiction', 'Romance',
+    'Business', 'Classics', 'Comics', 'Fiction', 'Horror'
+  ];
   title = 'dailylit.client';
   isSidenavOpen = false;
 

@@ -24,6 +24,11 @@ import { EditprofileComponent } from './editprofile/editprofile.component';
 import { ShelvesViewComponent } from './shelves-view/shelves-view.component';
 import { ShelfDetailComponent } from './shelf-detail/shelf-detail.component';
 import { AichatComponent } from './aichat/aichat.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
+
 
 @NgModule({
   declarations: [
@@ -46,6 +51,10 @@ import { AichatComponent } from './aichat/aichat.component';
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+    MatIconModule,
     FormsModule,
     CommonModule,
     RouterModule.forRoot(routes),

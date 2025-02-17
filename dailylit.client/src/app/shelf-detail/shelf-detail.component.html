@@ -1,15 +1,33 @@
 <h1>{{title}}</h1>
 <div class="book-list">
-    <div *ngFor="let book of books" class="book-item" (click)="apicall(book.key)">
+    <div *ngFor="let book of books" class="book-item" (click)="apicall(book.key)" >
       <!--[routerLink]="['/works', book.works]-->
       <img [src]="book.cover_url" alt="{{ book.title }}">
       <div class="book-title">{{ book.title }}</div>
       <div class="book-author">{{ book.author_name }}</div>
-      <div class="book-status">{{book.status}}</div>
+      <input [(ngModel)]="book.status" 
+      type="text" 
+      placeholder="Статус" 
+      [disabled]="!isEditing" 
+      (click)="$event.stopPropagation()"
+    />
       <div class="book-rating">{{book.rating}}</div>
+      <input [(ngModel)]="book.rating" 
+      type="number" 
+      placeholder="Оцінка" 
+      [disabled]="!isEditing" 
+      (click)="$event.stopPropagation()"
+      >
+      
+      
       <div class="book-booksadded">{{book.booksadded}}</div>
-      <div class="book-dateread">{{book.dateread}}</div>
-     
+      <input [(ngModel)]="book.dateread" 
+      type="date" 
+      [disabled]="!isEditing"
+      (click)="$event.stopPropagation()">
+      
+     <button (click)="enableEditing(book.key); $event.stopPropagation()"*ngIf="!isEditing">Edit</button>
+     <button (click)="updateBook(book);$event.stopPropagation()" [disabled]="!isEditing">Save</button>
     </div>
   </div>
   

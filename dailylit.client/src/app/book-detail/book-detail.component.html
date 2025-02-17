@@ -6,13 +6,12 @@
     <div class="col-md-8">
       <h2>{{ book.title }}</h2>
       <h4>Author: {{ book.author_name }}</h4>
+      <h5>Genre: {{book.genre}}</h5>
       <p>{{ book.description }}</p>
     </div>
   </div>
 </div>
 <div *ngIf="book">
-  <h2>{{ book.title }}</h2>
-  <p>{{ book.description }}</p>
   <button (click)="openDialog()">Want to Read</button>
 </div>
 

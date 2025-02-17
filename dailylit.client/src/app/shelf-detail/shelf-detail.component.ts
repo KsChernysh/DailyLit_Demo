@@ -11,10 +11,15 @@ import { BookService } from '../book.service';
 export class ShelfDetailComponent implements OnInit {
   title: string = '';
   books: BookDetails[] = [];
+  book: any;
+  
+  updatedBook: any;
+  shelfId: number = 0;
+  isEditing: boolean = false;
   id: string = '';
   api: string = "https://localhost:7172/api/Books";
   message: string = '';
-
+  ;
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private bookService: BookService) {}
 
   ngOnInit(): void {
@@ -60,8 +65,67 @@ export class ShelfDetailComponent implements OnInit {
     }
   );
 }
+updateBook(book: any): void {
+  this.updatedBook = { ...book }; // Копіюємо, щоб уникнути мутації
+  console.log('Before update:', this.updatedBook);
+
+  // Перевіряємо, чи є дата, і форматуємо її правильно
+  let formattedDate = null;
+  if (this.updatedBook.dateread) {
+    const date = new Date(this.updatedBook.dateread);
+    formattedDate = date.toISOString().split('T')[0]; // Формат yyyy-MM-dd
+  }
+
+  // Формуємо payload
+  const payload = {
+    status: this.updatedBook.status ?? '',
+    rating: this.updatedBook.rating?.toString() ?? '0', // Перетворюємо в string
+    dateread: formattedDate // Передаємо у форматі yyyy-MM-dd або null
+  };
+
+  console.log('Payload:', JSON.stringify(payload, null, 2));
+  this.sendUpdate(payload);
 }
 
+sendUpdate(payload: any): void {
+  this.http.post<any>(
+    `${this.api}/update-book?shelfName=${this.title}&key=${this.updatedBook.key}`, 
+    payload, // `HttpClient` автоматично конвертує в JSON
+    {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      withCredentials: true
+    }
+  ).subscribe(
+    response => {
+      if (response) { // Просто перевіряємо, чи є відповідь
+        this.book = response; // Сервер має повертати оновлену книгу
+        this.isEditing = false;
+        console.log('Book updated:', this.book);
+        alert('Book updated successfully');
+      }
+    },
+    error => {
+      console.error('Error updating book:', error);
+      this.message = 'Error updating book.';
+    }
+  );
+}
+
+
+
+
+enableEditing(key:string): void {
+  this.updatedBook = this.books.find(book => book.key === key);
+  this.isEditing = true;
+  console.log('Book to update:', this.updatedBook);
+
+  
+
+}
+
+}
 interface BookDetails { 
   id: string,
   title: string,
@@ -72,5 +136,11 @@ interface BookDetails {
   key: string,
   booksadded: Date,
   dateread: Date
+}
+interface Book {
+  status: string,
+  rating: number,
+  dateread: Date,
+  key : string;
 }
 
