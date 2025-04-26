@@ -88,6 +88,9 @@ export class BookService {
             key: response.id,
             title: response.volumeInfo.title,
             genre: this.category,
+            rating: response.volumeInfo.averageRating,
+            pages: response.volumeInfo.pageCount,
+            publish_date: response.volumeInfo.publishedDate,
             author_name: response.volumeInfo.authors.join(', '),
             cover_url: response.volumeInfo.imageLinks.thumbnail,
             description: response.volumeInfo.description

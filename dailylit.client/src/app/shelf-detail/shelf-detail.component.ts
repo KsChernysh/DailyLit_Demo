@@ -42,6 +42,7 @@ export class ShelfDetailComponent implements OnInit {
           cover_url: item.cover_Url || 'assets/no-cover.png',
           status: item.status || 'No Status',
           key: item.key || 'No Key',
+          isEditing: false,// Додаємо властивість isEditing
           rating: item.rating || 0,
           booksadded: item.booksadded || new Date(),
           dateread: item.dateread,
@@ -65,7 +66,7 @@ export class ShelfDetailComponent implements OnInit {
     }
   );
 }
-updateBook(book: any): void {
+ updateBook(book: any): void {
   this.updatedBook = { ...book }; // Копіюємо, щоб уникнути мутації
   console.log('Before update:', this.updatedBook);
 
@@ -85,6 +86,7 @@ updateBook(book: any): void {
 
   console.log('Payload:', JSON.stringify(payload, null, 2));
   this.sendUpdate(payload);
+  
 }
 
 sendUpdate(payload: any): void {
@@ -104,6 +106,7 @@ sendUpdate(payload: any): void {
         this.isEditing = false;
         console.log('Book updated:', this.book);
         alert('Book updated successfully');
+        this.loadBooks();
       }
     },
     error => {
@@ -114,21 +117,46 @@ sendUpdate(payload: any): void {
 }
 
 
-
-
+deleteBook(key: string): void {
+  if (confirm('Are you sure you want to delete this book?')) {
+    this.http.delete<any>(`${this.api}/delete-book?shelfName=${this.title}&key=${key}`, { withCredentials: true }).subscribe(
+      response => {
+        if (response) {
+          console.log('Book deleted:', response);
+          this.loadBooks();
+          alert('Book deleted successfully');
+        }
+      },
+      error => {
+        console.error('Error deleting book:', error);
+        this.message = 'Error deleting book.';
+      }
+    );
+  }
+}
+setRating(book: any, rating: number): void {
+  if (book.isEditing) {
+    book.rating = rating;
+    console.log(`Rating set to ${rating} for book ${book.title}`);
+ 
+  }
+}
 enableEditing(key:string): void {
-  this.updatedBook = this.books.find(book => book.key === key);
-  this.isEditing = true;
-  console.log('Book to update:', this.updatedBook);
-
+ 
+    this.books.forEach(book => book.isEditing = false); // Вимикаємо редагування для всіх книг
+    this.updatedBook = this.books.find(book => book.key === key);
+    if (this.updatedBook) {
+      this.updatedBook.isEditing = true;
+      console.log('Book to update:', this.updatedBook);
+    }
   
-
 }
 
 }
 interface BookDetails { 
   id: string,
   title: string,
+  isEditing: boolean,
   author_name: string,
   cover_url: string,
   status: string,

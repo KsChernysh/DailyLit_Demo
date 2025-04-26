@@ -54,7 +54,7 @@ namespace DailyLit.Server.Controllers
             var books = await _booksManager.GetBooksAsync(shelfName);
             return Ok(books);
         }
-        [HttpGet("delete-book")]
+        [HttpDelete("delete-book")]
         public async Task<IActionResult> DeleteBook([FromQuery] string shelfName, [FromQuery] string key)
         {
             var result = await _booksManager.DeleteBookFromShelfAsync(shelfName, key);
@@ -64,7 +64,7 @@ namespace DailyLit.Server.Controllers
             }
             return Ok(result);
         }
-        [HttpGet("delete-shelf")]
+        [HttpDelete("delete-shelf")]
         public async Task<IActionResult> DeleteShelf([FromQuery] string name)
         {
             var result = await _booksManager.DeleteShelfAsync(name);

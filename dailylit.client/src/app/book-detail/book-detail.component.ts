@@ -38,9 +38,11 @@ export class BookDetailComponent implements OnInit {
                 key: this.corectId || 'No Key',
                 title: book.title || 'No Title',
                 author_name: book.author_name || 'No Author',
-                genre: book.genre || 'No Genre',
+                genre: book.genre || 'Fiction',
                 cover_url: book.cover_url || 'assets/no-cover.png',
-                description: book.description || 'No Description Available'
+                description: this.stripHtmlTags(book.description || 'No Description Available'), pages: book.pages || 0,
+                publish_date: book.publish_date || 'No Publish Date Available',
+                rating: book.rating || 0,
               };
             } else {
               this.book = null;
@@ -69,7 +71,9 @@ export class BookDetailComponent implements OnInit {
       }
     );
   }
-
+  stripHtmlTags(str: string): string {
+    return str.replace(/<\/?[^>]+(>|$)/g, "");
+  }
   openDialog() {
     this.isDialogOpen = true;
   }
@@ -89,6 +93,7 @@ export class BookDetailComponent implements OnInit {
         key: this.corectId || 'No Key',
         status: '',
         rating: '',
+      
         genre: this.book.genre || 'No Genre',
         booksadded: new Date(),
         

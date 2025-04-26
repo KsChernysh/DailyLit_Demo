@@ -14,6 +14,7 @@ export class BookListComponent implements OnInit, OnDestroy {
   books: any[] = [];
   genre: string = '';
   BaseId: string = '';
+  
   routeSubscription!: Subscription;
   constructor(private route: ActivatedRoute, private bookService: BookService, private global: GlobalVariablesService, private router: Router) {
     console.log('BookListComponent constructed');
@@ -48,7 +49,9 @@ export class BookListComponent implements OnInit, OnDestroy {
             genre: item.volumeInfo.categories || 'No Genre',
             author_name: item.volumeInfo.authors?.join(', ') || 'No Author',
             cover_url: item.volumeInfo.imageLinks?.thumbnail || 'assets/no-cover.png',
-          }));
+            rating : item.volumeInfo.averageRating || 0,
+             }));
+          
           console.log('Processed books:', this.books);
         } else {
           this.books = [];

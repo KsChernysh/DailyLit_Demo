@@ -5,6 +5,10 @@ export interface BookDetails {
   description: string;     // Опис книги
   genre: any;           // Жанр книги
   key: string;             // Ключ книги  
+  pages: number;           // Кількість сторінок
+  publish_date: string;    // Дата публікації
+  rating: number;          // Рейтинг книги
+ 
 }
 
 export class Author {

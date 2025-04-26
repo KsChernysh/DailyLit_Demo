@@ -49,8 +49,18 @@ namespace DailyLit.Server.Repository
             if (defaultShelfs.Contains(shelf.Title) && string.IsNullOrEmpty(book.Status))
             {
                 book.Status = shelf.Title;
-            }
 
+            }
+            if (book.Status == "Read")
+            {
+               var userProfile = await _context.Profiles.FirstOrDefaultAsync(x => x.UserName == user.Identity.Name);
+                if (userProfile == null)
+                {
+                    throw new InvalidOperationException("User profile not found.");
+                }
+                userProfile.Read += 1;
+                await _context.SaveChangesAsync();
+            }
             var bookDomain = _mapper.Map<BookUrls>(book);
             bookDomain.Id = Guid.NewGuid();
             bookDomain.ShelfId = shelfId;
@@ -65,56 +75,6 @@ namespace DailyLit.Server.Repository
             await _context.SaveChangesAsync();
             return bookDomain;
         }
-/*
-        public async Task<BookUrls> AddBookAsync(BooksViewModel book, int shelfId)
-        {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null || user.Identity?.Name == null)
-            {
-                throw new InvalidOperationException("User is not authenticated.");
-            }
-
-            var profile = await _context.Profiles.FirstOrDefaultAsync(x => x.UserName == user.Identity.Name);
-            if (profile == null)
-            {
-                throw new InvalidOperationException("User profile not found.");
-            }
-
-            var shelf = await _context.Shelfs.FirstOrDefaultAsync(x => x.Id == shelfId && x.UserId == profile.Id);
-            if (shelf == null)
-            {
-                throw new InvalidOperationException("Shelf not found.");
-            }
-            if(defaultShelfs.Contains(shelf.Title) && book.Status=="")
-            {
-               book.Status = shelf.Title;
-            }
-            
-            var bookDomain = new BookUrls()
-            {
-                Id = Guid.NewGuid(),
-                Url = "",
-                Title = book.Title,
-                Author = book.Author,
-                Cover_Url = book.Cover_Url,
-                Key = book.Key,
-                Status = book.Status == null ? "Want to Read" : book.Status,
-                Rating = book.Rating,
-                BooksAdded = book.BooksAdded,
-                DateRead = book.DateRead,
-                ShelfId = shelfId,
-                Shelf = shelf
-
-            };
-            if(bookDomain == _context.BooksCollection.FirstOrDefault(x => x.Key == book.Key && x.ShelfId == shelfId))
-            {
-                throw new InvalidOperationException("Book already exists.");
-            }
-            _context.BooksCollection.Add(bookDomain);
-            await _context.SaveChangesAsync();
-            return bookDomain;
-        }
-*/
         public async Task<Shelfs> AddShelfsAsync(string name)
         {
             var user = _httpContextAccessor.HttpContext?.User;
@@ -303,10 +263,20 @@ namespace DailyLit.Server.Repository
                 _context.BooksCollection.Add(changedStatus);
                 await _context.SaveChangesAsync();
             }
-          
+            
             bookDomain.Status = book.status;
             bookDomain.Rating = book.rating;
             bookDomain.DateRead = book.dateread;
+            if (book.status == "Read")
+            {
+                var userProfile = await _context.Profiles.FirstOrDefaultAsync(x => x.UserName == user.Identity.Name);
+                if (userProfile == null)
+                {
+                    throw new InvalidOperationException("User profile not found.");
+                }
+                userProfile.Read += 1;
+                await _context.SaveChangesAsync();
+            }
             await _context.SaveChangesAsync();
 
            return _mapper.Map<BooksViewModel>(bookDomain);
