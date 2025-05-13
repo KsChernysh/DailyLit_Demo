@@ -1,19 +1,55 @@
-<form [formGroup]="registerForm" style="margin-top: 5em;" (ngSubmit)="onSubmit()">
-    <div>
-      <label for="name">Name:</label>
-      <input id="name" formControlName="name" type="text">
-      <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
-        Name is required
-      </div>
+<div class="register-container">
+  <div class="auth-box">
+    <div class="auth-header">
+      <h1>Створення аккаунту</h1>
+      <p>Зареєструйтесь для повного доступу до DailyLit</p>
     </div>
-    <div>
-        <label for="password">Password:</label>
-        <input id="password" formControlName="password" type="text">
-        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-          Password is required
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label for="name">Ім'я користувача</label>
+        <div class="input-wrapper">
+          <i class="fa fa-user"></i>
+          <input 
+            id="name" 
+            formControlName="name" 
+            type="text" 
+            placeholder="Введіть бажане ім'я користувача"
+            autocomplete="username"
+          >
+        </div>
+        <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" class="form-error">
+          <i class="fa fa-exclamation-circle"></i> Ім'я користувача обов'язкове
         </div>
       </div>
-    <button type="submit" [disabled]="registerForm.invalid">Submit</button>
-  </form>
+      
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <div class="input-wrapper">
+          <i class="fa fa-lock"></i>
+          <input 
+            id="password" 
+            formControlName="password" 
+            type="password" 
+            placeholder="Створіть надійний пароль"
+            autocomplete="new-password"
+          >
+        </div>
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="form-error">
+          <i class="fa fa-exclamation-circle"></i> Пароль обов'язковий
+        </div>
+      </div>
+      
+      <div class="form-action">
+        <button type="submit" class="btn primary-btn" [disabled]="registerForm.invalid">
+          <i class="fa fa-user-plus"></i> Зареєструватися
+        </button>
+      </div>
+    </form>
     
-  
+    <div class="auth-footer">
+      <p>Вже маєте аккаунт? <a routerLink="/login">Увійти</a></p>
+    </div>
+  </div>
+</div>
+

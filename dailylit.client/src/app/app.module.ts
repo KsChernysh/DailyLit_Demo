@@ -28,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
+import { ChatComponent } from './chat/chat.component';
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import { MatInputModule } from '@angular/material/input';
     EditprofileComponent,
     ShelvesViewComponent,
     ShelfDetailComponent,
-    AichatComponent
+    AichatComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,

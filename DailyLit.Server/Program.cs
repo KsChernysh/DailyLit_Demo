@@ -22,6 +22,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<IUserManagerRepository, UserManagerRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<BooksRecommender>();
 builder.Services.AddScoped<IBooksManager, BooksManager>();
 builder.Services.AddScoped<IProgressManager, ProgressManager>();
 // Register AutoMapper with the assembly containing the mapping profiles

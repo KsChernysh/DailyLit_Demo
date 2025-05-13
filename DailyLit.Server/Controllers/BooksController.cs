@@ -94,6 +94,16 @@ namespace DailyLit.Server.Controllers
             }
             return Ok(book);
         }
+        [HttpPost("recommendation")]
+        public async Task<IActionResult> GetRecommendation([FromBody] BooksCollection book)
+        {
+            var bookRecommendation = _booksManager.GetRecommendations(new List<BooksCollection> { book });
+            if (bookRecommendation == null)
+            {
+                return await Task.FromResult<IActionResult>(BadRequest("Error getting book recommendation."));
+            }
+            return await Task.FromResult<IActionResult>(Ok(bookRecommendation));
+        }
 
     }
 }

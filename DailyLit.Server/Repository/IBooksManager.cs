@@ -14,5 +14,10 @@ namespace DailyLit.Server.Repository
         public Task<IActionResult> DeleteShelfAsync(string name);
         public Task<IActionResult> DeleteBookFromShelfAsync(string name,string key);
         public Task<BooksViewModel> UpdateBookAsync(BooksEdit book, string shelfName, string key);
+        public List<(BooksCollection, float)> GetRecommendations(List<BooksCollection> userBooks);
+
+
+
+
     }
 }

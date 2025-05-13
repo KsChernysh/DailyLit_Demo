@@ -59,3 +59,175 @@
   background-color: #6c757d;
   cursor: not-allowed;
 }
+
+/* Стилі для каруселі книг */
+.book-carousel-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 20px 0;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.carousel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.carousel-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.close-carousel {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.close-carousel:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.carousel-arrow {
+  background: rgba(0,0,0,0.2);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 2;
+}
+
+.carousel-arrow:hover {
+  background: rgba(0,0,0,0.4);
+}
+
+.carousel-arrow.prev {
+  margin-right: 10px;
+}
+
+.carousel-arrow.next {
+  margin-left: 10px;
+}
+
+.carousel-content {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 8px;
+  position: relative;
+  min-height: 300px;
+}
+
+.carousel-slide {
+  display: flex;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.book-cover {
+  width: 120px;
+  min-width: 120px;
+  margin-right: 20px;
+}
+
+.book-cover img {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.book-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.book-title {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.book-author {
+  margin: 0 0 10px 0;
+  color: #666;
+  font-style: italic;
+}
+
+.book-description {
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.view-details-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.view-details-btn:hover {
+  background-color: #3d8b40;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.carousel-dots span {
+  width: 10px;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.carousel-dots span.active {
+  background-color: #2196f3;
+}

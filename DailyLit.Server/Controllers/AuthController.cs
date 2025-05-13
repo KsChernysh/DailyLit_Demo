@@ -1,7 +1,9 @@
 ﻿using DailyLit.Server.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Room4U.Server.Models.Auth;
+using System.Security.Claims;
 
 namespace DailyLit.Server.Controllers
 {
@@ -42,6 +44,27 @@ namespace DailyLit.Server.Controllers
                 return Ok();
             };
             return BadRequest();
-        }   
+        }
+        // У вашому AuthController
+        [Authorize]
+        [HttpGet("user")]
+        public IActionResult GetCurrentUser()
+        {
+            var userId = "11";
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if ( string.IsNullOrEmpty(username))
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new { id = int.Parse(userId), username });
+        }
+
+        [HttpGet("check")]
+        public IActionResult CheckAuthStatus()
+        {
+            return Ok(User.Identity?.IsAuthenticated ?? false);
+        }
     }
 }

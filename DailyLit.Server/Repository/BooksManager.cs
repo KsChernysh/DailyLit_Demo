@@ -13,6 +13,7 @@ namespace DailyLit.Server.Repository
     public class BooksManager : IBooksManager
     {
         private readonly ApplicationDbContext _context;
+        private readonly BooksRecommender _recommender;
         private readonly IHttpContextAccessor _httpContextAccessor;
         string[] defaultShelfs = ["Want to Read", "Currently reading", "Read"];
         private readonly IMapper _mapper;
@@ -304,6 +305,10 @@ namespace DailyLit.Server.Repository
             }
             return _mapper.Map<BooksViewModel>(book);
           
+        }
+        public List<(BooksCollection, float)> GetRecommendations(List<BooksCollection> userBooks)
+        {
+            return _recommender.GetRecommendationsByShelf(userBooks);
         }
     }
 }

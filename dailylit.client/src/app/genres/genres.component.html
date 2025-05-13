@@ -1,28 +1,93 @@
-<div class="container-fluid">
-  <div class="row">
-     <!-- Sidebar -->
-     <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block  sidebar collapse">
-      <div class="sidebar-sticky pt-3">
-        <h5 class="text-white text-center mb-4">Genres</h5>
-        <ul class="nav flex-column">
-          <li class="nav-item" *ngFor="let genre of genres">
-            <button class="btn btn-outline-success navbar-expand-lg text-left mb-2" (click)="goTo(genre)">
-              {{ genre }}
+<div class="genres-container">
+  <div class="genres-content">
+    <!-- Бічна панель з жанрами -->
+    <aside class="genres-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Жанри</h2>
+      </div>
+      
+      <div class="sidebar-search">
+        <div class="search-input-wrapper">
+          <i class="fa fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Знайти жанр..." 
+            [(ngModel)]="searchQuery"
+            (input)="filterGenres()"
+          >
+          <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="genres-list-wrapper">
+        <ul class="genres-list">
+          <li class="genre-item" *ngFor="let genre of filteredGenres">
+            <button class="genre-btn" [class.active]="selectedGenre === genre" (click)="goTo(genre)">
+              <i class="fa fa-bookmark-o genre-icon"></i>
+              <span class="genre-name">{{ genre }}</span>
+              <span class="genre-count" *ngIf="genreCounts[genre]">({{ genreCounts[genre] }})</span>
             </button>
           </li>
         </ul>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-      
-        <div class="btn-toolbar mb-2 mb-md-0">
-          <!-- Можна додати додаткові кнопки тут -->
+        
+        <!-- Порожній результат пошуку -->
+        <div *ngIf="filteredGenres.length === 0" class="empty-search-result">
+          <i class="fa fa-search-minus"></i>
+          <p>Жанрів не знайдено</p>
         </div>
       </div>
-      <div class="book-list-container">
+      
+      <div class="sidebar-footer">
+        <button class="view-all-btn" (click)="viewAllGenres()">
+          <i class="fa fa-th-large"></i> Показати всі жанри
+        </button>
+      </div>
+    </aside>
+
+    <!-- Основний контент -->
+    <main class="main-content">
+      <div class="content-header">
+        <h1 class="page-title">
+          <span *ngIf="selectedGenre">{{ selectedGenre }}</span>
+          <span *ngIf="!selectedGenre">Всі книги</span>
+        </h1>
+        
+        <div class="content-actions">
+          <div class="sort-options">
+            <label for="sortSelect">Сортувати:</label>
+            <select id="sortSelect" class="sort-select" [(ngModel)]="sortOption" (change)="sortBooks()">
+              <option value="relevance">За релевантністю</option>
+              <option value="newest">Спочатку нові</option>
+              <option value="title">За назвою (А-Я)</option>
+              <option value="rating">За рейтингом</option>
+            </select>
+          </div>
+          
+          <div class="view-toggle">
+            <button class="view-btn" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+              <i class="fa fa-th-large"></i>
+            </button>
+            <button class="view-btn" [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
+              <i class="fa fa-list"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Хлібні крихти -->
+      <div class="breadcrumbs">
+        <span class="crumb"><a routerLink="/">Головна</a></span>
+        <i class="fa fa-angle-right separator"></i>
+        <span class="crumb"><a routerLink="/genres">Жанри</a></span>
+        <i *ngIf="selectedGenre" class="fa fa-angle-right separator"></i>
+        <span *ngIf="selectedGenre" class="crumb current">{{ selectedGenre }}</span>
+      </div>
+      
+      <!-- Компонент списку книг -->
+      <div class="book-list-container" [ngClass]="{'grid-view': viewMode === 'grid', 'list-view': viewMode === 'list'}">
         <app-book-list></app-book-list>
       </div>
     </main>

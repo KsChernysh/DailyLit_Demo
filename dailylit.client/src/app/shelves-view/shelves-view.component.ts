@@ -13,6 +13,7 @@ export class ShelvesViewComponent implements OnInit {
   message: string = '';
   isDialogOpen: boolean = false;
   api: string = "https://localhost:7172/api/Books";
+  isSuccess: boolean = true; // Для стилізації повідомлень
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -46,28 +47,31 @@ export class ShelvesViewComponent implements OnInit {
   }
 
   onSubmit() {
-    const trimmedShelfName = this.shelfName.trim();
-
-    if (!trimmedShelfName) {
-      this.message = 'Назва полиці не може бути порожньою.';
+    if (!this.shelfName || this.shelfName.trim() === '') {
+      this.message = 'Будь ласка, введіть назву полиці';
+      this.isSuccess = false;
+      setTimeout(() => this.message = '', 5000);
       return;
     }
 
-    // Якщо сервер очікує простий рядок, відправляємо його у форматі JSON
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const body = JSON.stringify(trimmedShelfName); // Перетворюємо рядок у JSON строку
+    this.createShelf(this.shelfName);
+    this.closeDialog();
+  }
 
-    this.http.post<string>(`${this.api}/add-shelf`, body, { headers, withCredentials: true })
+  createShelf(title: string) {
+    this.http.post(this.api + '/shelves', { title: title }, { withCredentials: true })
       .subscribe(
-        (response: any) => {
-          this.message = 'Поличка успішно додана!';
-          this.shelfName = '';
-          this.isDialogOpen = false;
-          this.loadShelves();
+        response => {
+          this.shelves.push({ title: title, count: 0 });
+          this.message = 'Полицю успішно створено!';
+          this.isSuccess = true;
+          setTimeout(() => this.message = '', 5000);
         },
-        (error: any) => {
-          console.error('Error adding shelf:', error);
-          this.message = 'Помилка при додаванні полиці.';
+        error => {
+          console.error('Помилка створення полиці:', error);
+          this.message = 'Не вдалося створити полицю. Спробуйте ще раз.';
+          this.isSuccess = false;
+          setTimeout(() => this.message = '', 5000);
         }
       );
   }

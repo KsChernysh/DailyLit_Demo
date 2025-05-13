@@ -8,7 +8,7 @@ export interface BookDetails {
   pages: number;           // Кількість сторінок
   publish_date: string;    // Дата публікації
   rating: number;          // Рейтинг книги
- 
+ keywords: string[];        // Ключові слова
 }
 
 export class Author {

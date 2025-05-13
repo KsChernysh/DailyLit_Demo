@@ -1,19 +1,79 @@
 <div class="chat-container">
   <div class="messages">
-    <div *ngFor="let msg of messages" [ngClass]="msg.role">
-      <strong>{{ msg.role === 'user' ? 'Ви' : 'AI' }}:</strong> {{ msg.content }}
+    <div *ngFor="let msg of messages" class="message" [ngClass]="{'user-message': msg.role === 'user', 'bot-message': msg.role === 'bot'}">
+      <div class="message-header">
+        <strong>{{ msg.role === 'user' ? 'Ви' : 'AI' }}:</strong>
+      </div>
+      <div class="message-content">
+        {{ msg.content }}
+      </div>
     </div>
-    <div *ngIf="isLoading" class="bot">
-      <strong>AI:</strong> Відповідь генерується...
+    <div *ngIf="isLoading" class="message bot-message loading-message">
+      <div class="message-header">
+        <strong>AI:</strong>
+      </div>
+      <div class="message-content">
+        Відповідь генерується...
+        <div class="loading-dots">
+          <span>.</span><span>.</span><span>.</span>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Карусель з рекомендованими книгами -->
+  <div *ngIf="showCarousel && recommendedBooks.length > 0" class="book-carousel-container">
+    <div class="carousel-header">
+      <h3>Рекомендовані книги</h3>
+      <button class="close-carousel" (click)="closeCarousel()">×</button>
+    </div>
+    
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow prev" (click)="prevSlide()" *ngIf="recommendedBooks.length > 1">❮</button>
+      
+      <div class="carousel-content">
+        <div class="carousel-slide" *ngFor="let book of recommendedBooks; let i = index" 
+             [style.display]="i === currentCarouselIndex ? 'flex' : 'none'">
+          <div class="book-cover">
+            <img [src]="book.cover_url" [alt]="book.title">
+          </div>
+          <div class="book-info">
+            <h4 class="book-title">{{ book.title }}</h4>
+            <p class="book-author">{{ book.author }}</p>
+            <div class="book-description" *ngIf="book.description">
+              {{ book.description.length > 200 ? (book.description | slice:0:200) + '...' : book.description }}
+            </div>
+            <button *ngIf="book.id" class="view-details-btn" (click)="viewBookDetails(book.id)">
+              Детальніше
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <button class="carousel-arrow next" (click)="nextSlide()" *ngIf="recommendedBooks.length > 1">❯</button>
+    </div>
+    
+    <div class="carousel-dots" *ngIf="recommendedBooks.length > 1">
+      <span *ngFor="let book of recommendedBooks; let i = index" 
+          [ngClass]="{'active': i === currentCarouselIndex}"
+          (click)="currentCarouselIndex = i"></span>
+    </div>
+  </div>
+
   <div class="input-area">
     <input
       type="text"
       [(ngModel)]="userInput"
       (keypress)="handleKeyPress($event)"
-      placeholder="Введіть ваше повідомлення..."
+      placeholder="Введіть ваш запит..."
+      class="chat-input"
+      [disabled]="isLoading || isGeneratingRecommendations"
     />
-    <button (click)="sendMessage()" [disabled]="isLoading">Надіслати</button>
+    <button (click)="sendMessage()" 
+            [disabled]="isLoading || isGeneratingRecommendations || !userInput.trim()" 
+            class="send-button">
+      <span *ngIf="!isLoading && !isGeneratingRecommendations">Надіслати</span>
+      <span *ngIf="isLoading || isGeneratingRecommendations">...</span>
+    </button>
   </div>
 </div>

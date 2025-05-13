@@ -1,50 +1,145 @@
-<div *ngIf="book; else noBook" class="container mt-5">
-  <div class="row">
-    <div class="col-md-4">
-      <img [src]="book.cover_url" [alt]="book.title" class="img-fluid">
+<div class="book-detail-container">
+  <div *ngIf="book; else loading" class="book-content">
+    <!-- Хлібні крихти -->
+    <div class="breadcrumbs">
+      <a routerLink="/" class="crumb">Головна</a>
+      <i class="fa fa-angle-right separator"></i>
+      <a routerLink="/books" class="crumb">Книги</a>
+      <i class="fa fa-angle-right separator"></i>
+      <span class="crumb current">{{ book.title }}</span>
     </div>
-    <div class="col-md-8">
-      <h2>{{ book.title }}</h2>
-      <h4>Author: {{ book.author_name }}</h4>
-      <h5>Genre: {{book.genre}}</h5>
-      <p>{{ book.description }}</p>
-      <p>Publish Date: {{ book.publish_date }}</p>
-      <p>Pages: {{ book.pages }}</p>
-      <div>Rating:
-        <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" 
-               [attr.fill]="(book.rating || 0) >= star ? '#000' : '#ccc'"
-               class="bi" viewBox="0 0 16 16">
-            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-          </svg>
-        </ng-container>
-    </div> </div>
+    
+    <div class="book-card">
+      <div class="book-header">
+        <div class="book-cover-wrapper">
+          <img [src]="book.cover_url || 'assets/images/no-cover.png'" [alt]="book.title" class="book-cover">
+          <div class="book-cover-overlay">
+            <div class="book-rating-badge" *ngIf="book.rating">
+              {{ book.rating.toFixed(1) }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="book-info">
+          <h1 class="book-title">{{ book.title }}</h1>
+          <h3 class="book-author">{{ book.author_name }}</h3>
+          
+          <div class="book-metadata">
+            <span class="book-genre" *ngIf="book.genre">
+              <i class="fa fa-bookmark"></i> {{ book.genre }}
+            </span>
+            <span class="book-date" *ngIf="book.publish_date">
+              <i class="fa fa-calendar"></i> {{ book.publish_date | date }}
+            </span>
+            <span class="book-pages" *ngIf="book.pages">
+              <i class="fa fa-file-text"></i> {{ book.pages }} сторінок
+            </span>
+          </div>
+          
+          <div class="book-rating">
+            <span class="rating-label">Рейтинг:</span>
+            <div class="rating-stars">
+              <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                <i class="fa fa-star" [class.filled]="(book.rating || 0) >= star"></i>
+              </ng-container>
+              <span class="rating-value" *ngIf="book.rating">{{ book.rating.toFixed(1) }}</span>
+            </div>
+          </div>
+          
+          <div class="book-actions">
+            <button class="btn primary-btn" (click)="openDialog()">
+              <i class="fa fa-bookmark"></i> Хочу прочитати
+            </button>
+            
+            <button class="btn secondary-btn">
+              <i class="fa fa-share-alt"></i> Поділитися
+            </button>
+          </div>
+          
+          <div class="book-tags" *ngIf="book.keywords && book.keywords.length > 0">
+            <span class="tag" *ngFor="let keyword of book.keywords">{{ keyword }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="book-tabs">
+        <div class="tab-header">
+          <button class="tab-btn active">Опис</button>
+          <button class="tab-btn">Відгуки</button>
+          <button class="tab-btn">Схожі книги</button>
+        </div>
+        
+        <div class="tab-content">
+          <div class="book-description">
+            <div class="description-text" [innerHTML]="book.description || 'Опис відсутній'"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Секція обговорення -->
+    <div class="discussion-section">
+      <h3 class="section-title">Обговорення книги</h3>
+      <app-chat [bookId]="book?.key || ''"></app-chat>
+    </div>
+    
+    <!-- Діалог для додавання книги на полицю -->
+    <div *ngIf="isDialogOpen" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Додати книгу на полицю</h3>
+          <button class="close-btn" type="button" (click)="closeDialog()">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="shelf-selection">
+            <h4>Виберіть полицю:</h4>
+            
+            <div class="shelf-buttons">
+              <button 
+                *ngFor="let shelf of shelves" 
+                type="button" 
+                class="shelf-button"
+                [class.active]="selectedShelfId === shelf.id" 
+                (click)="selectShelf(shelf.id)">
+                <i class="fa fa-bookmark-o"></i>
+                {{ shelf.title }}
+              </button>
+            </div>
+
+            <div *ngIf="shelves.length === 0" class="no-shelves-message">
+              <i class="fa fa-exclamation-circle"></i>
+              Немає доступних полиць. Створіть полицю на сторінці "Мої полиці".
+            </div>
+            
+            <div *ngIf="selectedShelfId" class="selected-shelf">
+              <p>Вибрано: <strong>{{ getSelectedShelfTitle() }}</strong></p>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn cancel-btn" (click)="closeDialog()">Скасувати</button>
+            <button type="button" class="btn primary-btn" [disabled]="!selectedShelfId" (click)="onSubmit()">
+              Додати
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Повідомлення про успішне додавання -->
+    <div *ngIf="message" class="toast-message" [class.show]="message">
+      <i class="fa" [ngClass]="message.includes('успішно') ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+      {{ message }}
+    </div>
   </div>
-</div>
-<div *ngIf="book">
-  <button (click)="openDialog()">Want to Read</button>
+  
+  <ng-template #loading>
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Завантаження інформації про книгу...</p>
+    </div>
+  </ng-template>
 </div>
 
-<!-- Dialog for adding a book to a shelf -->
-<div *ngIf="isDialogOpen" class="dialog" style="margin-bottom: 50px;">
-  <h2>Select Shelf</h2>
-  <form (ngSubmit)="onSubmit()">
-    <div>
-      <label for="shelfSelect">Shelf:</label>
-      <select id="shelfSelect" [(ngModel)]="selectedShelfId" name="shelfSelect" required>
-        <option *ngFor="let shelf of shelves" [value]="shelf.id">{{ shelf.title }}</option>
-      </select>
-    </div>
-    <button type="submit">Add to Shelf</button>
-    <button type="button" (click)="closeDialog()">Cancel</button>
-   
-  </form>
-</div>
-<br> <br> <br> <br>
-
-<p>{{ message }}</p>
-<ng-template #noBook>
-  <div class="container mt-5">
-    <p>Book details not available.</p>
-  </div>
-</ng-template>

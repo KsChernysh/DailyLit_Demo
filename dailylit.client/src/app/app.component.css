@@ -1,17 +1,259 @@
-﻿/* Add these styles to your CSS file */
-.form-inline {
+﻿/* Глобальні стилі та змінні */
+:root {
+  /* Основна кольорова палітра (тепла, пісочна) */
+  --primary-color: #d2905b;
+  --primary-dark: #b57a49;
+  --primary-light: #f8ece2;
+  --accent-color: #796356;
+  --accent-dark: #5e4c44;
+  --accent-light: #f0e5d9;
+  
+  /* Функціональні кольори */
+  --success-color: #7c9b72;
+  --success-dark: #617b59;
+  --warning-color: #e9b872;
+  --error-color: #cc7352;
+  --error-dark: #aa5f45;
+  
+  /* Текстові кольори */
+  --text-primary: #3e3128;
+  --text-secondary: #6b584a;
+  --text-light: #9c8877;
+  --text-inverse: #f9f3ec;
+  
+  /* Фонові кольори */
+  --bg-paper: #fcf9f5;
+  --bg-light: #f5efe8;
+  --bg-default: #ebe1d4;
+  --bg-navbar: #5e4c44;
+  --bg-footer: #3e3128;
+  
+  /* Границі та тіні */
+  --border-color: #d1c3b5;
+  --border-light: #e8dfd5;
+  --shadow-sm: 0 2px 4px rgba(88, 69, 57, 0.1);
+  --shadow-md: 0 4px 8px rgba(88, 69, 57, 0.12);
+  --shadow-lg: 0 8px 16px rgba(88, 69, 57, 0.15);
+  
+  /* Радіуси границь */
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+  --border-radius-xl: 12px;
+  
+  /* Шрифти */
+  --font-family-primary: 'Roboto', 'Helvetica', sans-serif;
+  --font-family-secondary: 'Playfair Display', 'Georgia', serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  
+  /* Відступи */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+}
+
+/* Основні стилі сторінки */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #ebe1d4; /* bg-default */
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+  color: #3e3128; /* text-primary */
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Використовуємо viewport height для повного екрану */
+  padding-top: 70px; /* Висота фіксованого навбару + padding */
+}
+
+/* Навігаційна панель */
+.navbar {
+  background-color: #5e4c44 !important; /* accent-dark */
+  box-shadow: 0 2px 10px rgba(88, 69, 57, 0.15);
+  border-bottom: 1px solid #f0e5d9; /* accent-light */
+  padding: 10px 0;
+}
+
+.navbar-brand {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  color: #f8ece2 !important; /* Змінено на світло-пісочний */
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-brand span {
+  color: #f8ece2; /* Змінено на світло-пісочний */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #f0e5d9 !important; /* Змінено на світло-пісочний */
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  letter-spacing: 0.2px; /* Покращення читабельності */
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15); /* Додано тінь для кращої видимості */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
+  color: #d2905b !important; /* При наведенні - основний колір */
+  transform: translateY(-2px);
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+  color: #d2905b !important; /* primary-color */
+  font-weight: 700;
   position: relative;
 }
 
+.navbar-dark .navbar-nav .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 1rem;
+  right: 1rem;
+  height: 2px;
+  background-color: #d2905b; /* primary-color */
+}
+
+.navbar-brand img {
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Кнопки авторизації */
+.auth-nav {
+  display: flex;
+  gap: 10px;
+  margin-left: 15px;
+}
+
+.auth-btn {
+  padding: 8px 16px;
+  border-radius: 6px; /* border-radius-md */
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.login-btn,
+.logout-btn {
+  background-color: transparent;
+  border: 1px solid #f8ece2; /* primary-light */
+  color: #f0e5d9; /* Світло-пісочний */
+}
+
+.login-btn:hover {
+  background-color: #f8ece2; /* primary-light */
+  color: #5e4c44; /* accent-dark */
+}
+
+.register-btn {
+  background-color: #d2905b; /* primary-color */
+  border: 1px solid #d2905b; /* primary-color */
+  color: #f0e5d9; /* Світло-пісочний */
+  font-weight: 600; /* Жирніший шрифт для кнопки реєстрації */
+}
+
+.register-btn:hover {
+  background-color: #b57a49; /* primary-dark */
+}
+
+.logout-btn:hover {
+  background-color: #cc7352; /* error-color */
+}
+
+/* Контейнер головного контенту */
+.app-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 56px - 80px); /* Висота вьюпорта мінус навбар і футер */
+  width: 100%;
+  position: relative;
+  padding-bottom: 30px; /* Додатковий відступ внизу перед футером */
+  background-color: #ebe1d4; /* bg-default */
+}
+
+.content-container {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 15px;
+}
+
+/* Футер */
+footer {
+  background-color: #3e3128; /* bg-footer */
+  color: #f9f3ec; /* text-inverse */
+  padding: 25px 0;
+  margin-top: auto;
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  box-shadow: 0 -2px 10px rgba(88, 69, 57, 0.1);
+  border-top: 1px solid #f0e5d9; /* accent-light */
+}
+
+footer p {
+  margin-bottom: 0;
+  opacity: 0.9;
+}
+
+/* Стилі пошуку */
+.search-input {
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f0e5d9; /* Світло-пісочний */
+  transition: all 0.2s ease;
+  border-radius: 6px 0 0 6px; /* border-radius-md */
+}
+
+.search-input::placeholder {
+  color: rgba(240, 229, 217, 0.7); /* Світло-пісочний з прозорістю */
+}
+
+.search-input:focus {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: #f8ece2; /* primary-light */
+  box-shadow: 0 0 0 0.2rem rgba(249, 243, 236, 0.25);
+  color: #f9f3ec; /* text-inverse */
+}
+
+.btn-search {
+  background-color: #d2905b; /* primary-color */
+  border: 1px solid #d2905b; /* primary-color */
+  color: #f9f3ec; /* text-inverse */
+  border-radius: 0 6px 6px 0; /* border-radius-md */
+  padding: 0.375rem 0.75rem;
+}
+
+.btn-search:hover {
+  background-color: #b57a49; /* primary-dark */
+}
+
+/* Стилі пошуку з конкретними кольорами */
 .search-results {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #fcf9f5; /* bg-paper */
+  border: 1px solid #d1c3b5; /* border-color */
+  border-radius: 6px; /* border-radius-md */
+  box-shadow: 0 8px 16px rgba(88, 69, 57, 0.15); /* shadow-lg */
   max-height: 400px;
   overflow-y: auto;
   z-index: 1000;
@@ -21,8 +263,9 @@
 .book-item {
   display: flex;
   padding: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e8dfd5; /* border-light */
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .book-item:last-child {
@@ -30,7 +273,7 @@
 }
 
 .book-item:hover {
-  background-color: #f8f9fa;
+  background-color: #f8ece2; /* primary-light */
 }
 
 .book-cover {
@@ -38,6 +281,8 @@
   height: 75px;
   object-fit: cover;
   margin-right: 15px;
+  border-radius: 4px; /* border-radius-sm */
+  box-shadow: 0 2px 4px rgba(88, 69, 57, 0.1); /* shadow-sm */
 }
 
 .book-info {
@@ -49,47 +294,18 @@
 .book-info h5 {
   margin: 0 0 5px 0;
   font-size: 16px;
+  color: #3e3128; /* text-primary */
 }
 
 .book-info p {
   margin: 0;
-  color: #666;
+  color: #6b584a; /* text-secondary */
   font-size: 14px;
 }
 
-.navbar-brand img {
-  height: 40px; /* Adjust the height as needed */
-}
-
-/* Ensure the footer stays at the bottom */
-html, body {
-  height: 100%;
-
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding-top: 56px; /* Height of the fixed navbar */
-}
-
-/* Adjust main content to account for fixed navbar */
-.container-fluid > .row {
-  margin-right: 0;
-  margin-left: 0;
-}
-
-/* Footer Styling */
-footer {
-  margin-top: 4em;
-  background-color: #343a40;
-  color: #ffffff;
-}
-
-/* Optional: Adjust margins for responsiveness */
-@media (max-width: 767.98px) {
-  .container {
-    margin-top: 20px;
-  }
+.no-results {
+  padding: 15px;
+  text-align: center;
+  color: #6b584a; /* text-secondary */
+  font-style: italic;
 }

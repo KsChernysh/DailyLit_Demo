@@ -1,23 +1,72 @@
 <!-- src/app/book-list/book-list.component.html -->
-<div class="book-list">
-  <div *ngFor="let book of books" class="book-item" (click)="apicall(book.id)">
-    <!--[routerLink]="['/works', book.works]-->
-    <img [src]="book.cover_url" alt="{{ book.title }}">
-    <div class="book-title">{{ book.title }}</div>
-    <div class="book-author">{{ book.author }}</div>
-    <div>
-      <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" 
-             [attr.fill]="(book.rating || 0) >= star ? '#000' : '#ccc'"
-             class="bi" viewBox="0 0 16 16">
-          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-        </svg>
-      </ng-container>
-      
+<div class="book-list-container">
+  <!-- Індикатор завантаження -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Завантаження книг...</p>
+  </div>
+  
+  <!-- Повідомлення, якщо список порожній -->
+  <div *ngIf="!loading && (!books || books.length === 0)" class="empty-list">
+    <i class="fa fa-book"></i>
+    <h3>Книги не знайдено</h3>
+    <p>Спробуйте змінити параметри пошуку або перегляньте популярні книги.</p>
+  </div>
+  
+  <!-- Список книг -->
+  <div *ngIf="!loading && books && books.length > 0" class="book-grid">
+    <div *ngFor="let book of books" class="book-card" (click)="apicall(book.id)">
+      <div class="book-cover-container">
+        <img [src]="book.cover_url" [alt]="book.title" class="book-cover" onerror="this.src='assets/no-cover.png'">
+        
+        <div class="book-rating-overlay" *ngIf="book.rating">
+          <div class="rating-badge">
+            <i class="fa fa-star"></i>
+            <span>{{ book.rating }}</span>
+          </div>
+        </div>
+        
+        <div class="book-actions-overlay">
+          <button class="action-btn want-to-read-btn" (click)="$event.stopPropagation(); addToShelf(book)">
+            <i class="fa fa-bookmark"></i>
+            <span>Хочу прочитати</span>
+          </button>
+        </div>
       </div>
-    <div class="book-actions">
-
-      <button class="want-to-read-btn" (click)="apicall(book.id)">Want to Read</button>
+      
+      <div class="book-info">
+        <h3 class="book-title" [title]="book.title">{{ book.title }}</h3>
+        <p class="book-author" [title]="book.author">{{ book.author }}</p>
+        
+        <div class="book-rating">
+          <div class="star-rating">
+            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+              <i class="fa fa-star" [class.filled]="(book.rating || 0) >= star"></i>
+            </ng-container>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+  
+  <!-- Пагінація -->
+  <div *ngIf="totalPages > 1" class="pagination">
+    <button 
+      class="pagination-btn" 
+      [disabled]="currentPage === 1" 
+      (click)="changePage(currentPage - 1)">
+      <i class="fa fa-angle-left"></i> Назад
+    </button>
+    
+    <div class="page-info">
+      Сторінка {{ currentPage }} з {{ totalPages }}
+    </div>
+    
+    <button 
+      class="pagination-btn" 
+      [disabled]="currentPage === totalPages" 
+      (click)="changePage(currentPage + 1)">
+      Далі <i class="fa fa-angle-right"></i>
+    </button>
   </div>
 </div>

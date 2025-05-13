@@ -1,38 +1,173 @@
 <!-- filepath: /a:/Daily_Lit/dailylit.client/src/app/shelf-detail/shelf-detail.component.html -->
-<h1>{{title}}</h1>
-<div class="book-list">
-  <div *ngFor="let book of books" class="book-item" (click)="apicall(book.key)">
-    <img [src]="book.cover_url" alt="{{ book.title }}">
-    <div class="book-title">{{ book.title }}</div>
-    <div class="book-author">{{ book.author_name }}</div>
-    <input [(ngModel)]="book.status" 
-      type="text" 
-      placeholder="Статус" 
-      [disabled]="!book.isEditing" 
-      (click)="$event.stopPropagation()"
-    />
-    <div class="book-rating">
-    
-        <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
-          <button class="btn btn-link p-0" (click)="setRating(book, star)" [disabled]="!book.isEditing" (click)="$event.stopPropagation()">
-            <svg *ngIf="star <= book.rating" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
-              <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-            </svg>
-            <svg *ngIf="star > book.rating" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
-              <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
-            </svg>
-          </button>
-        </ng-container>
-     
+<div class="shelf-detail-container">
+  <div class="shelf-header">
+    <h1>{{title}}</h1>
+    <div class="shelf-actions">
+      <button class="action-btn refresh-btn" (click)="loadBooks()">
+        <i class="fa fa-refresh"></i> Оновити
+      </button>
     </div>
-    <div class="book-booksadded">{{book.booksadded}}</div>
-    <input [(ngModel)]="book.dateread" 
-      type="date" 
-      [disabled]="!book.isEditing"
-      (click)="$event.stopPropagation()"
-    >
-    <button (click)="enableEditing(book.key); $event.stopPropagation()" *ngIf="!book.isEditing">Edit</button>
-    <button (click)="updateBook(book); $event.stopPropagation()" [disabled]="!book.isEditing">Save</button>
-    <button (click)="deleteBook(book.key); $event.stopPropagation()">Delete</button>
+  </div>
+  
+  <div class="content-container">
+    <!-- Секція з книгами користувача -->
+    <div class="user-books-section">
+      <h2 class="section-title">Мої книги</h2>
+      
+      <div *ngIf="books.length === 0" class="empty-state">
+        <i class="fa fa-book"></i>
+        <p>На цій полиці ще немає книг</p>
+        <button class="btn primary-btn" routerLink="/books">Знайти книги</button>
+      </div>
+      
+      <div *ngIf="books.length > 0" class="book-grid">
+        <div *ngFor="let book of books" class="book-card" [class.editing]="book.isEditing">
+          <!-- Обкладинка і базова інформація (клікабельна) -->
+          <div class="book-header" (click)="apicall(book.key)">
+            <div class="book-cover-container">
+              <img [src]="book.cover_url" alt="{{ book.title }}" class="book-cover">
+            </div>
+            <div class="book-info">
+              <h3 class="book-title">{{ book.title }}</h3>
+              <p class="book-author">{{ book.author_name }}</p>
+              <div class="book-genre" *ngIf="book.genre">{{ book.genre }}</div>
+            </div>
+          </div>
+          
+          <!-- Форма редагування та деталі (не клікабельна) -->
+          <div class="book-details" (click)="$event.stopPropagation()">
+            <div class="book-status">
+              <label for="status-{{book.id}}">Статус:</label>
+              <input id="status-{{book.id}}" 
+                [(ngModel)]="book.status" 
+                type="text" 
+                placeholder="Статус" 
+                [disabled]="!book.isEditing"
+              />
+            </div>
+            
+            <!-- Заміна FA іконок на Unicode зірки -->
+            <div class="book-rating">
+              <label>Рейтинг:</label>
+              <div class="star-rating">
+                <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                  <span class="star" 
+                        [class.filled]="book.rating >= star" 
+                        (click)="book.isEditing && setRating(book, star)">
+                    {{ book.rating >= star ? '★' : '☆' }}
+                  </span>
+                </ng-container>
+              </div>
+            </div>
+            
+            <div class="book-dates">
+              <div class="added-date">
+                <label>Додано:</label>
+                <span>{{book.booksadded | date:'dd.MM.yyyy'}}</span>
+              </div>
+              
+              <div class="read-date">
+                <label for="date-{{book.id}}">Дата прочитання:</label>
+                <input id="date-{{book.id}}" 
+                  [(ngModel)]="book.dateread" 
+                  type="date" 
+                  [disabled]="!book.isEditing"
+                >
+              </div>
+            </div>
+            
+            <!-- Кнопки дій -->
+            <div class="book-actions">
+              <button class="btn edit-btn" *ngIf="!book.isEditing" (click)="enableEditing(book.key)">
+                <i class="fa fa-edit"></i> Редагувати
+              </button>
+              <button class="btn save-btn" *ngIf="book.isEditing" [disabled]="!book.isEditing" (click)="updateBook(book)">
+                <i class="fa fa-check"></i> Зберегти
+              </button>
+              <button class="btn delete-btn" (click)="deleteBook(book.key)">
+                <i class="fa fa-trash"></i> Видалити
+              </button>
+              <button class="btn analyze-btn" *ngIf="!book.isEditing" (click)="analyzeBookWithGemini(book)">
+                <i class="fa fa-magic"></i> Аналізувати
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Секція рекомендацій переміщена сюди, внизу сторінки, після книг -->
+  <div class="recommendations-section">
+    <h2 class="section-title">
+      Рекомендації для вас
+      <button class="refresh-recommendations" (click)="getRecommendations()">
+        <i class="fa fa-refresh"></i>
+      </button>
+    </h2>
+    
+    <!-- Попередження про API обмеження -->
+    <div *ngIf="apiQuotaExceeded" class="api-quota-warning">
+      <i class="fa fa-exclamation-triangle"></i>
+      <p>Використовуємо спрощені рекомендації через обмеження API.</p>
+    </div>
+    
+    <!-- Завантаження -->
+    <div *ngIf="isLoadingRecommendations" class="loading-spinner-container">
+      <div class="spinner"></div>
+      <p>Підбираємо книги спеціально для вас...</p>
+    </div>
+    
+    <!-- Немає рекомендацій -->
+    <div *ngIf="!isLoadingRecommendations && recommendedBooks.length === 0 && !showFallbackRecommendations" class="empty-recommendations">
+      <i class="fa fa-lightbulb-o"></i>
+      <p>Коли ви додасте більше книг або оціните існуючі, тут з'являться рекомендації.</p>
+      <button class="btn primary-btn" (click)="getDefaultRecommendations()">
+        Показати популярні книги
+      </button>
+    </div>
+    
+    <!-- Основні рекомендації -->
+    <div *ngIf="!isLoadingRecommendations && recommendedBooks.length > 0" class="recommendation-grid">
+      <div *ngFor="let book of recommendedBooks" class="recommendation-card">
+        <div class="recommendation-cover" (click)="apicall(book.key)">
+          <img [src]="book.cover_url" [alt]="book.title" onerror="this.src='assets/no-cover.png'">
+        </div>
+        <div class="recommendation-info">
+          <h4 class="recommendation-title">{{ book.title }}</h4>
+          <p class="recommendation-author">{{ book.author_name }}</p>
+          <div class="recommendation-tags">
+            <span class="tag" *ngIf="book.genre">{{ book.genre }}</span>
+          </div>
+          <button class="btn details-btn" (click)="apicall(book.key)">
+            <i class="fa fa-info-circle"></i> Деталі
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Запасні рекомендації для випадку проблем з API -->
+    <div *ngIf="showFallbackRecommendations && fallbackRecommendations.length > 0" class="recommendation-grid">
+      <div *ngFor="let book of fallbackRecommendations" class="recommendation-card">
+        <div class="recommendation-cover" (click)="apicall(book.key)">
+          <img [src]="book.cover_url" [alt]="book.title" onerror="this.src='assets/no-cover.png'">
+        </div>
+        <div class="recommendation-info">
+          <h4 class="recommendation-title">{{ book.title }}</h4>
+          <p class="recommendation-author">{{ book.author_name }}</p>
+          <div class="recommendation-tags">
+            <span class="tag" *ngIf="book.genre">{{ book.genre }}</span>
+          </div>
+          <button class="btn details-btn" (click)="apicall(book.key)">
+            <i class="fa fa-info-circle"></i> Деталі
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Повідомлення про статус операції -->
+  <div class="toast-message" [class.show]="message">
+    {{ message }}
   </div>
 </div>

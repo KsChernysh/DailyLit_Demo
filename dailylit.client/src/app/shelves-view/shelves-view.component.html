@@ -1,21 +1,74 @@
-<h2>Shelves</h2>
-<ul>
-  <li *ngFor="let shelf of shelves"  (click) = "apicall(shelf.title)">{{ shelf.title }}</li>
-</ul>
+<div class="shelves-container">
+  <div class="shelves-header">
+    <h1 class="title">Мої книжкові полиці</h1>
+    <button class="create-shelf-btn" (click)="openDialog()">
+      <i class="fa fa-plus-circle"></i> Створити нову полицю
+    </button>
+  </div>
 
-<button (click)="openDialog()">Create Shelf</button>
-
-<!-- Dialog for adding a new shelf -->
-<div *ngIf="isDialogOpen" class="dialog">
-  <h2>Add New Shelf</h2>
-  <form (ngSubmit)="onSubmit()">
-    <div>
-      <label for="shelfName">Shelf Name:</label>
-      <input type="text" id="shelfName" [(ngModel)]="shelfName" name="shelfName" required>
+  <!-- Відображення полиць -->
+  <div *ngIf="shelves && shelves.length > 0" class="shelves-grid">
+    <div *ngFor="let shelf of shelves" class="shelf-card" (click)="apicall(shelf.title)">
+      <div class="shelf-icon">
+        <i class="fa fa-book"></i>
+      </div>
+      <div class="shelf-details">
+        <h3 class="shelf-title">{{ shelf.title }}</h3>
+        <p class="shelf-count">{{ shelf.count || 0 }} книг</p>
+      </div>
+      <div class="shelf-arrow">
+        <i class="fa fa-angle-right"></i>
+      </div>
     </div>
-    <button type="submit">Add Shelf</button>
-    <button type="button" (click)="closeDialog()">Cancel</button>
-  </form>
-</div>
+  </div>
 
-<p>{{ message }}</p>
+  <!-- Порожній стан -->
+  <div *ngIf="!shelves || shelves.length === 0" class="empty-shelves">
+    <div class="empty-illustration">
+      <i class="fa fa-bookmark"></i>
+    </div>
+    <h3>У вас ще немає книжкових полиць</h3>
+    <p>Створіть свою першу полицю, щоб почати організовувати ваші книги</p>
+    <button class="create-shelf-btn-lg" (click)="openDialog()">
+      <i class="fa fa-plus-circle"></i> Створити полицю
+    </button>
+  </div>
+
+  <!-- Модальне вікно для створення нової полиці -->
+  <div *ngIf="isDialogOpen" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Створити нову полицю</h2>
+        <button class="close-btn" (click)="closeDialog()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="shelfName">Назва полиці:</label>
+            <input 
+              type="text" 
+              id="shelfName" 
+              [(ngModel)]="shelfName" 
+              name="shelfName" 
+              placeholder="Наприклад: Улюблені, Хочу прочитати..."
+              required
+              class="form-control"
+            >
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="cancel-btn" (click)="closeDialog()">Скасувати</button>
+            <button type="submit" class="submit-btn">Створити</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Повідомлення про результат операції -->
+  <div *ngIf="message" class="message-container" [ngClass]="{'success': isSuccess, 'error': !isSuccess}">
+    <i class="fa" [ngClass]="{'fa-check-circle': isSuccess, 'fa-exclamation-circle': !isSuccess}"></i>
+    <p>{{ message }}</p>
+  </div>
+</div>

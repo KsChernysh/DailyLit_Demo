@@ -1,74 +1,122 @@
-﻿<!-- Your existing navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-  <img src="assets/logo.png" alt="DailyLit Logo" style="height: 40px;">
- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link text-white" *ngIf="loggedIn" routerLink="/profile">Profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" *ngIf="loggedIn" routerLink="/shelves">My Books</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" routerLink="/genre/genre">Genres</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white"  *ngIf="loggedIn" routerLink="/reader">eReader</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" routerLink="/aichat">AI Help</a>
-      </li>
-    </ul>
-     
-    <ul class="navbar-nav ml-auto">
-       <!-- Search form with results -->
-       <form class="form-inline my-2 my-lg-0">
-        <input
-          class="form-control mr-sm-2"
-          type="search"
-          placeholder="Search for books"
-          aria-label="Search"
-          (keyup)="onKey($event)"
-          [(ngModel)]="query"
-          name="searchQuery"
-        />
-        <!-- Search Results -->
+﻿<!-- Навігаційна панель -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <img src="assets/logo.png" alt="DailyLit Logo">
+      <span>DailyLit</span>
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" *ngIf="loggedIn" routerLink="/profile" routerLinkActive="active">
+            <i class="fa fa-user"></i> Профіль
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" *ngIf="loggedIn" routerLink="/shelves" routerLinkActive="active">
+            <i class="fa fa-book"></i> Мої книги
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/genre/genre" routerLinkActive="active">
+            <i class="fa fa-tags"></i> Жанри
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" *ngIf="loggedIn" routerLink="/reader" routerLinkActive="active">
+            <i class="fa fa-tablet"></i> eReader
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" *ngIf="loggedIn" routerLink="/community" routerLinkActive="active">
+            <i class="fa fa-users"></i> Спільнота
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/aichat" routerLinkActive="active">
+            <i class="fa fa-comment"></i> AI Допомога
+          </a>
+        </li>
+      </ul>
+      
+      <form class="form-inline my-2 my-lg-0">
+        <div class="input-group">
+          <input
+            class="form-control search-input"
+            type="search"
+            placeholder="Пошук книг..."
+            aria-label="Search"
+            (keyup)="onKey($event)"
+            [(ngModel)]="query"
+            name="searchQuery"
+          />
+          <div class="input-group-append">
+            <button class="btn btn-search" type="button">
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Результати пошуку -->
         <div *ngIf="showWindow" class="search-results">
           <div *ngFor="let book of books" class="book-item" (click)="apicall(book.id)">
-            
-            <img [src]="book.cover_url" [alt]="book.title" class="book-cover">
+            <img [src]="book.cover_url" [alt]="book.title" class="book-cover" onerror="this.src='assets/no-cover.png'">
             <div class="book-info">
               <h5>{{ book.title }}</h5>
               <p>{{ book.author_name }}</p>
             </div>
           </div>
+          
+          <div *ngIf="books.length === 0" class="no-results">
+            <p>Нічого не знайдено</p>
+          </div>
         </div>
       </form>
-      <li class="nav-item " *ngIf="!loggedIn">
-        <button class="btn btn-outline-success my-2 my-sm-0" routerLink="/register">Sign up</button>
-      </li>
-      <li class="nav-item" *ngIf="!loggedIn">
-        <button class="btn btn-outline-danger my-2 my-sm-0" routerLink="/login">Sign in</button>
-      </li>
-      <li class="nav-item" *ngIf="loggedIn">
-        <button class="btn btn-outline-danger my-2 my-sm-0" (click)="logout()">Logout</button>
-      </li>
-    </ul>
-  
+      
+      <ul class="navbar-nav auth-nav">
+        <li class="nav-item" *ngIf="!loggedIn">
+          <a class="btn auth-btn login-btn" routerLink="/login">
+            <i class="fa fa-sign-in"></i> Вхід
+          </a>
+        </li>
+        <li class="nav-item ml-2" *ngIf="!loggedIn">
+          <a class="btn auth-btn register-btn" routerLink="/register">
+            <i class="fa fa-user-plus"></i> Реєстрація
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="loggedIn">
+          <button class="btn auth-btn logout-btn" (click)="logout()">
+            <i class="fa fa-sign-out"></i> Вихід
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
-<router-outlet></router-outlet>
-<!-- Footer -->
-<footer class=" fixed-bottom bg-dark text-white text-center py-3">
+<!-- Основний контейнер контенту -->
+<div class="app-container">
+  <div class="content-container">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<!-- Футер -->
+<footer>
   <div class="container">
-    <p class="mb-0">&copy; 2024 DailyLit. All rights reserved.</p>
-    <p class="mb-0">
-      <a href="#" class="text-white me-2">Privacy Policy</a>
-      <a href="#" class="text-white">Terms of Service</a>
-    </p>
+    <div class="row">
+      <div class="col-md-6">
+        <p>&copy; 2023-2025 DailyLit. Всі права захищені.</p>
+      </div>
+      <div class="col-md-6 text-right">
+        <p>Створено з <i class="fa fa-heart" style="color: var(--error-color);"></i> до книг!</p>
+      </div>
+    </div>
   </div>
 </footer>

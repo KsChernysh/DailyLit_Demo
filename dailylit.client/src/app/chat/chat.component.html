@@ -1,0 +1,66 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <h4>Коментарі та обговорення</h4>
+    <button class="refresh-btn" (click)="loadMessages()" [disabled]="isLoading" title="Оновити коментарі">
+      <i class="fa fa-refresh" [class.fa-spin]="isLoading"></i>
+    </button>
+  </div>
+  
+  <div class="chat-body">
+    <div *ngIf="isLoading" class="chat-loading">
+      <div class="loading-spinner"></div>
+      <span>Завантаження коментарів...</span>
+    </div>
+    
+    <div *ngIf="!isLoading && (!messages || messages.length === 0)" class="no-messages">
+      <i class="fa fa-comments-o"></i>
+      <p>Поки немає коментарів. Будьте першим, хто залишить відгук про цю книгу!</p>
+    </div>
+    
+    <div class="messages-list" *ngIf="!isLoading && messages && messages.length > 0">
+      <div *ngFor="let message of messages" class="message-item" [class.own-message]="message.userName === currentUserName">
+        <div class="message-avatar">
+          <div class="avatar-placeholder">
+            {{ message.userName?.charAt(0).toUpperCase() || '?' }}
+          </div>
+        </div>
+        <div class="message-content">
+          <div class="message-header">
+            <span class="message-author">{{ message.userName || 'Анонім' }}</span>
+            <span class="message-time" *ngIf="message.timestamp">{{ message.timestamp | date:'medium' }}</span>
+          </div>
+          <div class="message-text">{{ message.text }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="chat-footer">
+    <div class="message-input-container">
+      <textarea 
+        [(ngModel)]="newMessage" 
+        placeholder="Напишіть ваш коментар..." 
+        class="message-input"
+        rows="2"
+        [disabled]="isLoading"
+        (keydown.enter)="$event.preventDefault(); sendMessage()"
+      ></textarea>
+      
+      <div class="input-actions">
+        <button 
+          class="send-btn" 
+          [disabled]="!newMessage.trim() || isLoading"
+          (click)="sendMessage()"
+        >
+          <i class="fa fa-paper-plane"></i>
+          <span>Надіслати</span>
+        </button>
+      </div>
+    </div>
+    
+    <div *ngIf="!currentUserName || currentUserName === 'Гість'" class="guest-notice">
+      <i class="fa fa-info-circle"></i>
+      <span>Увійдіть в систему, щоб ваші коментарі відображалися з вашим ім'ям</span>
+    </div>
+  </div>
+</div>

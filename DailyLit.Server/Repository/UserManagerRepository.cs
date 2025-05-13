@@ -23,7 +23,7 @@ namespace DailyLit.Server.Repository
                 return null;
             }
             var user = _dbContext.Profiles.FirstOrDefault(x => x.UserName == userName);
-           
+
             user.NickName = userProfile.NickName;
             user.Email = userProfile.Email;
             user.ProfilePicture = userProfile.ProfilePicture;
@@ -51,5 +51,14 @@ namespace DailyLit.Server.Repository
             }
             return _dbContext.Profiles.FirstOrDefault(x => x.UserName == username);
         }
+        public string GetUserName()
+        {
+            var userName = httpContextAccessor.HttpContext.User.Identity.Name;
+            if (userName == null)
+            {
+                return null;
+            }
+            return userName;
+        }
     }
-}
+    }

@@ -1,0 +1,385 @@
+/* Основний контейнер для сторінки */
+.shelves-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 30px 15px;
+  font-family: 'Roboto', sans-serif;
+  color: #3e3128;
+}
+
+/* Заголовок сторінки */
+.shelves-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e8dfd5;
+  padding-bottom: 15px;
+}
+
+.title {
+  font-family: 'Playfair Display', serif;
+  color: #3e3128;
+  font-weight: 700;
+  margin: 0;
+  font-size: 28px;
+}
+
+/* Кнопка створення полиці */
+.create-shelf-btn {
+  background-color: #d2905b;
+  color: #fcf9f5;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(88, 69, 57, 0.15);
+}
+
+.create-shelf-btn:hover {
+  background-color: #b57a49;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(88, 69, 57, 0.2);
+}
+
+.create-shelf-btn i {
+  font-size: 16px;
+}
+
+/* Сітка полиць */
+.shelves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Картка полиці */
+.shelf-card {
+  background-color: #fcf9f5;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(88, 69, 57, 0.12);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e8dfd5;
+}
+
+.shelf-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(88, 69, 57, 0.15);
+  border-color: #d2905b;
+}
+
+/* Іконка полиці */
+.shelf-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0e5d9;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.shelf-icon i {
+  font-size: 22px;
+  color: #d2905b;
+}
+
+/* Деталі полиці */
+.shelf-details {
+  flex: 1;
+}
+
+.shelf-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: #3e3128;
+}
+
+.shelf-count {
+  font-size: 14px;
+  color: #6b584a;
+  margin: 0;
+}
+
+/* Стрілка на картці полиці */
+.shelf-arrow {
+  margin-left: 10px;
+}
+
+.shelf-arrow i {
+  font-size: 22px;
+  color: #d2905b;
+}
+
+/* Порожній стан */
+.empty-shelves {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f5efe8;
+  border-radius: 12px;
+  border: 1px dashed #d1c3b5;
+}
+
+.empty-illustration {
+  font-size: 60px;
+  color: #d1c3b5;
+  margin-bottom: 20px;
+}
+
+.empty-shelves h3 {
+  font-size: 22px;
+  color: #3e3128;
+  margin-bottom: 10px;
+}
+
+.empty-shelves p {
+  font-size: 16px;
+  color: #6b584a;
+  margin-bottom: 25px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.create-shelf-btn-lg {
+  background-color: #d2905b;
+  color: #fcf9f5;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(88, 69, 57, 0.15);
+}
+
+.create-shelf-btn-lg:hover {
+  background-color: #b57a49;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(88, 69, 57, 0.2);
+}
+
+/* Модальне вікно */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(62, 49, 40, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-container {
+  background-color: #fcf9f5;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(62, 49, 40, 0.3);
+  width: 100%;
+  max-width: 480px;
+  animation: slideIn 0.3s ease;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid #e8dfd5;
+  background-color: #f5efe8;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #3e3128;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #6b584a;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #cc7352;
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #3e3128;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #d1c3b5;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #3e3128;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #d2905b;
+  box-shadow: 0 0 0 2px rgba(210, 144, 91, 0.2);
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: #9c8877;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.cancel-btn {
+  background-color: transparent;
+  border: 1px solid #d1c3b5;
+  color: #6b584a;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #f5efe8;
+}
+
+.submit-btn {
+  background-color: #d2905b;
+  border: none;
+  color: #fcf9f5;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #b57a49;
+}
+
+/* Повідомлення про результат */
+.message-container {
+  position: fixed;
+  top: 100px;
+  right: 30px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideInRight 0.3s ease, fadeOut 0.3s ease 5s forwards;
+  z-index: 1050;
+  max-width: 350px;
+}
+
+.message-container.success {
+  background-color: #edf7ed;
+  border-left: 4px solid #7c9b72;
+}
+
+.message-container.error {
+  background-color: #fdeded;
+  border-left: 4px solid #cc7352;
+}
+
+.message-container i {
+  font-size: 20px;
+}
+
+.message-container.success i {
+  color: #7c9b72;
+}
+
+.message-container.error i {
+  color: #cc7352;
+}
+
+.message-container p {
+  margin: 0;
+  color: #3e3128;
+}
+
+/* Анімації */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* Медіа-запити для адаптивності */
+@media (max-width: 768px) {
+  .shelves-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .shelves-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .create-shelf-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

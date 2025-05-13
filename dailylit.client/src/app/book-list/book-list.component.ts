@@ -14,7 +14,10 @@ export class BookListComponent implements OnInit, OnDestroy {
   books: any[] = [];
   genre: string = '';
   BaseId: string = '';
-  
+  loading: boolean = false;
+  currentPage: number = 1;
+  totalPages: number = 1;
+
   routeSubscription!: Subscription;
   constructor(private route: ActivatedRoute, private bookService: BookService, private global: GlobalVariablesService, private router: Router) {
     console.log('BookListComponent constructed');
@@ -35,8 +38,6 @@ export class BookListComponent implements OnInit, OnDestroy {
     }
   }
 
-  
-        
   loadBooks(): void {
     console.log('loadBooks called for genre:', this.genre);
     
@@ -74,5 +75,19 @@ export class BookListComponent implements OnInit, OnDestroy {
         this.router.navigate([`/book/`, this.BaseId]);
       }
     );
+  }
+
+  changePage(pageNumber: number) {
+    if (pageNumber < 1 || pageNumber > this.totalPages) {
+      return;
+    }
+    
+    this.currentPage = pageNumber;
+    this.loadBooks(); // Метод, який завантажує книги
+  }
+
+  addToShelf(book: any) {
+    // Тут викликати діалог для вибору полиці
+    console.log('Додаємо книгу на полицю:', book);
   }
 }

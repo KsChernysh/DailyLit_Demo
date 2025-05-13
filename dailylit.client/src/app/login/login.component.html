@@ -1,25 +1,68 @@
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h2>Login</h2>
-      <form *ngIf="!loggedIn" (ngSubmit)="onSubmit()" #loginForm="ngForm">
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" class="form-control" id="name" required [(ngModel)]="name" name="name" #nameInput="ngModel">
-          <div *ngIf="nameInput.invalid && nameInput.touched" class="text-danger">
-            Name is required.
-          </div>
+<div class="login-container">
+  <div class="auth-box">
+    <div class="auth-header">
+      <h1>Вхід до аккаунту</h1>
+      <p>Увійдіть для доступу до своїх книг та полиць</p>
+    </div>
+    
+    <form *ngIf="!loggedIn" (ngSubmit)="onSubmit()" #loginForm="ngForm" class="auth-form">
+      <div class="form-group">
+        <label for="name">Ім'я користувача</label>
+        <div class="input-wrapper">
+          <i class="fa fa-user"></i>
+          <input 
+            type="text" 
+            id="name" 
+            required 
+            [(ngModel)]="name" 
+            name="name" 
+            #nameInput="ngModel"
+            placeholder="Введіть своє ім'я"
+            autocomplete="username"
+          >
         </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" id="password" required [(ngModel)]="password" name="password" #passwordInput="ngModel">
-          <div *ngIf="passwordInput.invalid && passwordInput.touched" class="text-danger">
-            Password is required.
-          </div>
+        <div *ngIf="nameInput.invalid && nameInput.touched" class="form-error">
+          <i class="fa fa-exclamation-circle"></i> Ім'я користувача обов'язкове
         </div>
-        <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Login</button>
-      </form>
-      <button *ngIf="loggedIn" class="btn btn-danger" (click)="logout()">Logout</button>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <div class="input-wrapper">
+          <i class="fa fa-lock"></i>
+          <input 
+            type="password" 
+            id="password" 
+            required 
+            [(ngModel)]="password" 
+            name="password" 
+            #passwordInput="ngModel"
+            placeholder="Введіть свій пароль"
+            autocomplete="current-password"
+          >
+        </div>
+        <div *ngIf="passwordInput.invalid && passwordInput.touched" class="form-error">
+          <i class="fa fa-exclamation-circle"></i> Пароль обов'язковий
+        </div>
+      </div>
+      
+      <div class="form-action">
+        <button type="submit" class="btn primary-btn" [disabled]="loginForm.invalid">
+          <i class="fa fa-sign-in"></i> Увійти
+        </button>
+      </div>
+    </form>
+    
+    <div *ngIf="loggedIn" class="logged-in-state">
+      <i class="fa fa-check-circle"></i>
+      <h3>Ви успішно увійшли!</h3>
+      <button class="btn danger-btn" (click)="logout()">
+        <i class="fa fa-sign-out"></i> Вийти
+      </button>
+    </div>
+    
+    <div class="auth-footer">
+      <p>Ще не маєте аккаунту? <a routerLink="/register">Зареєструватися</a></p>
     </div>
   </div>
 </div>
