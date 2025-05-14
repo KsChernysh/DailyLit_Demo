@@ -1,7 +1,8 @@
-<div class="login-container">
+<div class="auth-container">
   <div class="auth-box">
     <div class="auth-header">
-      <h1>Вхід до аккаунту</h1>
+      <i class="fa fa-book auth-icon"></i>
+      <h1>Вхід до облікового запису</h1>
       <p>Увійдіть для доступу до своїх книг та полиць</p>
     </div>
     
@@ -9,7 +10,7 @@
       <div class="form-group">
         <label for="name">Ім'я користувача</label>
         <div class="input-wrapper">
-          <i class="fa fa-user"></i>
+          <i class="fa fa-user input-icon"></i>
           <input 
             type="text" 
             id="name" 
@@ -19,6 +20,7 @@
             #nameInput="ngModel"
             placeholder="Введіть своє ім'я"
             autocomplete="username"
+            class="form-input"
           >
         </div>
         <div *ngIf="nameInput.invalid && nameInput.touched" class="form-error">
@@ -29,7 +31,7 @@
       <div class="form-group">
         <label for="password">Пароль</label>
         <div class="input-wrapper">
-          <i class="fa fa-lock"></i>
+          <i class="fa fa-lock input-icon"></i>
           <input 
             type="password" 
             id="password" 
@@ -39,6 +41,7 @@
             #passwordInput="ngModel"
             placeholder="Введіть свій пароль"
             autocomplete="current-password"
+            class="form-input"
           >
         </div>
         <div *ngIf="passwordInput.invalid && passwordInput.touched" class="form-error">
@@ -54,15 +57,25 @@
     </form>
     
     <div *ngIf="loggedIn" class="logged-in-state">
-      <i class="fa fa-check-circle"></i>
+      <div class="success-circle">
+        <i class="fa fa-check"></i>
+      </div>
       <h3>Ви успішно увійшли!</h3>
-      <button class="btn danger-btn" (click)="logout()">
+      <p>Тепер ви можете користуватися всіма можливостями DailyLit</p>
+      <button class="btn secondary-btn" (click)="logout()">
         <i class="fa fa-sign-out"></i> Вийти
       </button>
     </div>
     
     <div class="auth-footer">
-      <p>Ще не маєте аккаунту? <a routerLink="/register">Зареєструватися</a></p>
+      <p>Ще не маєте облікового запису? <a routerLink="/register" class="auth-link">Зареєструватися</a></p>
+    </div>
+  </div>
+  
+  <div class="auth-decoration">
+    <div class="decoration-text">
+      <h2>Відкрийте світ книг</h2>
+      <p>З DailyLit ви можете організувати свою бібліотеку, відстежувати прогрес читання та обговорювати книги з іншими читачами.</p>
     </div>
   </div>
 </div>

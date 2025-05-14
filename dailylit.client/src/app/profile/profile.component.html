@@ -1,22 +1,186 @@
-<div class="container mt-5">
-    <h3>User Profile</h3>
-    <div *ngIf="userProfile">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">{{ userProfile.userName }}</h5>
-          <p class="card-text"><strong>Email:</strong> {{ userProfile.email }}</p>
-          <p class="card-text"><strong>NickName:</strong> {{ userProfile.nickName }}</p>
-          <p class="card-text"><strong>Bio:</strong> {{ userProfile.bio }}</p>
-          <p class="card-text"><strong>Goal:</strong> {{ userProfile.goal }}</p>
-          <p class="card-text"><strong>Read:</strong> {{ userProfile.read }}</p>
-          <div *ngIf="userProfile.profilePicture">
-            <img [src]="'data:image;base64,' + userProfile.profilePicture" class="img-fluid" alt="Profile Picture" />
-          </div>
-          <button class="btn btn-primary" routerLink="/editprofile" >Edit Profile</button>
-    
-        </div>
-        
+<div class="profile-container">
+  <div class="profile-header">
+    <h1 class="page-title">
+      <i class="fa fa-user-circle"></i> Мій профіль
+    </h1>
+  </div>
+
+  <div *ngIf="errorMessage" class="profile-error">
+    <i class="fa fa-exclamation-circle"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <div *ngIf="userProfile" class="profile-content">
+    <div class="profile-tabs">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'info'" 
+        (click)="setActiveTab('info')"
+      >
+        <i class="fa fa-user"></i> Інформація
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'stats'" 
+        (click)="setActiveTab('stats')"
+      >
+        <i class="fa fa-bar-chart"></i> Статистика
+      </button>
+    </div>
+
+    <!-- Вкладка інформації профілю -->
+    <div class="profile-tab-content" *ngIf="activeTab === 'info'">
+      <div class="profile-card">
+        <div class="profile-image-container">
+          <div class="profile-image-wrapper">
+            <img 
+              *ngIf="userProfile.profilePicture" 
+              [src]="'data:image;base64,' + userProfile.profilePicture" 
+              alt="Аватар користувача"
+              class="profile-image" 
+            />
+            <img 
+              *ngIf="!userProfile.profilePicture" 
+              [src]="defaultAvatar" 
+              alt="Стандартний аватар"
+              class="profile-image default-avatar" 
+            />
+            <div class="edit-avatar-overlay">
+              <button class="edit-avatar-btn" (click)="triggerFileUpload()">
+                <i class="fa fa-camera"></i>
+              </button>
+              <input 
+                type="file" 
+                #fileInput
+                (change)="onFileSelected($event)" 
+                accept="image/*" 
+                style="display: none"
+              >
             </div>
+          </div>
+        </div>
+
+        <div class="profile-info">
+          <div class="profile-name">
+            <h2>{{ userProfile.userName }}</h2>
+            <span *ngIf="userProfile.nickName" class="profile-nickname">{{ userProfile.nickName }}</span>
+          </div>
+          
+          <div class="profile-data">
+            <div class="data-row" *ngIf="userProfile.email">
+              <i class="fa fa-envelope"></i>
+              <span>{{ userProfile.email }}</span>
+            </div>
+            
+            <div class="data-row bio-row" *ngIf="userProfile.bio">
+              <i class="fa fa-quote-left"></i>
+              <div class="bio-text">{{ userProfile.bio }}</div>
+            </div>
+            
+            <div class="reading-stats">
+              <div class="reading-stat">
+                <div class="stat-value">{{ userProfile.read || 0 }}</div>
+                <div class="stat-label">Прочитано</div>
+              </div>
+              <div class="reading-stat">
+                <div class="stat-value">{{ userProfile.goal || 0 }}</div>
+                <div class="stat-label">Ціль</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-actions">
+            <button class="btn primary-btn" routerLink="/editprofile">
+              <i class="fa fa-pencil"></i> Редагувати профіль
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вкладка статистики -->
+    <div class="profile-tab-content" *ngIf="activeTab === 'stats'">
+      <div class="stats-container">
+        <div class="stats-card reading-progress">
+          <h3 class="stats-title">
+            <i class="fa fa-book"></i> Прогрес читання
+          </h3>
+          <div class="progress-container">
+            <div class="chart-container">
+              <canvas #readingProgressChart></canvas>
+            </div>
+            <div class="progress-info">
+              <div class="progress-stat">
+                <span class="progress-label">Прочитано</span>
+                <span class="progress-value">{{ userProfile.read || 0 }}</span>
+              </div>
+              <div class="progress-stat">
+                <span class="progress-label">Ціль на рік</span>
+                <span class="progress-value">{{ userProfile.goal || 0 }}</span>
+              </div>
+              <div class="progress-stat">
+                <span class="progress-label">Залишилось</span>
+                <span class="progress-value">{{ (userProfile.goal || 0) - (userProfile.read || 0) }}</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-percentage">
+                  {{ calculateProgressPercentage() }}%
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="calculateProgressPercentage()"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stats-card genre-stats">
+            <h3 class="stats-title">
+              <i class="fa fa-pie-chart"></i> Жанри
+            </h3>
+            <div class="chart-container">
+              <canvas #genreChart></canvas>
+            </div>
+          </div>
+
+          <div class="stats-card time-stats">
+            <h3 class="stats-title">
+              <i class="fa fa-clock-o"></i> Активність по місяцях
+            </h3>
+            <div class="chart-container">
+              <canvas #activityChart></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card recent-books">
+          <h3 class="stats-title">
+            <i class="fa fa-list"></i> Нещодавно прочитані книги
+          </h3>
+          <div *ngIf="recentBooks.length === 0" class="no-data">
+            <i class="fa fa-info-circle"></i>
+            <span>Немає даних про прочитані книги</span>
+          </div>
+          <div *ngIf="recentBooks.length > 0" class="recent-books-list">
+            <div *ngFor="let book of recentBooks" class="recent-book-item">
+              <div class="book-cover">
+                <img [src]="book.coverUrl || defaultBookCover" [alt]="book.title">
+              </div>
+              <div class="book-info">
+                <div class="book-title">{{ book.title }}</div>
+                <div class="book-author">{{ book.author }}</div>
+                <div class="book-date">Прочитано: {{ book.dateFinished | date }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  
+
+  <div *ngIf="!userProfile && !errorMessage" class="profile-loading">
+    <div class="loading-spinner"></div>
+    <span>Завантаження даних профілю...</span>
+  </div>
+</div>

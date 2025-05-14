@@ -5,3 +5,495 @@
   .card {
     margin-top: 20px;
   }
+
+/* Основні стилі профілю користувача */
+.profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  font-family: 'Roboto', sans-serif;
+  color: #3e3128;
+}
+
+.profile-header {
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #3e3128;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title i {
+  color: #d2905b;
+}
+
+/* Вкладки */
+.profile-tabs {
+  display: flex;
+  border-bottom: 1px solid #e8dfd5;
+  margin-bottom: 25px;
+}
+
+.tab-button {
+  padding: 12px 25px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #6b584a;
+  cursor: pointer;
+  position: relative;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-button:hover {
+  color: #d2905b;
+}
+
+.tab-button.active {
+  color: #d2905b;
+}
+
+.tab-button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #d2905b;
+  border-radius: 3px 3px 0 0;
+}
+
+.tab-button i {
+  font-size: 18px;
+}
+
+/* Картка профілю */
+.profile-card {
+  display: flex;
+  background-color: #fcf9f5;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(88, 69, 57, 0.08);
+  overflow: hidden;
+  margin-bottom: 30px;
+  border: 1px solid #e8dfd5;
+}
+
+.profile-image-container {
+  padding: 25px;
+  background-color: #f5efe8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #e8dfd5;
+}
+
+.profile-image-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(88, 69, 57, 0.15);
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.default-avatar {
+  background-color: #e8dfd5;
+  border: 2px solid #d1c3b5;
+}
+
+.edit-avatar-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(62, 49, 40, 0.7);
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-image-wrapper:hover .edit-avatar-overlay {
+  opacity: 1;
+}
+
+.edit-avatar-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.profile-info {
+  flex: 1;
+  padding: 25px;
+}
+
+.profile-name {
+  margin-bottom: 20px;
+  border-bottom: 1px dashed #e8dfd5;
+  padding-bottom: 15px;
+}
+
+.profile-name h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  margin: 0 0 5px 0;
+  color: #3e3128;
+}
+
+.profile-nickname {
+  font-size: 16px;
+  color: #9c8877;
+}
+
+.profile-data {
+  margin-bottom: 20px;
+}
+
+.data-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  color: #6b584a;
+}
+
+.data-row i {
+  margin-right: 12px;
+  font-size: 16px;
+  color: #d2905b;
+  margin-top: 3px;
+}
+
+.bio-row {
+  align-items: flex-start;
+}
+
+.bio-text {
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.reading-stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 25px;
+}
+
+.reading-stat {
+  background-color: #f5efe8;
+  border-radius: 10px;
+  padding: 15px;
+  flex: 1;
+  text-align: center;
+  border: 1px solid #e8dfd5;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #d2905b;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b584a;
+}
+
+.profile-actions {
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.primary-btn {
+  background-color: #d2905b;
+  color: white;
+  box-shadow: 0 4px 10px rgba(210, 144, 91, 0.3);
+}
+
+.primary-btn:hover {
+  background-color: #c07d48;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(210, 144, 91, 0.4);
+}
+
+/* Стилі для вкладки статистики */
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.stats-card {
+  background-color: #fcf9f5;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(88, 69, 57, 0.08);
+  overflow: hidden;
+  border: 1px solid #e8dfd5;
+  padding: 25px;
+}
+
+.stats-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  margin: 0 0 20px 0;
+  color: #3e3128;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e8dfd5;
+}
+
+.stats-title i {
+  color: #d2905b;
+}
+
+.stats-row {
+  display: flex;
+  gap: 25px;
+}
+
+.genre-stats, .time-stats {
+  flex: 1;
+}
+
+.chart-container {
+  height: 240px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-container {
+  display: flex;
+  gap: 30px;
+}
+
+.progress-container .chart-container {
+  width: 240px;
+  height: 240px;
+  flex-shrink: 0;
+}
+
+.progress-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.progress-stat {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.progress-label {
+  color: #6b584a;
+}
+
+.progress-value {
+  font-weight: 600;
+  color: #3e3128;
+}
+
+.progress-bar-container {
+  margin-top: 20px;
+}
+
+.progress-percentage {
+  text-align: right;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #d2905b;
+}
+
+.progress-bar {
+  height: 10px;
+  background-color: #e8dfd5;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #d2905b;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+/* Нещодавно прочитані книги */
+.recent-books-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.recent-book-item {
+  display: flex;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(88, 69, 57, 0.05);
+  border: 1px solid #e8dfd5;
+  transition: all 0.3s ease;
+}
+
+.recent-book-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(88, 69, 57, 0.1);
+}
+
+.book-cover {
+  width: 80px;
+  overflow: hidden;
+}
+
+.book-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-info {
+  flex: 1;
+  padding: 12px;
+}
+
+.book-title {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #3e3128;
+}
+
+.book-author {
+  font-size: 14px;
+  color: #6b584a;
+  margin-bottom: 10px;
+}
+
+.book-date {
+  font-size: 12px;
+  color: #9c8877;
+}
+
+/* Стани завантаження і помилки */
+.profile-loading, .profile-error, .no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  text-align: center;
+  color: #6b584a;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(210, 144, 91, 0.2);
+  border-radius: 50%;
+  border-top-color: #d2905b;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.profile-error {
+  color: #cc7352;
+}
+
+.profile-error i, .no-data i {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.no-data {
+  padding: 30px;
+  color: #9c8877;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  .profile-card {
+    flex-direction: column;
+  }
+  
+  .profile-image-container {
+    border-right: none;
+    border-bottom: 1px solid #e8dfd5;
+    padding: 30px;
+  }
+  
+  .stats-row {
+    flex-direction: column;
+  }
+  
+  .progress-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .reading-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-tabs {
+    flex-direction: column;
+    gap: 5px;
+    border-bottom: none;
+  }
+  
+  .tab-button {
+    border-bottom: 1px solid #e8dfd5;
+    justify-content: center;
+  }
+  
+  .tab-button.active::after {
+    display: none;
+  }
+}

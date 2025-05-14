@@ -1,2 +1,212 @@
-<br><br><br><br>
-<app-book-viewer></app-book-viewer>
+<div class="book-viewer-container">
+  <!-- Верхня панель з інформацією про книгу та керуванням -->
+  <div class="viewer-header">
+    <div class="book-info">
+      <h1 class="book-title">{{ bookTitle || 'Електронна книга' }}</h1>
+      <p class="book-author" *ngIf="bookAuthor">{{ bookAuthor }}</p>
+    </div>
+    
+    <div class="viewer-controls">
+      <div class="control-group">
+        <button class="control-btn" (click)="toggleTOC()" title="Зміст">
+          <i class="fas fa-list-ul"></i>
+        </button>
+        <button class="control-btn" (click)="toggleSettings()" title="Налаштування">
+          <i class="fas fa-cog"></i>
+        </button>
+        <button class="control-btn" (click)="downloadBook()" title="Завантажити книгу">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
+      
+      <div class="progress-info">
+        <span class="current-page">{{ currentPage }}</span>
+        <span class="page-separator">/</span>
+        <span class="total-pages">{{ totalPages || '-' }}</span>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="readingProgress"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Основний вміст читалки -->
+  <div class="viewer-content">
+    <!-- Сайдбар зі змістом -->
+    <div class="toc-sidebar" [class.active]="tocVisible">
+      <div class="sidebar-header">
+        <h3>Зміст</h3>
+        <button class="close-sidebar" (click)="toggleTOC()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="toc-items">
+        <div *ngIf="loadingTOC" class="loading-indicator">
+          <div class="loading-spinner-sm"></div>
+          <span>Завантаження...</span>
+        </div>
+        <ul *ngIf="!loadingTOC && tocItems.length > 0">
+          <li *ngFor="let item of tocItems" 
+              [class.active]="currentHref === item.href"
+              (click)="navigateToChapter(item.href)">
+            {{ item.label }}
+          </li>
+        </ul>
+        <div *ngIf="!loadingTOC && tocItems.length === 0" class="no-toc">
+          <i class="fas fa-info-circle"></i>
+          <p>Зміст недоступний</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Сайдбар з налаштуваннями -->
+    <div class="settings-sidebar" [class.active]="settingsVisible">
+      <div class="sidebar-header">
+        <h3>Налаштування</h3>
+        <button class="close-sidebar" (click)="toggleSettings()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="settings-content">
+        <!-- Розмір тексту -->
+        <div class="settings-group">
+          <h4>Розмір тексту</h4>
+          <div class="font-size-control">
+            <button class="control-btn" (click)="decreaseFontSize()" title="Зменшити шрифт">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="font-size-value">{{ fontSize }}%</span>
+            <button class="control-btn" (click)="increaseFontSize()" title="Збільшити шрифт">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Вибір теми -->
+        <div class="settings-group">
+          <h4>Тема читання</h4>
+          <div class="theme-buttons">
+            <button class="theme-btn light-theme" 
+                    [class.active]="currentTheme === 'light'" 
+                    (click)="setTheme('light')" 
+                    title="Світла тема">
+                <span class="theme-name">Світла</span>
+            </button>
+            <button class="theme-btn sepia-theme" 
+                    [class.active]="currentTheme === 'sepia'" 
+                    (click)="setTheme('sepia')" 
+                    title="Сепія">
+                <span class="theme-name">Сепія</span>
+            </button>
+            <button class="theme-btn dark-theme" 
+                    [class.active]="currentTheme === 'dark'" 
+                    (click)="setTheme('dark')" 
+                    title="Темна тема">
+                <span class="theme-name">Темна</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Налаштування відступів -->
+        <div class="settings-group">
+          <h4>Відступи</h4>
+          <div class="margin-control">
+            <button class="control-btn" (click)="decreaseMargins()" title="Зменшити відступи">
+              <i class="fas fa-compress-alt"></i>
+            </button>
+            <span class="margin-value">{{ margins }}px</span>
+            <button class="control-btn" (click)="increaseMargins()" title="Збільшити відступи">
+              <i class="fas fa-expand-alt"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Завантаження книги -->
+        <div class="settings-group download-group">
+          <h4>Завантаження книги</h4>
+          <p class="settings-description">
+            Завантажте книгу на свій пристрій для читання офлайн
+          </p>
+          <button class="download-btn" (click)="downloadBook()">
+            <i class="fas fa-download"></i> Завантажити EPUB
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Контейнер для відображення EPUB -->
+    <div class="epub-container" #epubViewer></div>
+    
+    <!-- Екран завантаження файлу, коли книга не відкрита -->
+    <div class="upload-container" *ngIf="!bookLoaded">
+      <div class="upload-content">
+        <div class="upload-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h2>Відкрийте електронну книгу</h2>
+        <p>Виберіть EPUB файл на вашому пристрої для початку читання</p>
+        
+        <div class="upload-actions">
+          <label for="bookUpload" class="upload-btn">
+            <i class="fas fa-file-upload"></i> Вибрати файл
+          </label>
+          <input 
+            type="file" 
+            id="bookUpload" 
+            accept=".epub" 
+            (change)="onFileSelected($event)" 
+            style="display: none;"
+          >
+        </div>
+        
+        <!-- Нещодавно відкриті книги -->
+        <div *ngIf="recentBooks.length > 0" class="recent-books">
+          <h3>Нещодавно відкриті книги</h3>
+          <div class="recent-books-list">
+            <div *ngFor="let book of recentBooks" class="recent-book-item" (click)="openRecentBook(book)">
+              <div class="recent-book-cover">
+                <img [src]="book.cover || 'assets/images/default-book-cover.png'" [alt]="book.title">
+              </div>
+              <div class="recent-book-info">
+                <div class="recent-book-title">{{ book.title }}</div>
+                <div class="recent-book-author" *ngIf="book.author">{{ book.author }}</div>
+                <div class="recent-book-date">
+                  <i class="fas fa-clock"></i> {{ book.lastOpened | date:'short' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="upload-note">
+          <i class="fas fa-info-circle"></i>
+          <span>Підтримується формат EPUB</span>
+        </div>
+      </div>
+    </div>
+
+   
+  
+  <!-- Нижня панель з кнопками навігації -->
+  <div class="viewer-footer" *ngIf="bookLoaded">
+    <button class="nav-btn prev-btn" (click)="prevPage()" [disabled]="isFirstPage">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    
+    <div class="page-input-container">
+      <input 
+        type="number" 
+        class="page-input" 
+        [value]="currentPageNum" 
+        (change)="goToPage($event)" 
+        min="1" 
+        [max]="totalPages || 1000"
+      >
+      <span class="page-input-total">/ {{ totalPages || '-' }}</span>
+    </div>
+    
+    <button class="nav-btn next-btn" (click)="nextPage()" [disabled]="isLastPage">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>

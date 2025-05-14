@@ -1,7 +1,8 @@
-<div class="register-container">
+<div class="auth-container">
   <div class="auth-box">
     <div class="auth-header">
-      <h1>Створення аккаунту</h1>
+      <i class="fa fa-user-plus auth-icon"></i>
+      <h1>Створення облікового запису</h1>
       <p>Зареєструйтесь для повного доступу до DailyLit</p>
     </div>
     
@@ -9,13 +10,14 @@
       <div class="form-group">
         <label for="name">Ім'я користувача</label>
         <div class="input-wrapper">
-          <i class="fa fa-user"></i>
+          <i class="fa fa-user input-icon"></i>
           <input 
             id="name" 
             formControlName="name" 
             type="text" 
             placeholder="Введіть бажане ім'я користувача"
             autocomplete="username"
+            class="form-input"
           >
         </div>
         <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" class="form-error">
@@ -26,18 +28,27 @@
       <div class="form-group">
         <label for="password">Пароль</label>
         <div class="input-wrapper">
-          <i class="fa fa-lock"></i>
+          <i class="fa fa-lock input-icon"></i>
           <input 
             id="password" 
             formControlName="password" 
             type="password" 
             placeholder="Створіть надійний пароль"
             autocomplete="new-password"
+            class="form-input"
           >
         </div>
         <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="form-error">
           <i class="fa fa-exclamation-circle"></i> Пароль обов'язковий
         </div>
+      </div>
+      
+      <div class="form-group consent-check">
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="termsAccepted">
+          <span class="checkmark"></span>
+          <span class="checkbox-text">Я погоджуюсь з <a href="#" class="auth-link">умовами використання</a> сервісу</span>
+        </label>
       </div>
       
       <div class="form-action">
@@ -48,7 +59,28 @@
     </form>
     
     <div class="auth-footer">
-      <p>Вже маєте аккаунт? <a routerLink="/login">Увійти</a></p>
+      <p>Вже маєте обліковий запис? <a routerLink="/login" class="auth-link">Увійти</a></p>
+    </div>
+  </div>
+  
+  <div class="auth-decoration">
+    <div class="decoration-text">
+      <h2>Приєднуйтесь до спільноти</h2>
+      <p>Створіть свої власні полиці для книг, відстежуйте прогрес читання та приєднуйтесь до обговорень з іншими читачами.</p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <i class="fa fa-bookmark"></i>
+          <span>Створюйте власні колекції книг</span>
+        </div>
+        <div class="feature-item">
+          <i class="fa fa-comments"></i>
+          <span>Обговорюйте прочитане</span>
+        </div>
+        <div class="feature-item">
+          <i class="fa fa-star"></i>
+          <span>Оцінюйте книги та діліться враженнями</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

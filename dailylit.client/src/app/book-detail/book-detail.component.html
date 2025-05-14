@@ -1,145 +1,139 @@
 <div class="book-detail-container">
-  <div *ngIf="book; else loading" class="book-content">
-    <!-- Хлібні крихти -->
-    <div class="breadcrumbs">
-      <a routerLink="/" class="crumb">Головна</a>
-      <i class="fa fa-angle-right separator"></i>
-      <a routerLink="/books" class="crumb">Книги</a>
-      <i class="fa fa-angle-right separator"></i>
-      <span class="crumb current">{{ book.title }}</span>
-    </div>
-    
-    <div class="book-card">
-      <div class="book-header">
-        <div class="book-cover-wrapper">
-          <img [src]="book.cover_url || 'assets/images/no-cover.png'" [alt]="book.title" class="book-cover">
-          <div class="book-cover-overlay">
-            <div class="book-rating-badge" *ngIf="book.rating">
-              {{ book.rating.toFixed(1) }}
-            </div>
-          </div>
-        </div>
-        
-        <div class="book-info">
-          <h1 class="book-title">{{ book.title }}</h1>
-          <h3 class="book-author">{{ book.author_name }}</h3>
-          
-          <div class="book-metadata">
-            <span class="book-genre" *ngIf="book.genre">
-              <i class="fa fa-bookmark"></i> {{ book.genre }}
-            </span>
-            <span class="book-date" *ngIf="book.publish_date">
-              <i class="fa fa-calendar"></i> {{ book.publish_date | date }}
-            </span>
-            <span class="book-pages" *ngIf="book.pages">
-              <i class="fa fa-file-text"></i> {{ book.pages }} сторінок
-            </span>
-          </div>
-          
-          <div class="book-rating">
-            <span class="rating-label">Рейтинг:</span>
-            <div class="rating-stars">
-              <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
-                <i class="fa fa-star" [class.filled]="(book.rating || 0) >= star"></i>
-              </ng-container>
-              <span class="rating-value" *ngIf="book.rating">{{ book.rating.toFixed(1) }}</span>
-            </div>
-          </div>
-          
-          <div class="book-actions">
-            <button class="btn primary-btn" (click)="openDialog()">
-              <i class="fa fa-bookmark"></i> Хочу прочитати
-            </button>
-            
-            <button class="btn secondary-btn">
-              <i class="fa fa-share-alt"></i> Поділитися
-            </button>
-          </div>
-          
-          <div class="book-tags" *ngIf="book.keywords && book.keywords.length > 0">
-            <span class="tag" *ngFor="let keyword of book.keywords">{{ keyword }}</span>
-          </div>
+  <!-- Головна інформація про книгу -->
+  <div *ngIf="book; else loading" class="book-card">
+    <div class="book-header">
+      <div class="book-cover-wrapper">
+        <img [src]="book.cover_url || 'assets/images/no-cover.png'" [alt]="book.title" class="book-cover">
+        <div class="book-badge" *ngIf="book.rating && book.rating >= 4.5">
+          <i class="fa fa-star"></i> Популярна
         </div>
       </div>
       
-      <div class="book-tabs">
-        <div class="tab-header">
-          <button class="tab-btn active">Опис</button>
-          <button class="tab-btn">Відгуки</button>
-          <button class="tab-btn">Схожі книги</button>
+      <div class="book-info">
+        <h1 class="book-title">{{ book.title }}</h1>
+        <h3 class="book-author">{{ book.author_name }}</h3>
+        
+        <div class="book-metadata">
+          <div class="metadata-item book-genre" *ngIf="book.genre">
+            <i class="fa fa-bookmark"></i> 
+            <span>{{ book.genre }}</span>
+          </div>
+          <div class="metadata-item book-date" *ngIf="book.publish_date">
+            <i class="fa fa-calendar"></i> 
+            <span>{{ book.publish_date | date }}</span>
+          </div>
+          <div class="metadata-item book-pages" *ngIf="book.pages">
+            <i class="fa fa-file-text"></i> 
+            <span>{{ book.pages }} сторінок</span>
+          </div>
         </div>
         
-        <div class="tab-content">
-          <div class="book-description">
-            <div class="description-text" [innerHTML]="book.description || 'Опис відсутній'"></div>
+        <div class="book-rating">
+          <span class="rating-label">Рейтинг:</span>
+          <div class="rating-stars">
+            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+              <svg class="star" [class.filled]="(book.rating || 0) >= star" viewBox="0 0 24 24">
+                <path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" />
+              </svg>
+            </ng-container>
+            <span class="rating-value" *ngIf="book.rating">{{ book.rating.toFixed(1) }}</span>
           </div>
+        </div>
+        
+        <div class="book-actions">
+          <button class="btn primary-btn pulse-animation" (click)="openDialog()">
+            <i class="fa fa-bookmark"></i> Хочу прочитати
+          </button>
+          
         </div>
       </div>
     </div>
     
-    <!-- Секція обговорення -->
-    <div class="discussion-section">
-      <h3 class="section-title">Обговорення книги</h3>
-      <app-chat [bookId]="book?.key || ''"></app-chat>
+    <div class="book-description">
+      <h3 class="section-title">
+        <i class="fa fa-book section-icon"></i> Опис
+      </h3>
+      <div class="description-text" [innerHTML]="book.description || 'Опис відсутній'"></div>
     </div>
     
-    <!-- Діалог для додавання книги на полицю -->
+    <!-- Виправлене діалогове вікно для вибору полиці -->
     <div *ngIf="isDialogOpen" class="modal-overlay">
       <div class="modal-dialog">
         <div class="modal-header">
-          <h3>Додати книгу на полицю</h3>
-          <button class="close-btn" type="button" (click)="closeDialog()">
+          <h3>
+            <i class="fa fa-bookmark-o"></i>
+            Додати книгу на полицю
+          </h3>
+          <button class="close-btn" (click)="closeDialog()" aria-label="Закрити">
             <i class="fa fa-times"></i>
           </button>
         </div>
         <div class="modal-body">
-          <div class="shelf-selection">
-            <h4>Виберіть полицю:</h4>
-            
-            <div class="shelf-buttons">
-              <button 
-                *ngFor="let shelf of shelves" 
-                type="button" 
-                class="shelf-button"
-                [class.active]="selectedShelfId === shelf.id" 
-                (click)="selectShelf(shelf.id)">
-                <i class="fa fa-bookmark-o"></i>
-                {{ shelf.title }}
+          <form (ngSubmit)="onSubmit()" class="shelf-form">
+            <div class="form-group">
+              <label for="shelfSelect">Виберіть полицю:</label>
+              <div class="select-wrapper">
+                <select 
+                  id="shelfSelect" 
+                  [(ngModel)]="selectedShelfId" 
+                  name="shelfSelect" 
+                  required 
+                  class="form-control"
+                >
+                  <option value="" disabled selected>-- Виберіть полицю --</option>
+                  <option *ngFor="let shelf of shelves" [value]="shelf.id">{{ shelf.title }}</option>
+                </select>
+                <i class="fa fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn cancel-btn" (click)="closeDialog()">
+                <i class="fa fa-times"></i> Скасувати
+              </button>
+              <button type="submit" class="btn primary-btn" [disabled]="!selectedShelfId">
+                <i class="fa fa-check"></i> Додати
               </button>
             </div>
-
-            <div *ngIf="shelves.length === 0" class="no-shelves-message">
-              <i class="fa fa-exclamation-circle"></i>
-              Немає доступних полиць. Створіть полицю на сторінці "Мої полиці".
-            </div>
-            
-            <div *ngIf="selectedShelfId" class="selected-shelf">
-              <p>Вибрано: <strong>{{ getSelectedShelfTitle() }}</strong></p>
-            </div>
-          </div>
-          
-          <div class="form-actions">
-            <button type="button" class="btn cancel-btn" (click)="closeDialog()">Скасувати</button>
-            <button type="button" class="btn primary-btn" [disabled]="!selectedShelfId" (click)="onSubmit()">
-              Додати
-            </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>
     
-    <!-- Повідомлення про успішне додавання -->
+    <!-- Покращене повідомлення про успішне додавання -->
     <div *ngIf="message" class="toast-message" [class.show]="message">
-      <i class="fa" [ngClass]="message.includes('успішно') ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
-      {{ message }}
+      <i class="fa fa-check-circle toast-icon"></i>
+      <span>{{ message }}</span>
     </div>
   </div>
   
-  <ng-template #loading>
-    <div class="loading-container">
-      <div class="loading-spinner"></div>
-      <p>Завантаження інформації про книгу...</p>
-    </div>
-  </ng-template>
+  <!-- Покращений компонент чату -->
+  <div class="discussion-section">
+    <h3 class="section-title">
+      <i class="fa fa-comments section-icon"></i> Обговорення книги
+    </h3>
+    <app-chat [bookId]="book?.key || ''"></app-chat>
+  </div>
 </div>
 
+<!-- Покращений екран завантаження -->
+<ng-template #loading>
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Завантаження інформації про книгу...</p>
+    <small class="loading-tip">Це може зайняти кілька секунд</small>
+  </div>
+</ng-template>
+
+<!-- Покращений екран "книгу не знайдено" -->
+<ng-template #noBook>
+  <div class="error-container">
+    <div class="error-icon">
+      <i class="fa fa-exclamation-circle"></i>
+    </div>
+    <h2>Книгу не знайдено</h2>
+    <p>На жаль, інформація про цю книгу відсутня або сталася помилка при завантаженні.</p>
+    <button class="btn primary-btn" routerLink="/books">
+      <i class="fa fa-arrow-left"></i> Повернутися до списку книг
+    </button>
+  </div>
+</ng-template>

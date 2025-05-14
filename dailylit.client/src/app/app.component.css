@@ -64,13 +64,13 @@ html, body {
   background-color: #ebe1d4; /* bg-default */
   font-family: 'Roboto', 'Helvetica', sans-serif;
   color: #3e3128; /* text-primary */
+  position: relative;
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* Використовуємо viewport height для повного екрану */
-  padding-top: 70px; /* Висота фіксованого навбару + padding */
 }
 
 /* Навігаційна панель */
@@ -79,6 +79,12 @@ body {
   box-shadow: 0 2px 10px rgba(88, 69, 57, 0.15);
   border-bottom: 1px solid #f0e5d9; /* accent-light */
   padding: 10px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  height: 70px; /* Фіксована висота для навбару */
 }
 
 .navbar-brand {
@@ -179,10 +185,11 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 56px - 80px); /* Висота вьюпорта мінус навбар і футер */
   width: 100%;
+  padding-top: 70px; /* Додаємо відступ зверху, щоб не перекривати навбар */
+  padding-bottom: 0; /* Видаляємо відступ знизу, він буде у content-container */
+  min-height: calc(100vh - 70px); /* Висота екрану мінус навбар */
   position: relative;
-  padding-bottom: 30px; /* Додатковий відступ внизу перед футером */
   background-color: #ebe1d4; /* bg-default */
 }
 
@@ -191,7 +198,7 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 15px;
+  padding: 30px 15px 80px 15px; /* Збільшено нижній padding для футера */
 }
 
 /* Футер */
@@ -199,12 +206,11 @@ footer {
   background-color: #3e3128; /* bg-footer */
   color: #f9f3ec; /* text-inverse */
   padding: 25px 0;
-  margin-top: auto;
-  position: relative;
   width: 100%;
   z-index: 10;
   box-shadow: 0 -2px 10px rgba(88, 69, 57, 0.1);
   border-top: 1px solid #f0e5d9; /* accent-light */
+  position: relative; /* Змінено з absolute на relative */
 }
 
 footer p {
