@@ -7,6 +7,27 @@ import { BookDetails } from './book-details.model';
 import { GlobalVariablesService } from './global.variables.service';
 import { GeminiService } from './gemini.service';
 
+// Define interfaces for Google Books API responses
+interface VolumeInfo {
+  title?: string;
+  authors?: string[];
+  categories?: string[] | string;
+  description?: string;
+  imageLinks?: {
+    thumbnail?: string;
+    smallThumbnail?: string;
+    medium?: string;
+  };
+  averageRating?: number;
+  pageCount?: number;
+  publishedDate?: string;
+}
+
+interface BookItem {
+  id: string;
+  volumeInfo?: VolumeInfo;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,90 +45,135 @@ export class BookService {
   constructor(
     private http: HttpClient, 
     private global: GlobalVariablesService,
-    private geminiService: GeminiService  // Додаємо Gemini Service
+    private geminiService: GeminiService
   ) {}
 
   getBooks(genre: string): Observable<any[]> {
     const url = this.getUrlByGenre(genre);
-    return this.http.get<any>(url).pipe(
-      map(response => response.items || [])
+    return this.http.get<{items?: BookItem[]}>(url).pipe(
+      map(response => {
+        const books = response.items || [];
+        // Filter to only include books with valid cover images
+        return books.filter((book: BookItem) => {
+          // Check if the book has valid image links
+          return book.volumeInfo?.imageLinks?.thumbnail || 
+                 book.volumeInfo?.imageLinks?.smallThumbnail || 
+                 book.volumeInfo?.imageLinks?.medium;
+        });
+      })
     );
   }
 
   private getUrlByGenre(genre: string): string {
     let apiUrl: string;
+    const formattedGenre = genre.toLowerCase().replace(/ /g, '-');
     
-    switch (genre.toLowerCase()) {
+    const maxResults = 40;
+    const langRestrict = 'uk,en';
+    const params = `&maxResults=${maxResults}&langRestrict=${langRestrict}&key=${this.global.apiKey}&fields=items(id,volumeInfo)`;
+    
+    switch (formattedGenre) {
       case 'business':
+      case 'бізнес':
         this.category = 'Business';
-        apiUrl = `${this.baseApiUrl}business&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}business${params}`;
         break;
       case 'classics':
+      case 'класика':
         this.category = 'Classics';
-        apiUrl = `${this.baseApiUrl}classics&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}classics${params}`;
         break;
       case 'comics':
+      case 'комікси':
         this.category = 'Comics';
-        apiUrl = `${this.baseApiUrl}comics&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}comics${params}`;
         break;
       case 'fantasy':
+      case 'фентезі':
         this.category = 'Fantasy';
-        apiUrl = `${this.baseApiUrl}fantasy&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}fantasy${params}`;
         break;
       case 'fiction':
+      case 'художня-література':
         this.category = 'Fiction';
-        apiUrl = `${this.baseApiUrl}fiction&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}fiction${params}`;
         break;
       case 'horror':
+      case 'жахи':
         this.category = 'Horror';
-        apiUrl = `${this.baseApiUrl}horror&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}horror${params}`;
         break;
-      case 'non fiction':
+      case 'non-fiction':
+      case 'нехудожня-література':
         this.category = 'Non Fiction';
-        apiUrl = `${this.baseApiUrl}non-fiction&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}non-fiction${params}`;
         break;
       case 'romance':
+      case 'романтика':
         this.category = 'Romance';
-        apiUrl = `${this.baseApiUrl}romance&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}romance${params}`;
         break;
-      case 'science fiction':
+      case 'science-fiction':
+      case 'наукова-фантастика':
         this.category = 'Science Fiction';
-        apiUrl = `${this.baseApiUrl}science-fiction&key=${this.global.apiKey}&maxResults=40`;
+        apiUrl = `${this.baseApiUrl}science-fiction${params}`;
+        break;
+      case 'mystery':
+      case 'детектив':
+        this.category = 'Mystery';
+        apiUrl = `${this.baseApiUrl}mystery${params}`;
         break;
       default:
-        // Для невідомих жанрів використовуємо оригінальну назву, замінюючи пробіли на дефіси
-        const formattedGenre = genre.toLowerCase().replace(/ /g, '-');
-        this.category = genre;
-        apiUrl = `${this.baseApiUrl}${formattedGenre}&key=${this.global.apiKey}&maxResults=40`;
+        this.category = genre || 'All';
+        if (!genre) {
+          apiUrl = `https://www.googleapis.com/books/v1/volumes?q=subject:popular${params}`;
+        } else {
+          apiUrl = `${this.baseApiUrl}${formattedGenre}${params}`;
+        }
     }
 
+    console.log(`API URL for genre '${genre}':`, apiUrl);
     return apiUrl;
   }
   
   searchBooks(query: string): Observable<any> {
-    // Виправляємо URL для пошуку книг у Google Books API
     return this.http.get(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=${this.global.apiKey}&maxResults=20`);
   }
   
   getBookDetails(id: string): Observable<BookDetails> {
     return this.http.get<any>(`${this.ApiUrl}${id}`).pipe(
       mergeMap(response => {
-        // Створюємо базові деталі книги
+        let coverUrl = 'assets/no-cover.png';
+        if (response.volumeInfo?.imageLinks) {
+          coverUrl = response.volumeInfo.imageLinks.thumbnail || 
+                    response.volumeInfo.imageLinks.smallThumbnail ||
+                    response.volumeInfo.imageLinks.medium ||
+                    'assets/no-cover.png';
+        }
+        
+        if (coverUrl && coverUrl.startsWith('http:')) {
+          coverUrl = coverUrl.replace('http:', 'https:');
+        }
+        
+        let genre = this.category;
+        if (response.volumeInfo?.categories && response.volumeInfo.categories.length > 0) {
+          genre = response.volumeInfo.categories[0];
+        }
+        
         const bookDetails: BookDetails = {
           key: response.id,
-          title: response.volumeInfo.title,
-          genre: response.volumeInfo.categories ? response.volumeInfo.categories[0] : this.category,
-          rating: response.volumeInfo.averageRating,
-          pages: response.volumeInfo.pageCount,
-          publish_date: response.volumeInfo.publishedDate,
-          author_name: response.volumeInfo.authors ? response.volumeInfo.authors.join(', ') : 'Unknown Author',
-          cover_url: response.volumeInfo.imageLinks ? response.volumeInfo.imageLinks.thumbnail : 'assets/no-cover.png',
-          description: response.volumeInfo.description || '',
+          title: response.volumeInfo?.title || 'Невідома назва',
+          genre: genre,
+          rating: response.volumeInfo?.averageRating || 0,
+          pages: response.volumeInfo?.pageCount || 0,
+          publish_date: response.volumeInfo?.publishedDate || '',
+          author_name: response.volumeInfo?.authors ? response.volumeInfo.authors.join(', ') : 'Невідомий автор',
+          cover_url: coverUrl,
+          description: response.volumeInfo?.description || 'Опис відсутній',
           keywords: []
         };
         
-        // Отримуємо ключові слова з опису через Gemini API
-        if (bookDetails.description) {
+        if (bookDetails.description && bookDetails.description !== 'Опис відсутній') {
           return this.extractKeywordsUsingGemini(bookDetails.description, bookDetails.title).pipe(
             map(keywords => {
               bookDetails.keywords = keywords;
@@ -116,30 +182,28 @@ export class BookService {
           );
         }
         
-        // Якщо опису немає, просто повертаємо деталі
+        bookDetails.keywords = this.fallbackKeywordExtraction(bookDetails.title, '');
         return of(bookDetails);
       }),
       catchError(error => {
         console.error('Error fetching book details:', error);
         return of({
           key: id,
-          title: 'Error fetching book details',
-          genre: 'Unknown',
+          title: 'Помилка завантаження даних',
+          genre: 'Невідомо',
           rating: 0,
           pages: 0,
           publish_date: '',
-          author_name: 'Unknown',
+          author_name: 'Невідомий автор',
           cover_url: 'assets/no-cover.png',
-          description: 'Error fetching book details',
+          description: 'Не вдалося завантажити опис книги',
           keywords: []
         });
       })
     );
   }
 
-  // Метод для витягування ключових слів з опису за допомогою Gemini
   extractKeywordsUsingGemini(description: string, title: string): Observable<string[]> {
-    // Створюємо конкретний промпт для Gemini
     const prompt = `
     Проаналізуй опис книги з назвою "${title}" та визнач 10-15 найважливіших ключових слів або фраз, 
     які найкраще характеризують тематику, сюжет, настрій та ідеї книги.
@@ -163,11 +227,9 @@ export class BookService {
     return this.geminiService.generateContentWithGeminiPro(prompt, []).pipe(
       map(response => {
         try {
-          // Видаляємо markdown форматування, якщо воно є
           const cleanedResponse = response.replace(/```json|```/g, '').trim();
           const parsed = JSON.parse(cleanedResponse);
           
-          // Зберігаємо жанр та ключові слова
           if (parsed.genre) {
             this.category = parsed.genre;
           }
@@ -175,8 +237,6 @@ export class BookService {
           return parsed.keywords || [];
         } catch (error) {
           console.error('Error parsing Gemini response:', error, 'Response was:', response);
-          
-          // Якщо не можемо розпарсити відповідь, екстрагуємо хоча б деякі слова з опису
           return this.fallbackKeywordExtraction(description, title);
         }
       }),
@@ -187,18 +247,15 @@ export class BookService {
     );
   }
 
-  // Запасний механізм витягування ключових слів (якщо Gemini недоступний)
   private fallbackKeywordExtraction(description: string, title: string): string[] {
     const keywords = new Set<string>();
     
-    // Додаємо слова з заголовку
     title.toLowerCase()
       .replace(/[^\w\s]/gi, '')
       .split(/\s+/)
       .filter(word => word.length > 3)
       .forEach(word => keywords.add(word));
     
-    // Витягуємо значущі слова з опису
     const stopWords = new Set([
       'the', 'and', 'a', 'an', 'in', 'on', 'at', 'by', 'for', 'with', 'about',
       'is', 'are', 'was', 'were', 'be', 'been', 'being',
@@ -215,12 +272,9 @@ export class BookService {
     return Array.from(keywords).slice(0, 15);
   }
 
-  // Новий метод для отримання рекомендованих книг за ключовими словами
   getRecommendationsByKeywords(keywords: string[], excludeIds: string[] = []): Observable<any[]> {
-    // Обмежуємо кількість ключових слів для запитів
     const topKeywords = keywords.slice(0, 5);
     
-    // Створюємо запит для кожного ключового слова
     const searchRequests = topKeywords.map(keyword => 
       this.searchBooksByKeyword(keyword).pipe(
         catchError(error => {
@@ -230,14 +284,11 @@ export class BookService {
       )
     );
     
-    // Об'єднуємо результати всіх запитів
     return forkJoin(searchRequests).pipe(
       map(results => {
-        // Об'єднуємо результати і видаляємо дублікати
         const allBooks = results.flat();
         const uniqueBooks = this.removeDuplicates(allBooks);
         
-        // Виключаємо книги за ID
         if (excludeIds.length > 0) {
           return uniqueBooks.filter(book => !excludeIds.includes(book.key));
         }
@@ -247,35 +298,39 @@ export class BookService {
     );
   }
 
-  // Пошук книг за ключовим словом (комбінована версія)
   searchBooksByKeyword(keyword: string): Observable<any[]> {
-    // Спочатку пробуємо пошук у Google Books API
-    return this.http.get<any>(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(keyword)}&key=${this.global.apiKey}&maxResults=10`).pipe(
+    return this.http.get<{items?: BookItem[]}>(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(keyword)}&key=${this.global.apiKey}&maxResults=10`).pipe(
       map(response => {
         if (response && response.items && response.items.length > 0) {
-          return response.items.map((item: any) => this.mapGoogleBookToBookDetails(item, keyword));
+          // Filter to only include books with covers
+          const booksWithCovers = response.items.filter((item: BookItem) => 
+            item.volumeInfo?.imageLinks?.thumbnail || 
+            item.volumeInfo?.imageLinks?.smallThumbnail || 
+            item.volumeInfo?.imageLinks?.medium
+          );
+          return booksWithCovers.map((item: BookItem) => this.mapGoogleBookToBookDetails(item, keyword));
         }
         return [];
       }),
       catchError(error => {
         console.error('Error with Google Books API, falling back to OpenLibrary:', error);
-        
-        // Якщо Google Books API не відповідає, використовуємо OpenLibrary
         return this.searchBooksByKeywordOpenLibrary(keyword);
       })
     );
   }
 
-  // Пошук книг за ключовим словом в OpenLibrary
   private searchBooksByKeywordOpenLibrary(keyword: string): Observable<any[]> {
     const params = new HttpParams()
       .set('q', keyword)
-      .set('limit', '10');
+      .set('limit', '10')
+      .set('has_fulltext', 'true'); // Prefer books with full text which often have covers
     
     return this.http.get(`${this.openLibraryApi}`, { params }).pipe(
       map((response: any) => {
         if (response.docs && response.docs.length > 0) {
-          return response.docs.map((doc: any) => this.mapOpenLibraryToBookDetails(doc, keyword));
+          // Filter to only include books with cover IDs
+          const docsWithCovers = response.docs.filter((doc: any) => doc.cover_i);
+          return docsWithCovers.map((doc: any) => this.mapOpenLibraryToBookDetails(doc, keyword));
         }
         return [];
       }),
@@ -286,18 +341,36 @@ export class BookService {
     );
   }
 
-  // Конвертація результату Google Books у формат BookDetails
   private mapGoogleBookToBookDetails(item: any, sourceKeyword: string): any {
     if (!item.volumeInfo) return null;
     
-    const authors = item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author';
-    const coverUrl = item.volumeInfo.imageLinks ? 
-      item.volumeInfo.imageLinks.thumbnail : 'assets/no-cover.png';
+    // Extract author information with proper fallback
+    const authors = item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Невідомий автор';
+    
+    // Extract cover URL with multiple fallbacks
+    let coverUrl = 'assets/no-cover.png';
+    if (item.volumeInfo.imageLinks) {
+      coverUrl = item.volumeInfo.imageLinks.thumbnail || 
+                item.volumeInfo.imageLinks.smallThumbnail ||
+                item.volumeInfo.imageLinks.medium ||
+                'assets/no-cover.png';
+    }
+    
+    // Fix protocol for Google Books image URLs (prevent mixed content)
+    if (coverUrl && coverUrl.startsWith('http:')) {
+      coverUrl = coverUrl.replace('http:', 'https:');
+    }
+    
+    // Make sure genres are properly extracted
+    let genre = sourceKeyword;
+    if (item.volumeInfo.categories && item.volumeInfo.categories.length > 0) {
+      genre = item.volumeInfo.categories[0];
+    }
     
     return {
       id: item.id,
       key: item.id,
-      title: item.volumeInfo.title || 'No Title',
+      title: item.volumeInfo.title || 'Невідома назва',
       author_name: authors,
       cover_url: coverUrl,
       status: 'Recommended',
@@ -305,8 +378,8 @@ export class BookService {
       rating: item.volumeInfo.averageRating || 0,
       booksadded: new Date(),
       dateread: null,
-      genre: item.volumeInfo.categories ? item.volumeInfo.categories[0] : sourceKeyword,
-      description: item.volumeInfo.description || '',
+      genre: genre,
+      description: item.volumeInfo.description || 'Опис відсутній',
       keywords: this.extractKeywordsFromText(item.volumeInfo.title + ' ' + 
                (item.volumeInfo.description || '') + ' ' + 
                (item.volumeInfo.categories ? item.volumeInfo.categories.join(' ') : ''),
@@ -314,18 +387,37 @@ export class BookService {
     };
   }
 
-  // Конвертація результату OpenLibrary у формат BookDetails
   private mapOpenLibraryToBookDetails(doc: any, sourceKeyword: string): any {
-    const authors = doc.author_name ? doc.author_name.join(', ') : 'Unknown Author';
+    // Extract author information with proper fallback
+    const authors = doc.author_name ? doc.author_name.join(', ') : 'Невідомий автор';
+    
+    // Extract cover URL with fallback
     const coverId = doc.cover_i ? doc.cover_i : null;
-    const coverUrl = coverId 
-      ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` 
-      : 'assets/no-cover.png';
+    let coverUrl = 'assets/no-cover.png';
+    
+    if (coverId) {
+      // Try to get the medium size cover first, fallback to small
+      coverUrl = `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`;
+    }
+    
+    // Extract genre information with fallback
+    let genre = sourceKeyword;
+    if (doc.subject && doc.subject.length > 0) {
+      genre = doc.subject[0];
+    }
+    
+    // Extract description with fallback
+    let description = 'Опис відсутній';
+    if (doc.first_sentence && Array.isArray(doc.first_sentence)) {
+      description = doc.first_sentence.join('. ');
+    } else if (doc.first_sentence) {
+      description = doc.first_sentence;
+    }
     
     return {
       id: doc.key || '',
       key: doc.key || '',
-      title: doc.title || 'No Title',
+      title: doc.title || 'Невідома назва',
       author_name: authors,
       cover_url: coverUrl,
       status: 'Recommended',
@@ -333,17 +425,15 @@ export class BookService {
       rating: 0,
       booksadded: new Date(),
       dateread: null,
-      genre: doc.subject ? doc.subject[0] : sourceKeyword,
-      description: doc.first_sentence ? doc.first_sentence.join('. ') : '',
+      genre: genre,
+      description: description,
       keywords: this.extractKeywordsFromOpenLibrary(doc, sourceKeyword)
     };
   }
 
-  // Простий метод витягування ключових слів з тексту
   private extractKeywordsFromText(text: string, sourceKeyword: string): string[] {
     const keywords = new Set<string>();
     
-    // Додаємо ключове слово, за яким ми знайшли цю книгу
     keywords.add(sourceKeyword.toLowerCase());
     
     if (!text) return Array.from(keywords);
@@ -359,17 +449,15 @@ export class BookService {
       .replace(/[^\w\s]/gi, '')
       .split(/\s+/)
       .filter(word => word.length > 3 && !stopWords.has(word))
-      .slice(0, 20) // Обмежуємо кількість ключових слів
+      .slice(0, 20)
       .forEach(word => keywords.add(word));
     
     return Array.from(keywords);
   }
 
-  // Витягує ключові слова з відповіді OpenLibrary API
   private extractKeywordsFromOpenLibrary(doc: any, sourceKeyword: string): string[] {
     const keywords = new Set<string>();
     
-    // Додаємо заголовок
     if (doc.title) {
       doc.title.toLowerCase()
         .replace(/[^\w\s]/gi, '')
@@ -378,27 +466,23 @@ export class BookService {
         .forEach((word: string) => keywords.add(word));
     }
     
-    // Додаємо авторів
     if (doc.author_name) {
       doc.author_name.forEach((author: string) => {
         keywords.add(author.toLowerCase());
       });
     }
     
-    // Додаємо жанри/теми
     if (doc.subject) {
       doc.subject.slice(0, 5).forEach((subject: string) => {
         keywords.add(subject.toLowerCase());
       });
     }
     
-    // Додаємо ключове слово, за яким ми знайшли цю книгу
     keywords.add(sourceKeyword.toLowerCase());
     
     return Array.from(keywords);
   }
 
-  // Видаляє дублікати книг за ключем
   private removeDuplicates(books: any[]): any[] {
     const uniqueBooks = new Map<string, any>();
     

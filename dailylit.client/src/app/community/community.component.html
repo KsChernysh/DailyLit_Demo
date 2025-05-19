@@ -1,0 +1,167 @@
+<div class="community-container">
+  <!-- Page header with title and description -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fa fa-users"></i>
+      <span>Спільнота читачів</span>
+    </h1>
+    <p class="page-subtitle">Приєднуйтесь до книжкових клубів за вашими інтересами, обговорюйте книги та діліться враженнями з однодумцями.</p>
+  </div>
+  
+  <!-- NEW WRAPPER for all club-related content -->
+  <div class="clubs-section-wrapper">
+    <!-- Header with create club button -->
+    <div class="header-actions">
+      <h2 class="section-title">
+        <i class="fa fa-users section-icon"></i>
+        <span>Книжкові клуби</span>
+      </h2>
+      <button routerLink="/create-club" class="btn primary-btn">
+        <i class="fa fa-plus-circle"></i>
+        <span>Створити клуб</span>
+      </button>
+    </div>
+    
+    <!-- Filter section -->
+    <div class="filter-card">
+      <div class="filter-header">
+        <h3 class="filter-title">
+          <i class="fa fa-filter"></i>
+          <span>Фільтр за жанром</span>
+        </h3>
+      </div>
+      
+      <div class="filter-body">
+        <div class="filter-buttons">
+          <button 
+            *ngFor="let genre of genres" 
+            class="filter-btn" 
+            [class.active]="selectedGenre === genre"
+            (click)="filterByGenre(genre)"
+          >
+            {{ genre }}
+          </button>
+          
+          <button 
+            class="filter-btn" 
+            [class.active]="selectedGenre === ''"
+            (click)="filterByGenre('')"
+          >
+            <i class="fa fa-list"></i>
+            <span>Всі клуби</span>
+          </button>
+          
+          <button 
+            class="filter-btn" 
+            [class.active]="selectedGenre === 'popular'"
+            (click)="filterByGenre('popular')"
+          >
+            <i class="fa fa-star"></i>
+            <span>Популярні клуби</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main content - club cards or loading/empty states -->
+    <div class="clubs-content">
+      <!-- Loading state -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Завантаження клубів...</p>
+      </div>
+      
+      <!-- Error state -->
+      <div *ngIf="error" class="error-container">
+        <div class="error-icon">
+          <i class="fa fa-exclamation-circle"></i>
+        </div>
+        <h3>Виникла помилка</h3>
+        <p>{{ error }}</p>
+        <button class="btn primary-btn" (click)="loadClubs()">
+          <i class="fa fa-refresh"></i>
+          <span>Спробувати знову</span>
+        </button>
+      </div>
+      
+      <!-- Empty state -->
+      <div *ngIf="!loading && !error && filteredClubs.length === 0" class="empty-container">
+        <div class="empty-icon">
+          <i class="fa fa-book"></i>
+        </div>
+        <h3>Клубів не знайдено</h3>
+        <p>Не знайдено жодного клубу за вашим запитом. Бажаєте створити перший клуб?</p>
+        <button routerLink="/create-club" class="btn primary-btn">
+          <i class="fa fa-plus-circle"></i>
+          <span>Створити клуб</span>
+        </button>
+      </div>
+      
+      <!-- Club cards grid -->
+      <div *ngIf="!loading && !error && filteredClubs.length > 0" class="cards-grid">
+        <div *ngFor="let club of filteredClubs" class="club-card-wrapper">
+          <!-- Перевіряємо чи id існує і валідний -->
+          <div class="club-card" (click)="club.id && !isNaN(club.id) ? goToClub(club.id) : null">
+            <div class="club-image-container">
+              <ng-container *ngIf="club.imageUrl; else defaultClubImage">
+                <img [src]="club.imageUrl" [alt]="club.name" class="club-image">
+              </ng-container>
+              <ng-template #defaultClubImage>
+                <img src="assets/default-club.png" [alt]="club.name" class="club-image">
+              </ng-template>
+              
+              <div class="club-genre-badge" *ngIf="club.genre">
+                <span>{{ club.genre }}</span>
+              </div>
+            </div>
+            
+            <div class="club-content">
+              <h3 class="club-title">{{ club.name }}</h3>
+              <p class="club-description">{{ club.description | slice:0:120 }}{{ club.description && club.description.length > 120 ? '...' : '' }}</p>
+              
+              <div class="club-stats">
+                <div class="stat-item">
+                  <i class="fa fa-users"></i>
+                  <span>{{ club.membersCount || 0 }} учасників</span>
+                </div>
+                <div class="stat-item">
+                  <i class="fa fa-comments"></i>
+                  <span>{{ club.topicsCount || 0 }} обговорень</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="club-footer">
+              <div class="club-meta">
+                <div class="creator-info">
+                  <div class="creator-avatar" 
+                       [style.backgroundColor]="getAvatarColor(club.creatorName)">
+                    {{ club.creatorName?.charAt(0).toUpperCase() }}
+                  </div>
+                  <span class="creator-name">{{ club.creatorName }}</span>
+                </div>
+                
+                <span class="creation-date">
+                  <i class="fa fa-calendar"></i>
+                  {{ club.createdAt | date }}
+                </span>
+              </div>
+              
+              <div class="club-actions">
+                <!-- Перевіряємо чи id існує і валідний в кнопці перегляду -->
+                <button *ngIf="club.id && !isNaN(club.id)" class="btn view-club-btn" (click)="goToClub(club.id); $event.stopPropagation()">
+                  <i class="fa fa-arrow-right"></i>
+                  <span>Переглянути клуб</span>
+                </button>
+                <button *ngIf="!club.id || isNaN(club.id)" class="btn view-club-btn disabled" disabled>
+                  <i class="fa fa-warning"></i>
+                  <span>Недоступно</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> <!-- End of clubs-section-wrapper -->
+</div>

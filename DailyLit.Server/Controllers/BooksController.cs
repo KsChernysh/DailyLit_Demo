@@ -47,7 +47,16 @@ namespace DailyLit.Server.Controllers
             
             return Ok(shelves);
         }
-
+        [HttpGet("shelf-books")]
+        public async Task<IActionResult> GetShelfBooks([FromQuery] string shelfName)
+        {
+            var books = await _booksManager.GetBooksByShelfAsync(shelfName);
+            if (books == null)
+            {
+                return BadRequest("Error getting shelf books.");
+            }
+            return Ok(books);
+        }
         [HttpGet("books")]
         public async Task<IActionResult> GetBooks([FromQuery] string shelfName)
         {

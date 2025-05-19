@@ -8,7 +8,7 @@ import { from, Observable, catchError, map, of } from "rxjs";
 })
 export class GeminiService {
   private geminiConfig = {
-    model: 'gemini-1.5-pro', // Model name to use
+    model: 'gemini-2.0-flash-lite', // Model name to use
     apiKey: environment.googleAiApiKey, // API key from environment file
     temperature: 0.9, // Temperature for generation (controls response variability)
     maxOutputTokens: 2048, // Maximum number of tokens in the output

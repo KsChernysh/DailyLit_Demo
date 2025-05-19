@@ -1,0 +1,136 @@
+<div class="create-topic-container">
+  <div class="page-header">
+    <h1 class="page-title">Створити обговорення</h1>
+    <button *ngIf="club?.id" class="btn-back" [routerLink]="['/clubs', club.id]">
+      <i class="fa fa-arrow-left"></i> Повернутися до клубу
+    </button>
+  </div>
+  
+  <!-- Breadcrumbs navigation -->
+  <div class="breadcrumbs">
+    <span class="breadcrumb-item">
+      <a routerLink="/">Головна</a>
+    </span>
+    <span class="breadcrumb-item">
+      <a routerLink="/clubs">Спільнота</a>
+    </span>
+    <span class="breadcrumb-item" *ngIf="club">
+      <a [routerLink]="['/clubs', club.id]">{{ club.name }}</a>
+    </span>
+    <span class="breadcrumb-item active">Нова тема</span>
+  </div>
+  
+  <!-- Club info card if a club is loaded -->
+  <div class="club-info-card" *ngIf="club">
+    <div class="club-image-wrapper">
+      <img [src]="club.imageUrl || '/assets/images/default-club.jpg'" [alt]="club.name" class="club-image">
+    </div>
+    <div class="club-details">
+      <h3 class="club-name">{{ club.name }}</h3>
+      <div class="club-genre" *ngIf="club.genre">
+        <i class="fa fa-bookmark"></i> {{ club.genre }}
+      </div>
+      <p class="club-description">{{ club.description }}</p>
+    </div>
+  </div>
+  
+  <!-- Main content card -->
+  <div class="main-card">
+    <div class="card-header">
+      <h2 class="card-title">
+        <i class="fa fa-comment"></i> Створення нової теми
+      </h2>
+      <p class="card-subtitle">Поділіться своїми думками з іншими учасниками клубу</p>
+    </div>
+    
+    <div class="card-body">
+      <!-- Error message display -->
+      <div *ngIf="error" class="alert alert-danger" role="alert">
+        <i class="fa fa-exclamation-circle"></i>
+        {{ error }}
+      </div>
+      
+      <!-- Topic creation form -->
+      <form (ngSubmit)="createTopic()" #topicForm="ngForm" *ngIf="club; else loadingOrNotFound">
+        <div class="form-section">
+          <div class="form-group">
+            <label for="title" class="form-label">Назва теми</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="title" 
+              name="title" 
+              [(ngModel)]="topic.title" 
+              required 
+              minlength="5"
+              placeholder="Введіть назву теми"
+              #titleInput="ngModel"
+            >
+            <div *ngIf="titleInput.touched && titleInput.invalid" class="text-danger">
+              <div *ngIf="titleInput.errors?.['required']">Назва теми обов'язкова</div>
+              <div *ngIf="titleInput.errors?.['minlength']">Назва повинна містити щонайменше 5 символів</div>
+            </div>
+            <div class="form-text">
+              <i class="fa fa-lightbulb-o"></i> Коротка, інформативна назва допоможе іншим користувачам знайти вашу тему
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="content" class="form-label">Зміст теми</label>
+            <textarea 
+              class="form-control" 
+              id="content" 
+              name="content" 
+              [(ngModel)]="topic.content" 
+              required 
+              minlength="10"
+              placeholder="Детально опишіть, що ви хочете обговорити..."
+              #contentInput="ngModel"
+            ></textarea>
+            <div *ngIf="contentInput.touched && contentInput.invalid" class="text-danger">
+              <div *ngIf="contentInput.errors?.['required']">Зміст теми обов'язковий</div>
+              <div *ngIf="contentInput.errors?.['minlength']">Зміст має містити щонайменше 10 символів</div>
+            </div>
+            <div class="form-text">
+              <i class="fa fa-lightbulb-o"></i> Надайте детальну інформацію про вашу тему та додайте запитання, щоб започаткувати дискусію
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action buttons -->
+        <div class="btn-container">
+          <button type="submit" class="btn primary-btn" [disabled]="topicForm.invalid || submitting">
+            <span *ngIf="submitting" class="spinner-border" role="status" aria-hidden="true"></span>
+            <i *ngIf="!submitting" class="fa fa-check-circle"></i>
+            Створити тему
+          </button>
+          
+          <button type="button" class="btn secondary-btn" [routerLink]="['/clubs', club?.id]">
+            <i class="fa fa-times"></i> Скасувати
+          </button>
+        </div>
+      </form>
+      
+      <!-- Loading or Club Not Found states -->
+      <ng-template #loadingOrNotFound>
+        <div *ngIf="loading; else notFound" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Завантаження даних клубу...</p>
+        </div>
+        
+        <ng-template #notFound>
+          <div class="error-container">
+            <div class="error-icon">
+              <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <h3>Клуб не знайдено</h3>
+            <p>Клуб не знайдено або у вас немає дозволу на створення тем у цьому клубі.</p>
+            <button class="btn primary-btn" routerLink="/clubs">
+              <i class="fa fa-arrow-left"></i> Повернутися до списку клубів
+            </button>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+</div>

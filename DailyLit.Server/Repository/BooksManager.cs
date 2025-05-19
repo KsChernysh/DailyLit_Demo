@@ -7,6 +7,7 @@ using DailyLit.Server.Profiles;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Security;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DailyLit.Server.Repository
 {
@@ -184,6 +185,7 @@ namespace DailyLit.Server.Repository
             return await _context.BooksCollection.Where(x => x.ShelfId == shelf.Id).ToListAsync();
         }
 
+
         public async Task<List<Shelfs>> GetShelvesAsync()
         {
             var user = _httpContextAccessor.HttpContext?.User;
@@ -310,5 +312,34 @@ namespace DailyLit.Server.Repository
         {
             return _recommender.GetRecommendationsByShelf(userBooks);
         }
+
+        public async Task<List<BookUrls>> GetBooksByShelfAsync(string name)
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user == null || user.Identity?.Name == null)
+            {
+                throw new InvalidOperationException("User is not authenticated.");
+            }
+
+            var profile = await _context.Profiles.FirstOrDefaultAsync(x => x.UserName == user.Identity.Name);
+            if (profile == null)
+            {
+                throw new InvalidOperationException("User profile not found.");
+            }
+
+            var shelf = await _context.Shelfs.FirstOrDefaultAsync(x => x.Title == name && x.UserId == profile.Id);
+            if (shelf == null)
+            {
+                throw new InvalidOperationException("Shelf not found.");
+            }
+
+            // Отримуємо книги за допомогою ShelfId
+            var books = await _context.BooksCollection
+                .Where(x => x.ShelfId == shelf.Id)
+                .ToListAsync();
+
+            return books;
+        }
+
     }
 }

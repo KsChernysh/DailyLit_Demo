@@ -189,6 +189,80 @@ namespace DailyLit.Server.Migrations
                     b.ToTable("BothReads");
                 });
 
+            modelBuilder.Entity("DailyLit.Server.Models.Club", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Genre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Clubs");
+                });
+
+            modelBuilder.Entity("DailyLit.Server.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReplyToCommentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TopicId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReplyToCommentId");
+
+                    b.HasIndex("TopicId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("DailyLit.Server.Models.Friends", b =>
                 {
                     b.Property<int>("Id")
@@ -337,6 +411,39 @@ namespace DailyLit.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Shelfs");
+                });
+
+            modelBuilder.Entity("DailyLit.Server.Models.Topic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClubId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastActivityAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClubId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Topics");
                 });
 
             modelBuilder.Entity("DailyLit.Server.Models.UserProfile", b =>
@@ -630,6 +737,43 @@ namespace DailyLit.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DailyLit.Server.Models.Club", b =>
+                {
+                    b.HasOne("DailyLit.Server.Models.UserProfile", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("DailyLit.Server.Models.Comment", b =>
+                {
+                    b.HasOne("DailyLit.Server.Models.Comment", "ReplyToComment")
+                        .WithMany()
+                        .HasForeignKey("ReplyToCommentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DailyLit.Server.Models.Topic", "Topic")
+                        .WithMany("Comments")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DailyLit.Server.Models.UserProfile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ReplyToComment");
+
+                    b.Navigation("Topic");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DailyLit.Server.Models.Friends", b =>
                 {
                     b.HasOne("DailyLit.Server.Models.UserProfile", "User")
@@ -672,6 +816,25 @@ namespace DailyLit.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DailyLit.Server.Models.Topic", b =>
+                {
+                    b.HasOne("DailyLit.Server.Models.Club", "Club")
+                        .WithMany("Topics")
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DailyLit.Server.Models.UserProfile", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Club");
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("DailyLit.Server.Models.UserProfile", b =>
@@ -732,6 +895,11 @@ namespace DailyLit.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("DailyLit.Server.Models.Club", b =>
+                {
+                    b.Navigation("Topics");
+                });
+
             modelBuilder.Entity("DailyLit.Server.Models.Groups", b =>
                 {
                     b.Navigation("Members");
@@ -740,6 +908,11 @@ namespace DailyLit.Server.Migrations
             modelBuilder.Entity("DailyLit.Server.Models.Shelfs", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("DailyLit.Server.Models.Topic", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

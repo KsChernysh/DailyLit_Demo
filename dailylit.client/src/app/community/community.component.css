@@ -1,0 +1,524 @@
+/* Загальний контейнер сторінки */
+.community-container {
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  color: #3e3128; /* --text-primary */
+  padding: 24px 16px; /* --spacing-lg --spacing-md */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Стилі заголовків */
+.page-header {
+  margin-bottom: 24px; /* --spacing-lg */
+  text-align: center;
+  padding: 24px; /* --spacing-lg */
+  background-color: #f5efe8; /* --bg-light */
+  border-radius: 8px; /* --border-radius-lg */
+  box-shadow: 0 2px 4px rgba(88, 69, 57, 0.1); /* --shadow-sm */
+  border: 1px solid #e8dfd5; /* --border-light */
+}
+
+.page-title {
+  color: #5e4c44; /* --accent-dark */
+  font-family: 'Playfair Display', 'Georgia', serif; /* --font-family-secondary */
+  font-size: 2.2rem;
+  margin-bottom: 8px; /* --spacing-sm */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* --spacing-sm */
+}
+
+.page-title i {
+  color: #d2905b; /* --primary-color */
+}
+
+.page-subtitle {
+  color: #6b584a; /* --text-secondary */
+  font-size: 1rem;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.section-title {
+  color: #5e4c44; /* --accent-dark */
+  font-family: 'Playfair Display', 'Georgia', serif; /* --font-family-secondary */
+  font-size: 1.8rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* --spacing-sm */
+}
+
+.section-icon {
+  color: #d2905b; /* --primary-color */
+}
+
+/* Фільтр жанрів */
+.filter-card {
+  background-color: #f5efe8; /* --bg-light */
+  border-radius: 8px; /* --border-radius-lg */
+  box-shadow: 0 2px 4px rgba(88, 69, 57, 0.1); /* --shadow-sm */
+  margin-bottom: 24px; /* --spacing-lg */
+  padding: 16px; /* --spacing-md */
+  border: 1px solid #e8dfd5; /* --border-light */
+}
+
+.filter-header {
+  padding: 0 0 16px 0; /* --spacing-md */
+  border-bottom: 1px solid #d1c3b5; /* --border-color */
+  margin-bottom: 16px; /* --spacing-md */
+}
+
+.filter-title {
+  margin: 0;
+  color: #5e4c44; /* --accent-dark */
+  font-family: 'Playfair Display', 'Georgia', serif; /* --font-family-secondary */
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* --spacing-sm */
+}
+
+.filter-title i {
+  color: #d2905b; /* --primary-color */
+}
+
+.filter-body {
+  padding: 0;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* --spacing-sm */
+}
+
+.filter-btn {
+  background-color: #fcf9f5; /* --bg-paper */
+  border: 1px solid #d1c3b5; /* --border-color */
+  color: #b57a49; /* --primary-dark */
+  padding: 4px 16px; /* --spacing-xs --spacing-md */
+  font-size: 0.9rem;
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  border-radius: 6px; /* --border-radius-md */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px; /* --spacing-xs */
+}
+
+.filter-btn i {
+  color: #d2905b; /* --primary-color */
+  font-size: 0.8rem;
+}
+
+.filter-btn:hover {
+  background-color: #f8ece2; /* --primary-light */
+  border-color: #d2905b; /* --primary-color */
+  color: #b57a49; /* --primary-dark */
+}
+
+.filter-btn.active {
+  background-color: #d2905b; /* --primary-color */
+  color: #f9f3ec; /* --text-inverse */
+  border-color: #b57a49; /* --primary-dark */
+}
+
+.filter-btn.active i {
+  color: #f9f3ec; /* --text-inverse */
+}
+
+/* NEW STYLES for the wrapper of all club-related content */
+.clubs-section-wrapper {
+  background-color: #fbf6f0; /* A warm, inviting off-white */
+  padding: 24px; /* --spacing-lg */
+  border-radius: 16px; /* --border-radius-xl, even more rounded */
+  margin-top: 32px; /* --spacing-xl, to separate from page header */
+  box-shadow: 0 8px 16px rgba(88, 69, 57, 0.1); /* --shadow-lg, slightly more pronounced */
+  border: 1px solid #e6ddd3; /* A soft border */
+}
+
+/* Контент клубів */
+.clubs-content {
+  background-color: #fdfaf6; /* Lighter, more distinct background */
+  padding: 24px; /* Adjusted padding to --spacing-lg, was 32px */
+  border-radius: 12px; /* More rounded corners --border-radius-xl */
+  box-shadow: 0 4px 12px rgba(88, 69, 57, 0.1); /* Adjusted shadow, was 0.15 --shadow-md */
+  margin-top: 24px; /* --spacing-lg */
+  border: 1px solid #e0d5c9; /* Slightly darker border --border-color */
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px; /* --spacing-lg */
+}
+
+.btn {
+  padding: 8px 16px; /* --spacing-sm --spacing-md */
+  border-radius: 6px; /* --border-radius-md */
+  font-size: 0.9rem;
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  font-weight: 500; /* --font-weight-medium */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px; /* --spacing-xs */
+  border: 1px solid transparent;
+}
+
+.primary-btn {
+  background-color: #5e4c44 !important; /* --accent-dark */
+  color: #f0e5d9 !important; /* --accent-light */
+  border: 1px solid #796356 !important; /* --accent-color */
+  font-weight: 700; /* --font-weight-bold */
+}
+
+.primary-btn:hover {
+  background-color: #796356 !important; /* --accent-color */
+  border-color: #f8ece2 !important; /* --primary-light */
+  color: #f8ece2 !important; /* --primary-light */
+  transform: translateY(-2px);
+}
+
+/* Стани завантаження, помилки і порожнього стану */
+.loading-container,
+.error-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px; /* --spacing-xl --spacing-lg */
+  text-align: center;
+  background-color: #fcf9f5; /* --bg-paper */
+  border-radius: 8px; /* --border-radius-lg */
+  box-shadow: 0 2px 4px rgba(88, 69, 57, 0.1); /* --shadow-sm */
+  border: 1px solid #e8dfd5; /* --border-light */
+  margin: 24px 0; /* --spacing-lg */
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f8ece2; /* --primary-light */
+  border-radius: 50%;
+  border-top-color: #d2905b; /* --primary-color */
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px; /* --spacing-md */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-icon,
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px; /* --spacing-md */
+}
+
+.error-icon {
+  color: #cc7352; /* --error-color */
+}
+
+.empty-icon {
+  color: #9c8877; /* --text-light */
+}
+
+.loading-container p,
+.error-container h3,
+.empty-container h3 {
+  margin-top: 0;
+  margin-bottom: 8px; /* --spacing-sm */
+  color: #3e3128; /* --text-primary */
+  font-family: 'Playfair Display', 'Georgia', serif; /* --font-family-secondary */
+  font-size: 1.3rem;
+}
+.loading-container p { 
+ font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+ font-size: 1rem;
+ color: #6b584a; /* --text-secondary */
+}
+
+.error-container p,
+.empty-container p {
+  color: #6b584a; /* --text-secondary */
+  margin-bottom: 16px; /* --spacing-md */
+  font-size: 0.9rem;
+}
+
+/* Сітка карток клубів */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px; /* --spacing-lg */
+}
+
+.club-card-wrapper {
+  height: 100%;
+}
+
+.club-card {
+  height: 100%;
+  background-color: #fcf9f5; /* --bg-paper */
+  border-radius: 10px; /* Increased border-radius --border-radius-lg */
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(88, 69, 57, 0.1); /* Adjusted shadow for depth --shadow-md */
+  display: flex !important; 
+  flex-direction: column !important; 
+  cursor: pointer;
+  border: 1px solid #d8cbbc; /* Slightly adjusted border color */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smoother transition */
+}
+
+.club-card:hover {
+  transform: translateY(-6px) scale(1.02); /* Enhanced hover effect */
+  box-shadow: 0 10px 20px rgba(88, 69, 57, 0.2); /* Deeper shadow on hover --shadow-xl */
+}
+
+/* Зображення клубу */
+.club-image-container {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  background-color: #f5efe8; /* --bg-light */
+}
+
+.club-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.default-club-image {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f8ece2, #f0e5d9); /* --primary-light, --accent-light */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6b584a; /* --text-secondary */
+}
+
+.default-club-image i {
+  font-size: 2.5rem;
+  margin-bottom: 4px; /* --spacing-xs */
+  color: #b57a49; /* --primary-dark */
+}
+.default-club-image span {
+  font-family: 'Playfair Display', 'Georgia', serif; /* --font-family-secondary */
+  font-size: 0.9rem;
+  color: #6b584a; /* --text-secondary */
+}
+
+.club-genre-badge {
+  position: absolute;
+  bottom: 4px; /* --spacing-xs */
+  right: 4px; /* --spacing-xs */
+  background-color: rgba(94, 76, 68, 0.8); /* fallback for --accent-dark-rgb, 0.8 */
+  color: #f9f3ec; /* --text-inverse */
+  padding: 3px 4px; /* --spacing-xs */
+  border-radius: 4px; /* --border-radius-sm */
+  font-size: 0.75rem;
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  font-weight: 500; /* --font-weight-medium */
+}
+
+/* Контент клубу */
+.club-content {
+  padding: 16px; /* --spacing-md */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.club-title {
+  color: #b57a49; /* --primary-dark */
+  margin: 0 0 8px 0; /* --spacing-sm */
+  font-family: 'Playfair Display', 'Georgia', serif; /* --font-family-secondary */
+  font-size: 1.25rem;
+  font-weight: 700; /* --font-weight-bold */
+  line-height: 1.3;
+}
+
+.club-description {
+  color: #6b584a; /* --text-secondary */
+  margin: 0 0 16px 0; /* --spacing-md */
+  font-size: 0.875rem;
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3; /* Standard property */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.club-stats {
+  display: flex;
+  gap: 16px; /* --spacing-md */
+  margin-top: auto;
+  padding-top: 8px; /* --spacing-sm */
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* --spacing-xs */
+  font-size: 0.8rem;
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  color: #9c8877; /* --text-light */
+}
+
+.stat-item i {
+  font-size: 0.9rem;
+  color: #796356; /* --accent-color */
+}
+
+/* Футер клубу */
+.club-footer {
+  padding: 8px 16px; /* --spacing-sm --spacing-md */
+  border-top: 1px solid #e8dfd5; /* --border-light */
+  background-color: #f8ece2; /* --primary-light */
+}
+
+.club-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px; /* --spacing-sm */
+}
+
+.creator-info {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* --spacing-xs */
+}
+
+.creator-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f9f3ec; /* --text-inverse */
+  font-weight: 500; /* --font-weight-medium */
+  font-size: 0.85rem;
+}
+
+.creator-name {
+  font-size: 0.8rem;
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  color: #6b584a; /* --text-secondary */
+  font-weight: 500; /* --font-weight-medium */
+}
+
+.creation-date {
+  font-size: 0.75rem;
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  color: #9c8877; /* --text-light */
+  display: flex;
+  align-items: center;
+  gap: 4px; /* --spacing-xs */
+}
+.creation-date i {
+  font-size: 0.8rem;
+}
+
+.club-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.view-club-btn {
+  width: 100%;
+  background-color: transparent;
+  color: #d2905b; /* --primary-color */
+  border: 1px solid #d2905b; /* --primary-color */
+  border-radius: 6px; /* --border-radius-md */
+  transition: all 0.2s ease;
+  justify-content: center;
+  font-family: 'Roboto', 'Helvetica', sans-serif; /* --font-family-primary */
+  font-weight: 500; /* --font-weight-medium */
+  padding: 4px 8px; /* --spacing-xs --spacing-sm */
+  font-size: 0.9rem;
+}
+
+.view-club-btn:hover {
+  background-color: #d2905b; /* --primary-color */
+  color: #f9f3ec; /* --text-inverse */
+  border-color: #b57a49; /* --primary-dark */
+}
+.view-club-btn i {
+  margin-right: 4px; /* --spacing-xs */
+}
+
+/* Адаптивний дизайн */
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px; /* --spacing-md */
+  }
+  .header-actions {
+    flex-direction: column;
+    gap: 16px; /* --spacing-md */
+    align-items: stretch;
+  }
+  .primary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .filter-buttons {
+    justify-content: center;
+  }
+  .page-title {
+    font-size: 1.8rem;
+  }
+  .section-title {
+    font-size: 1.5rem;
+  }
+  .filter-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .community-container {
+    padding: 16px 8px; /* --spacing-md --spacing-sm */
+  }
+  .page-title {
+    font-size: 1.6rem;
+  }
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .filter-btn {
+    padding: 4px 8px; /* --spacing-xs --spacing-sm */
+    font-size: 0.85rem;
+    width: 100%;
+    justify-content: center; 
+  }
+  .club-title {
+    font-size: 1.1rem;
+  }
+  .club-description {
+    font-size: 0.8rem;
+  }
+}
+
+/* Helper for RGB variable if not defined, for opacity */
+/* Removed :root block as variables are now hardcoded */

@@ -166,7 +166,7 @@ export class ShelfDetailComponent implements OnInit {
     console.log('Book features extracted:', this.bookFeatures.size);
   }
 
-  // Генерування рекомендацій на основі книг на полиці
+  // Запит на рекомендації з підтримкою двомовного пошуку
   getRecommendations(): void {
     this.isLoadingRecommendations = true;
     this.showFallbackRecommendations = false;
@@ -193,9 +193,9 @@ export class ShelfDetailComponent implements OnInit {
     // Обираємо випадковий жанр із наявних
     const randomGenre = genres[Math.floor(Math.random() * genres.length)];
     
-    // Запит на рекомендації
+    // Запит на рекомендації англійською мовою для більш точних результатів
     this.http.get<any>(
-      `https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(randomGenre || 'default')}&maxResults=10`
+      `https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(randomGenre || 'fiction')}&maxResults=10&langRestrict=en`
     ).subscribe(
       response => {
         if (response && response.items && response.items.length > 0) {
@@ -239,8 +239,9 @@ export class ShelfDetailComponent implements OnInit {
 
   // Додайте цей метод для отримання запасних рекомендацій за жанром
   getFallbackRecommendationsByGenre(genre: string): void {
+    // Запит англійською мовою для кращих результатів
     this.http.get<any>(
-      `https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(genre)}&orderBy=relevance&maxResults=10`
+      `https://www.googleapis.com/books/v1/volumes?q=subject:${encodeURIComponent(genre)}&orderBy=relevance&maxResults=10&langRestrict=en`
     ).subscribe(
       response => {
         if (response && response.items && response.items.length > 0) {
@@ -280,9 +281,9 @@ export class ShelfDetailComponent implements OnInit {
     const popularGenres = ['fiction', 'fantasy', 'thriller', 'romance', 'science fiction'];
     const randomGenre = popularGenres[Math.floor(Math.random() * popularGenres.length)];
     
-    // Використовуємо простий запит на популярні книги
+    // Використовуємо простий запит на популярні книги англійською мовою
     this.http.get<any>(
-      `https://www.googleapis.com/books/v1/volumes?q=subject:${randomGenre}&orderBy=relevance&maxResults=10`
+      `https://www.googleapis.com/books/v1/volumes?q=subject:${randomGenre}&orderBy=relevance&maxResults=10&langRestrict=en`
     ).subscribe(
       response => {
         if (response && response.items && response.items.length > 0) {

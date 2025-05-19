@@ -1,21 +1,31 @@
 <div class="chat-container">
-  <div class="messages">
+  <div class="chat-header">
+    <h2>AI Книжковий Помічник</h2>
+  </div>
+  
+  <div class="messages" #messagesContainer>
     <div *ngFor="let msg of messages" class="message" [ngClass]="{'user-message': msg.role === 'user', 'bot-message': msg.role === 'bot'}">
-      <div class="message-header">
-        <strong>{{ msg.role === 'user' ? 'Ви' : 'AI' }}:</strong>
+      <div class="message-avatar">
+        <div class="avatar-icon">{{ msg.role === 'user' ? 'В' : 'AI' }}</div>
       </div>
-      <div class="message-content">
-        {{ msg.content }}
+      <div class="message-bubble">
+        <div class="message-content">
+          {{ msg.content }}
+        </div>
+        <div class="message-time">{{ msg.timestamp | date:'HH:mm' }}</div>
       </div>
     </div>
     <div *ngIf="isLoading" class="message bot-message loading-message">
-      <div class="message-header">
-        <strong>AI:</strong>
+      <div class="message-avatar">
+        <div class="avatar-icon">AI</div>
       </div>
-      <div class="message-content">
-        Відповідь генерується...
-        <div class="loading-dots">
-          <span>.</span><span>.</span><span>.</span>
+      <div class="message-bubble">
+        <div class="message-content">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
       </div>
     </div>
@@ -60,6 +70,64 @@
     </div>
   </div>
 
+  <!-- Reading Plan Display -->
+  <div *ngIf="showReadingPlan && readingPlan.length > 0" class="reading-plan-container">
+    <h3>Ваш книжковий план</h3>
+    <button class="close-plan" (click)="closeReadingPlan()">×</button>
+    
+    <div class="plan-summary">
+      <div class="summary-item">
+        <span class="summary-label">Всього книг:</span>
+        <span class="summary-value">{{ readingPlan.length }}</span>
+      </div>
+      <div class="summary-item" *ngIf="readingPlanTotalDays">
+        <span class="summary-label">Загальний час:</span>
+        <span class="summary-value">{{ readingPlanTotalDays ? readingPlanTotalDays + ' днів' : '' }}</span>
+      </div>
+    </div>
+    
+    <div class="reading-plan-list">
+      <div *ngFor="let item of sortedReadingPlan; let i = index" class="plan-item" 
+           [ngClass]="{
+             'high-priority': item.priority !== undefined && item.priority === 1, 
+             'medium-priority': item.priority !== undefined && item.priority > 1 && item.priority <= 3, 
+             'low-priority': item.priority !== undefined && item.priority > 3
+           }">
+        <div class="priority-badge" *ngIf="item.priority !== undefined">{{ item.priority }}</div>
+        <div class="plan-item-content">
+          <h4 class="book-title">{{ item.book }}</h4>
+          <p class="book-author">{{ item.author }}</p>
+          
+          <div class="plan-details">
+            <div class="plan-detail">
+              <i class="plan-icon time-icon"></i>
+              <span>{{ item.estimatedTime }}</span>
+            </div>
+            <div class="plan-detail" *ngIf="item.pagesPerDay">
+              <i class="plan-icon pages-icon"></i>
+              <span>{{ item.pagesPerDay }} сторінок/день</span>
+            </div>
+          </div>
+          
+          <div class="plan-notes" *ngIf="item.notes">
+            <p>{{ item.notes }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preset Response Buttons -->
+  <div class="preset-responses">
+    <button 
+      *ngFor="let prompt of presetPrompts" 
+      class="preset-button"
+      [disabled]="isLoading || isGeneratingRecommendations"
+      (click)="usePresetPrompt(prompt)">
+      {{ prompt }}
+    </button>
+  </div>
+
   <div class="input-area">
     <input
       type="text"
@@ -72,8 +140,12 @@
     <button (click)="sendMessage()" 
             [disabled]="isLoading || isGeneratingRecommendations || !userInput.trim()" 
             class="send-button">
-      <span *ngIf="!isLoading && !isGeneratingRecommendations">Надіслати</span>
-      <span *ngIf="isLoading || isGeneratingRecommendations">...</span>
+      <span *ngIf="!isLoading && !isGeneratingRecommendations">
+        <i class="send-icon">➤</i>
+      </span>
+      <span class="loading-icon" *ngIf="isLoading || isGeneratingRecommendations">
+        <i class="spinner"></i>
+      </span>
     </button>
   </div>
 </div>

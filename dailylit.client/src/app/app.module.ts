@@ -29,6 +29,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { ChatComponent } from './chat/chat.component';
+import { CommunityComponent } from './community/community.component';
+import { ClubDetailComponent } from './club-detail/club-detail.component';
+import { TopicDetailComponent } from './topic-detail/topic-detail.component';
+import { CreateClubComponent } from './create-club/create-club.component';
+import { CreateTopicComponent } from './create-topic/create-topic.component';
 
 
 @NgModule({
@@ -45,7 +50,12 @@ import { ChatComponent } from './chat/chat.component';
     ShelvesViewComponent,
     ShelfDetailComponent,
     AichatComponent,
-    ChatComponent
+    ChatComponent,
+    CommunityComponent,
+    ClubDetailComponent,
+    TopicDetailComponent,
+    CreateClubComponent,
+    CreateTopicComponent
   ],
   imports: [
     BrowserModule,

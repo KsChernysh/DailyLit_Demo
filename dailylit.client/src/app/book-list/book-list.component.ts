@@ -40,28 +40,59 @@ export class BookListComponent implements OnInit, OnDestroy {
 
   loadBooks(): void {
     console.log('loadBooks called for genre:', this.genre);
+    this.loading = true;
     
     this.bookService.getBooks(this.genre).subscribe(
       (result: any[]) => {
-        if (result.length > 0) {
-          this.books = result.map((item: any) => ({
-            id: item.id,
-            title: item.volumeInfo.title || 'No Title',
-            genre: item.volumeInfo.categories || 'No Genre',
-            author_name: item.volumeInfo.authors?.join(', ') || 'No Author',
-            cover_url: item.volumeInfo.imageLinks?.thumbnail || 'assets/no-cover.png',
-            rating : item.volumeInfo.averageRating || 0,
-             }));
+        if (result && result.length > 0) {
+          this.books = result.map((item: any) => {
+            // Make sure volumeInfo exists to prevent errors
+            const volumeInfo = item.volumeInfo || {};
+            
+            // Extract cover URL with multiple fallbacks
+            let coverUrl = '';
+            if (volumeInfo.imageLinks) {
+              coverUrl = volumeInfo.imageLinks.thumbnail || 
+                        volumeInfo.imageLinks.smallThumbnail ||
+                        volumeInfo.imageLinks.medium;
+            }
+            
+            // Skip books without covers
+            if (!coverUrl) {
+              return null;
+            }
+            
+            // Fix protocol for Google Books image URLs (prevent mixed content)
+            if (coverUrl && coverUrl.startsWith('http:')) {
+              coverUrl = coverUrl.replace('http:', 'https:');
+            }
+            
+            return {
+              id: item.id,
+              title: volumeInfo.title || 'Невідома назва',
+              genre: volumeInfo.categories ? 
+                  (Array.isArray(volumeInfo.categories) ? volumeInfo.categories[0] : volumeInfo.categories) : 
+                  (this.genre || 'Невідомий жанр'),
+              author_name: volumeInfo.authors ? 
+                  (Array.isArray(volumeInfo.authors) ? volumeInfo.authors.join(', ') : volumeInfo.authors) : 
+                  'Невідомий автор',
+              cover_url: coverUrl,
+              rating: volumeInfo.averageRating || 0,
+              description: volumeInfo.description || 'Опис відсутній'
+            };
+          }).filter(book => book !== null); // Filter out any null entries (books without covers)
           
-          console.log('Processed books:', this.books);
+          console.log('Processed books with covers:', this.books);
         } else {
           this.books = [];
           console.warn('No books found for genre:', this.genre);
         }
+        this.loading = false;
       },
       (error: any) => {
         console.error('Error fetching books:', error);
         this.books = [];
+        this.loading = false;
       }
     );
   }
@@ -83,11 +114,12 @@ export class BookListComponent implements OnInit, OnDestroy {
     }
     
     this.currentPage = pageNumber;
-    this.loadBooks(); // Метод, який завантажує книги
+    this.loadBooks(); // Method that loads books
   }
 
   addToShelf(book: any) {
-    // Тут викликати діалог для вибору полиці
-    console.log('Додаємо книгу на полицю:', book);
+    // Show shelf selection dialog
+    // Add book to shelf
+    console.log('Adding book to shelf:', book);
   }
 }

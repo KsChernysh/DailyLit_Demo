@@ -27,7 +27,7 @@
 }
 
 .book-card:hover {
-  transform: translateY(-5px) rotate(1deg);
+  transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(88, 69, 57, 0.15);
   border-color: #d2905b;
 }

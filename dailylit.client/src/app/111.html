@@ -1,0 +1,103 @@
+<div class="book-detail-container">
+  <div *ngIf="book; else loading" class="book-card">
+    <div class="book-header">
+      <div class="book-cover-wrapper">
+        <img [src]="book.cover_url || 'assets/images/no-cover.png'" [alt]="book.title" class="book-cover">
+      </div>
+      <div class="book-info">
+        <h1 class="book-title">{{ book.title }}</h1>
+        <h3 class="book-author">{{ book.author_name }}</h3>
+        
+        <div class="book-metadata">
+          <span class="book-genre" *ngIf="book.genre">
+            <i class="fa fa-bookmark"></i> {{ book.genre }}
+          </span>
+          <span class="book-date" *ngIf="book.publish_date">
+            <i class="fa fa-calendar"></i> {{ book.publish_date | date }}
+          </span>
+          <span class="book-pages" *ngIf="book.pages">
+            <i class="fa fa-file-text"></i> {{ book.pages }} сторінок
+          </span>
+        </div>
+        
+        <div class="book-rating">
+          <span class="rating-label">Рейтинг:</span>
+          <div class="rating-stars">
+            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+              <svg class="star" [class.filled]="(book.rating || 0) >= star" viewBox="0 0 24 24">
+                <path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" />
+              </svg>
+            </ng-container>
+            <span class="rating-value" *ngIf="book.rating">{{ book.rating.toFixed(1) }}</span>
+          </div>
+        </div>
+        
+        <div class="book-actions">
+          <button class="btn primary-btn" (click)="openDialog()">
+            <i class="fa fa-bookmark"></i> Хочу прочитати
+          </button>
+          <button class="btn secondary-btn" *ngIf="book.read_url">
+            <a [href]="book.read_url" target="_blank"><i class="fa fa-book"></i> Читати онлайн</a>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="book-description">
+      <h3 class="section-title">Опис</h3>
+      <div class="description-text" [innerHTML]="book.description || 'Опис відсутній'"></div>
+    </div>
+    
+    <!-- Діалог для додавання книги на полицю -->
+    <div *ngIf="isDialogOpen" class="modal-overlay">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Додати книгу на полицю</h3>
+          <button class="close-btn" (click)="closeDialog()">×</button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="onSubmit()" class="shelf-form">
+            <div class="form-group">
+              <label for="shelfSelect">Виберіть полицю:</label>
+              <select id="shelfSelect" [(ngModel)]="selectedShelfId" name="shelfSelect" required class="form-control">
+                <option value="" disabled selected>-- Виберіть полицю --</option>
+                <option *ngFor="let shelf of shelves" [value]="shelf.id">{{ shelf.title }}</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn cancel-btn" (click)="closeDialog()">Скасувати</button>
+              <button type="submit" class="btn primary-btn" [disabled]="!selectedShelfId">Додати</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Повідомлення про успішне додавання -->
+    <div *ngIf="message" class="toast-message" [class.show]="message">
+      {{ message }}
+    </div>
+  </div>
+  
+  <!-- Компонент чату -->
+  <div class="discussion-section">
+    <h3 class="section-title">Обговорення книги</h3>
+    <app-chat [bookId]="book?.key || ''"></app-chat>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Завантаження інформації про книгу...</p>
+  </div>
+</ng-template>
+
+<ng-template #noBook>
+  <div class="error-container">
+    <i class="fa fa-exclamation-circle"></i>
+    <h2>Книгу не знайдено</h2>
+    <p>На жаль, інформація про цю книгу відсутня або сталася помилка при завантаженні.</p>
+    <button class="btn primary-btn" routerLink="/books">Повернутися до списку книг</button>
+  </div>
+</ng-template>

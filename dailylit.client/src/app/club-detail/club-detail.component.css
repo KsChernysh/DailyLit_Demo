@@ -1,0 +1,600 @@
+/* Основні змінні кольорів */
+:root {
+  --primary-color: #d2905b;
+  --primary-dark: #b57a49;
+  --primary-light: #f8ece2;
+  --background-light: #fcf9f5;
+  --text-dark: #3e3128;
+  --text-light: #6b584a;
+  --text-muted: #9c8877;
+  --border-color: #e8dfd5;
+  --border-dark: #d1c3b5;
+  --shadow-color: rgba(88, 69, 57, 0.15);
+}
+
+/* Основні стилі для club-detail компонента */
+.container {
+  font-family: var(--font-family-primary, 'Roboto', sans-serif);
+  color: var(--text-primary, #3e3128);
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Section containers with pastel borders */
+.section-container {
+  background-color: var(--bg-paper, #fcf9f5);
+  border-radius: var(--border-radius-lg, 8px);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm, 0 2px 4px rgba(88, 69, 57, 0.1));
+  border: 1px solid var(--border-color, #d1c3b5);
+}
+
+/* Pastel button styling */
+.btn-brown {
+  background-color: var(--primary-color, #d2905b);
+  color: var(--text-inverse, #f9f3ec);
+  border: none;
+  border-radius: var(--border-radius-md, 6px);
+  padding: 8px 16px;
+  font-weight: var(--font-weight-medium, 500);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-brown:hover {
+  background-color: var(--primary-dark, #b57a49);
+  color: var(--text-inverse, #f9f3ec);
+  box-shadow: 0 4px 10px rgba(210, 144, 91, 0.3);
+}
+
+.btn-brown:disabled {
+  background-color: var(--border-light, #e8dfd5);
+  color: var(--text-light, #9c8877);
+  cursor: not-allowed;
+}
+
+/* Хлібні крихти */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-item {
+  color: #6b584a;
+  text-decoration: none;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  margin-right: 5px;
+}
+
+.breadcrumb-item:hover {
+  color: #8B4513;
+  text-decoration: underline;
+}
+
+.breadcrumb-item.current {
+  color: #8B4513;
+  font-weight: 500;
+}
+
+.separator {
+  color: #9c8877;
+  margin: 0 8px;
+  font-size: 12px;
+}
+
+/* Заголовок клубу */
+.club-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e8dfd5;
+}
+
+.club-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #3e3128;
+  margin: 0;
+}
+
+.club-title {
+  color: var(--text-primary, #3e3128);
+  font-family: var(--font-family-secondary, 'Playfair Display', serif);
+  font-weight: var(--font-weight-bold, 700);
+  margin-bottom: 10px;
+}
+
+/* Картки */
+.card {
+  background-color: #fcf9f5;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(88, 69, 57, 0.1);
+  border: 1px solid #e8dfd5;
+  overflow: hidden;
+  margin-bottom: 25px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(88, 69, 57, 0.15);
+}
+
+.card-header {
+  background: linear-gradient(to right, #e8dfd5, #f5efe8);
+  padding: 15px 20px;
+  border-bottom: 1px solid #e8dfd5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h5 {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #3e3128;
+  display: flex;
+  align-items: center;
+}
+
+.card-header h5 i {
+  margin-right: 8px;
+  color: #d2905b;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Основна інформаційна картка */
+.main-info-card {
+  border-left: 4px solid #d2905b;
+}
+
+/* Зображення клубу */
+.club-image-card {
+  border: 1px solid #8B4513;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.club-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.default-image-container {
+  width: 100%;
+  height: 300px;
+  background-color: #f5efe8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-placeholder {
+  text-align: center;
+  color: #d1c3b5;
+}
+
+.image-placeholder i {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.default-club-image {
+  max-width: 150px;
+  opacity: 0.7;
+}
+
+/* Метадані клубу */
+.club-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+  color: #9c8877;
+  align-items: center;
+}
+
+.club-meta span {
+  display: flex;
+  align-items: center;
+}
+
+.club-meta i {
+  margin-right: 5px;
+}
+
+/* Genre badge with pastel border */
+.genre-badge {
+  background-color: var(--primary-light, #f8ece2);
+  border: 1px solid var(--primary-color, #d2905b);
+  border-radius: var(--border-radius-md, 6px);
+  padding: 6px 12px;
+  color: var(--primary-dark, #b57a49);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.badge {
+  background-color: #d2905b;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+/* Інформація про творця */
+.creator-info {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e8dfd5;
+}
+
+.creator-name {
+  font-weight: 600;
+  color: #3e3128;
+}
+
+.creator-role {
+  font-size: 13px;
+  color: #9c8877;
+}
+
+/* Налаштування кнопок */
+.btn {
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: #d2905b;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #c07d48;
+  box-shadow: 0 4px 10px rgba(210, 144, 91, 0.3);
+}
+
+.btn-secondary {
+  background-color: #f5efe8;
+  color: #6b584a;
+  border: 1px solid #d1c3b5;
+}
+
+.btn-secondary:hover {
+  background-color: #e8dfd5;
+  color: #3e3128;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* Topics section */
+.topics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-light, #e8dfd5);
+}
+
+.topics-header h3 {
+  color: var(--text-primary, #3e3128);
+  font-family: var(--font-family-secondary, 'Playfair Display', serif);
+  margin: 0;
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.topics-count {
+  color: var(--text-light, #9c8877);
+  font-size: 14px;
+}
+
+/* Таблиця з темами */
+.topics-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.topics-table thead th {
+  background-color: #f5efe8;
+  color: #6b584a;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #e8dfd5;
+}
+
+.topics-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e8dfd5;
+  font-size: 14px;
+  color: #3e3128;
+}
+
+.topic-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.topic-row:hover {
+  background-color: rgba(139, 69, 19, 0.05);
+}
+
+.topic-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--primary-color, #d2905b);
+}
+
+.comments-badge {
+  background-color: var(--primary-color, #d2905b);
+  color: var(--text-inverse, #f9f3ec);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+/* Empty state */
+.empty-topics {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-topics i {
+  font-size: 48px;
+  color: #d1c3b5;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.empty-topics h5 {
+  font-weight: 600;
+  color: #3e3128;
+  margin-bottom: 8px;
+}
+
+.empty-topics p {
+  color: #9c8877;
+  margin-bottom: 24px;
+}
+
+/* Back button */
+.back-button-container {
+  margin-top: 20px;
+}
+
+/* Loading state */
+.loading-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--primary-light, #f8ece2);
+  border-radius: 50%;
+  border-top-color: var(--primary-color, #d2905b);
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: var(--text-secondary, #6b584a);
+}
+
+/* Error state */
+.error-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.error-icon {
+  font-size: 48px;
+  color: var(--error-color, #cc7352);
+  margin-bottom: 16px;
+}
+
+/* Порожній стан */
+.text-center {
+  text-align: center;
+}
+
+.text-center i {
+  font-size: 40px;
+  color: #d1c3b5;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  border: 0.25rem solid #d2905b;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Сповіщення */
+.alert {
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Список груп */
+.list-group {
+  padding-left: 0;
+  list-style: none;
+  margin-bottom: 0;
+}
+
+.list-group-item {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #e8dfd5;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-flush .list-group-item {
+  background-color: transparent;
+}
+
+.bg-secondary {
+  background-color: #9c8877 !important;
+}
+
+.rounded-pill {
+  border-radius: 50rem !important;
+}
+
+/* Адаптивність */
+@media (max-width: 767px) {
+  .club-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .club-info-section .d-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .table {
+    display: block;
+  }
+  
+  .table thead {
+    display: none;
+  }
+  
+  .table tbody, .table tr, .table td {
+    display: block;
+    width: 100%;
+  }
+  
+  .table tr {
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e8dfd5;
+  }
+  
+  .table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+  
+  .table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    text-align: left;
+    font-weight: 600;
+  }
+  
+  .topics-table {
+    display: block;
+  }
+  
+  .topics-table thead {
+    display: none;
+  }
+  
+  .topics-table tbody, .topics-table tr, .topics-table td {
+    display: block;
+    width: 100%;
+  }
+  
+  .topics-table tr {
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e8dfd5;
+  }
+  
+  .topics-table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+  
+  .topics-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    text-align: left;
+    font-weight: 600;
+  }
+}

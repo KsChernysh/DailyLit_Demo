@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class ShelvesViewComponent implements OnInit {
   shelves: any[] = [];
   shelfName: string = '';
+  count: number = 0;
   message: string = '';
   isDialogOpen: boolean = false;
   api: string = "https://localhost:7172/api/Books";
@@ -21,12 +22,39 @@ export class ShelvesViewComponent implements OnInit {
     this.loadShelves();
   }
 
+  loadBooksFromShelf(shelfName: string) {
+    const encodedShelfName = encodeURIComponent(shelfName);
+    this.http.get<any[]>(`${this.api}/shelf-books?shelfName=${encodedShelfName}`, { withCredentials: true }).subscribe(
+      (data) => {
+        console.log(`Books for shelf ${shelfName} loaded:`, data);
+        
+        // Find the shelf object and update its count
+        const shelfIndex = this.shelves.findIndex(shelf => shelf.title === shelfName);
+        if (shelfIndex !== -1) {
+          this.shelves[shelfIndex].count = data.length;
+        }
+      },
+      (error) => {
+        console.error(`Error loading books for shelf ${shelfName}:`, error);
+      }
+    );
+  }
+
   loadShelves() {
     console.log('Loading shelves...');
-    this.http.get<string[]>(`${this.api}/shelves`, { withCredentials: true }).subscribe(
+    this.http.get<any[]>(`${this.api}/shelves`, { withCredentials: true }).subscribe(
       (data) => {
         console.log('Shelves loaded:', data);
-        this.shelves = data;
+        // Initialize shelves with zero counts if not provided by API
+        this.shelves = data.map(shelf => ({
+          ...shelf,
+          count: shelf.count || 0
+        }));
+        
+        // Load book counts for each shelf
+        this.shelves.forEach(shelf => {
+          this.loadBooksFromShelf(shelf.title);
+        });
       },
       (error) => {
         this.message = 'Error loading shelves.';
@@ -59,21 +87,50 @@ export class ShelvesViewComponent implements OnInit {
   }
 
   createShelf(title: string) {
-    this.http.post(this.api + '/shelves', { title: title }, { withCredentials: true })
-      .subscribe(
-        response => {
-          this.shelves.push({ title: title, count: 0 });
+    // Ensure title is properly trimmed
+    const trimmedTitle = title.trim();
+    
+    // Log what we're sending to help with debugging
+    console.log('Creating shelf with title:', trimmedTitle);
+    
+    // Send the title as a direct string, not as a JSON object
+    this.http.post(`${this.api}/add-shelf`, JSON.stringify(trimmedTitle), { 
+      withCredentials: true,
+      headers: new HttpHeaders({ 
+        'Content-Type': 'application/json' 
+      })
+    })
+      .subscribe({
+        next: (response) => {
+          console.log('Shelf created successfully:', response);
+          
+          // Add the new shelf to the array with the same structure as API returns
+          const newShelf = {
+            id: response && (response as any).id ? (response as any).id : null,
+            title: trimmedTitle,
+            count: 0
+          };
+          
+          this.shelves.push(newShelf);
           this.message = 'Полицю успішно створено!';
           this.isSuccess = true;
           setTimeout(() => this.message = '', 5000);
         },
-        error => {
+        error: (error) => {
           console.error('Помилка створення полиці:', error);
-          this.message = 'Не вдалося створити полицю. Спробуйте ще раз.';
+          
+          // Extract and display the specific validation errors if available
+          if (error.error && error.error.errors) {
+            console.error('Validation errors:', error.error.errors);
+            this.message = 'Помилка: ' + Object.values(error.error.errors).flat().join(', ');
+          } else {
+            this.message = 'Не вдалося створити полицю. Спробуйте ще раз.';
+          }
+          
           this.isSuccess = false;
           setTimeout(() => this.message = '', 5000);
         }
-      );
+      });
   }
 
   apicall(title: string) {

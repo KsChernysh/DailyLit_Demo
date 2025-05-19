@@ -120,6 +120,12 @@ export class BookDetailComponent implements OnInit {
       return;
     }
 
+    // Get the selected shelf to check if it's the "Read" shelf
+    const selectedShelf = this.shelves.find(shelf => shelf.id == this.selectedShelfId);
+    const isReadShelf = selectedShelf && selectedShelf.title === "Read";
+
+    const currentDate = new Date();
+    
     const newBook = {
       title: this.book.title || 'No Title',
       author: this.book.author_name || 'No Author',
@@ -128,7 +134,8 @@ export class BookDetailComponent implements OnInit {
       status: '',
       rating: '',
       genre: this.book.genre || 'No Genre',
-      booksadded: new Date(),
+      booksadded: currentDate,  // Set when the book was added to any shelf
+      dateRead: isReadShelf ? currentDate : null  // Set DateRead only if adding to "Read" shelf
     };
 
     console.log('Відправляємо книгу на сервер:', newBook);

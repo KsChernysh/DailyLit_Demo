@@ -34,10 +34,9 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" *ngIf="loggedIn" routerLink="/community" routerLinkActive="active">
-            <i class="fa fa-users"></i> Спільнота
-          </a>
+          <a class="nav-link" routerLink="/community" routerLinkActive="active">Спільнота</a>
         </li>
+        
         <li class="nav-item">
           <a class="nav-link" routerLink="/aichat" routerLinkActive="active">
             <i class="fa fa-comment"></i> AI Допомога
@@ -103,10 +102,12 @@
 <!-- Основний контейнер контенту -->
 <div class="app-container">
   <div class="content-container">
-    <router-outlet></router-outlet>
+    <div class="router-outlet-wrapper">
+      <router-outlet></router-outlet>
+    </div>
   </div>
   
-  <!-- Футер - перенесено всередину app-container -->
+  <!-- Футер -->
   <footer>
     <div class="container">
       <div class="row">

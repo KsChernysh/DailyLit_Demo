@@ -1,0 +1,129 @@
+<div class="create-club-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fa fa-users"></i> Створити книжковий клуб
+    </h1>
+    <p class="page-subtitle">Створіть спільноту для обговорення улюблених книг та знайдіть однодумців</p>
+  </div>
+  
+  <div class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">
+        <i class="fa fa-pencil-square-o"></i> Інформація про клуб
+      </h2>
+    </div>
+    
+    <div class="form-body">
+      <!-- Error message -->
+      <div *ngIf="error" class="error-message">
+        <i class="fa fa-exclamation-circle"></i>
+        <span>{{ error }}</span>
+      </div>
+      
+      <form (ngSubmit)="createClub()" #clubForm="ngForm">
+        <!-- Club name -->
+        <div class="form-group">
+          <label for="name" class="form-label">Назва клубу *</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name"
+            class="form-control" 
+            [(ngModel)]="club.name" 
+            required 
+            minlength="3"
+            placeholder="Введіть назву клубу"
+            #nameInput="ngModel"
+          >
+          <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)" class="help-text text-danger">
+            <div *ngIf="nameInput.errors?.['required']">Назва клубу обов'язкова</div>
+            <div *ngIf="nameInput.errors?.['minlength']">Назва має містити щонайменше 3 символи</div>
+          </div>
+        </div>
+        
+        <!-- Club description -->
+        <div class="form-group">
+          <label for="description" class="form-label">Опис клубу *</label>
+          <textarea 
+            id="description" 
+            name="description"
+            class="form-control" 
+            [(ngModel)]="club.description" 
+            required 
+            minlength="20"
+            rows="5"
+            placeholder="Опишіть, про що ваш клуб, чим ви будете займатися та кого запрошуєте..."
+            #descriptionInput="ngModel"
+          ></textarea>
+          <div *ngIf="descriptionInput.invalid && (descriptionInput.dirty || descriptionInput.touched)" class="help-text text-danger">
+            <div *ngIf="descriptionInput.errors?.['required']">Опис клубу обов'язковий</div>
+            <div *ngIf="descriptionInput.errors?.['minlength']">Опис має містити щонайменше 20 символів</div>
+          </div>
+          <div class="help-text">
+            Гарний опис допоможе зацікавити потенційних учасників вашого клубу
+          </div>
+        </div>
+        
+        <!-- Club genre -->
+        <div class="form-group">
+          <label for="genre" class="form-label">Жанр *</label>
+          <select 
+            id="genre" 
+            name="genre"
+            class="form-control" 
+            [(ngModel)]="club.genre" 
+            required
+            #genreInput="ngModel"
+          >
+            <option value="" disabled selected>Оберіть жанр</option>
+            <option *ngFor="let genre of genres" [value]="genre">{{ genre }}</option>
+          </select>
+          <div *ngIf="genreInput.invalid && (genreInput.dirty || genreInput.touched)" class="help-text text-danger">
+            <div *ngIf="genreInput.errors?.['required']">Жанр обов'язковий</div>
+          </div>
+        </div>
+        
+        <!-- Club image -->
+        <div class="form-group">
+          <label class="form-label">Зображення клубу (необов'язково)</label>
+          <div class="image-upload" (click)="fileInput.click()">
+            <input 
+              type="file" 
+              #fileInput 
+              style="display: none" 
+              accept="image/*"
+              (change)="onImageSelected($event)"
+            >
+            <i class="fa fa-cloud-upload image-upload-icon"></i>
+            <p class="image-upload-text">Клацніть тут, щоб завантажити зображення для клубу</p>
+            <button type="button" class="image-upload-btn">
+              <i class="fa fa-picture-o"></i> Обрати файл
+            </button>
+          </div>
+          
+          <!-- Image preview -->
+          <div *ngIf="imagePreview" class="mt-3">
+            <h4 class="mb-2">Попередній перегляд:</h4>
+            <img [src]="imagePreview" alt="Preview" class="image-preview">
+          </div>
+        </div>
+        
+        <!-- Submit buttons -->
+        <div class="form-actions">
+          <button type="button" class="btn secondary-btn" routerLink="/community">
+            <i class="fa fa-arrow-left"></i> Назад
+          </button>
+          <button 
+            type="submit" 
+            class="btn primary-btn" 
+            [disabled]="clubForm.invalid || submitting"
+          >
+            <span *ngIf="submitting" class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+            <i *ngIf="!submitting" class="fa fa-check-circle"></i>
+            Створити клуб
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

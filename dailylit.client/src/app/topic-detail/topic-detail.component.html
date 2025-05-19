@@ -1,0 +1,142 @@
+<div class="container" *ngIf="topic && !loading">
+  <div class="page-header section-container">
+    <div class="breadcrumb">
+      <a routerLink="/community">Спільнота</a>
+      <i class="fa fa-chevron-right"></i>
+      <a [routerLink]="['/clubs', topic.club.id]">{{ topic.club.name }}</a>
+      <i class="fa fa-chevron-right"></i>
+      <span>{{ topic.title }}</span>
+    </div>
+    
+    <div class="page-title">
+      <h1>{{ topic.title }}</h1>
+      <a [routerLink]="['/clubs', topic.club.id]" class="club-badge">
+        <i class="fa fa-users"></i> {{ topic.club.name }}
+      </a>
+    </div>
+    
+    <div class="topic-meta">
+      <span><i class="fa fa-user"></i> {{ topic.creator }}</span>
+      <span><i class="fa fa-calendar"></i> {{ topic.createdAt | date:'dd.MM.yyyy HH:mm' }}</span>
+      <span><i class="fa fa-comments"></i> {{ topic.comments?.length || 0 }} коментарів</span>
+    </div>
+  </div>
+  
+  <div class="chat-container section-container">
+    <div class="chat-header">
+      <div class="header-title">
+        <i class="fa fa-comments"></i>
+        <h4>Обговорення</h4>
+      </div>
+      <span class="comment-count">{{ topic.comments?.length || 0 }} коментарів</span>
+    </div>
+    
+    <div class="chat-body">
+      <div *ngIf="topic.comments?.length === 0" class="no-messages">
+        <div class="empty-state">
+          <i class="fa fa-book"></i>
+          <p>Поки що немає коментарів. Будьте першим, хто напише коментар!</p>
+          <small>Поділіться своїми враженнями або задайте питання</small>
+        </div>
+      </div>
+      
+      <div class="messages-list" *ngIf="topic.comments && topic.comments.length > 0">
+        <div class="comment-item" *ngFor="let comment of topic.comments">
+          <div class="message-item" [class.own-message]="comment.user?.userName === userProfile?.userName">
+            <div class="message-avatar">
+              <div class="avatar-placeholder" [style.background-color]="getAvatarColor(comment.user?.userName || 'Анонім')">
+                {{ (comment.user?.userName || 'A').charAt(0).toUpperCase() }}
+              </div>
+            </div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-author">{{ comment.user?.userName || 'Анонім' }}</span>
+                <div class="message-time">
+                  <i class="fa fa-clock-o"></i> {{ comment.createdAt | date:'dd.MM.yyyy HH:mm' }}
+                </div>
+              </div>
+              <div class="message-text">{{ comment.text }}</div>
+              
+              <div class="message-actions">
+                <button class="action-btn" [class.liked]="comment.userLiked" (click)="likeComment(comment.id)">
+                  <svg class="heart-icon" [class.liked]="comment.userLiked" viewBox="0 0 296.472 296.472">
+                    <g>
+                      <path d="M148.237,0C66.368,0,0,66.367,0,148.235c0,81.869,66.367,148.236,148.236,148.236c81.867,0,148.234-66.367,148.234-148.236 C296.471,66.367,230.104,0,148.237,0z M148.236,239.217c-127-81.04-91.78-153.231-58.15-163.982 c28.343-9.059,52.715,8.4,58.15,31.099c5.436-22.698,29.808-40.157,58.15-31.099C240.016,85.985,275.236,158.177,148.236,239.217z"></path>
+                    </g>
+                  </svg>
+                  {{ comment.likes || 0 }}
+                </button>
+                <button class="action-btn" (click)="replyToComment(comment)">
+                  <i class="fa fa-reply"></i> Відповісти
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chat-footer">
+      <div *ngIf="replyingTo" class="reply-badge">
+        <i class="fa fa-reply"></i>
+        <span>Відповідь на коментар користувача <strong>{{ replyingTo.user?.userName }}</strong></span>
+        <button class="close-btn" (click)="cancelReply()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      
+      <div *ngIf="error" class="error-notice">
+        <i class="fa fa-exclamation-circle"></i> {{ error }}
+      </div>
+      
+      <div class="message-input-container">
+        <textarea 
+          id="commentTextarea"
+          class="message-input" 
+          [(ngModel)]="newComment" 
+          placeholder="Напишіть свій коментар..."
+          rows="3"></textarea>
+        
+        <div class="input-actions">
+          <div class="form-info">
+            <span *ngIf="!newComment.trim()" class="text-muted">
+              <small>Поділіться своїми думками...</small>
+            </span>
+          </div>
+          
+          <button class="send-btn" [disabled]="!newComment.trim() || submitting" (click)="addComment()">
+            <i *ngIf="!submitting" class="fa fa-paper-plane"></i>
+            <i *ngIf="submitting" class="fa fa-spinner fa-spin"></i>
+            <span>Надіслати</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="back-button-container">
+    <button class="btn-brown" routerLink="/community">
+      <i class="fa fa-arrow-left"></i> До списку клубів
+    </button>
+  </div>
+</div>
+
+<!-- Стан завантаження -->
+<div class="loading-container" *ngIf="loading">
+  <div class="loading-spinner"></div>
+  <div>Завантаження обговорення...</div>
+</div>
+
+<!-- Стан помилки -->
+<div class="container" *ngIf="error && !loading && !topic">
+  <div class="error-container section-container">
+    <div class="error-icon">
+      <i class="fa fa-exclamation-triangle"></i>
+    </div>
+    <h4>Помилка!</h4>
+    <p>{{ error }}</p>
+    <button class="btn-brown" routerLink="/community">
+      <i class="fa fa-arrow-left"></i> До списку клубів
+    </button>
+  </div>
+</div>

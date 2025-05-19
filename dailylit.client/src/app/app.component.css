@@ -64,7 +64,6 @@ html, body {
   background-color: #ebe1d4; /* bg-default */
   font-family: 'Roboto', 'Helvetica', sans-serif;
   color: #3e3128; /* text-primary */
-  position: relative;
 }
 
 body {
@@ -187,10 +186,9 @@ body {
   flex-direction: column;
   width: 100%;
   padding-top: 70px; /* Додаємо відступ зверху, щоб не перекривати навбар */
-  padding-bottom: 0; /* Видаляємо відступ знизу, він буде у content-container */
   min-height: calc(100vh - 70px); /* Висота екрану мінус навбар */
-  position: relative;
   background-color: #ebe1d4; /* bg-default */
+  box-shadow: 0 2px 10px rgba(88, 69, 57, 0.1);
 }
 
 .content-container {
@@ -198,7 +196,10 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 15px 80px 15px; /* Збільшено нижній padding для футера */
+  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 70px - 76px); /* viewport - navbar height - footer height */
 }
 
 /* Футер */
@@ -207,10 +208,9 @@ footer {
   color: #f9f3ec; /* text-inverse */
   padding: 25px 0;
   width: 100%;
-  z-index: 10;
+  margin-top: auto; /* Прижимає футер до низу */
   box-shadow: 0 -2px 10px rgba(88, 69, 57, 0.1);
   border-top: 1px solid #f0e5d9; /* accent-light */
-  position: relative; /* Змінено з absolute на relative */
 }
 
 footer p {
@@ -314,4 +314,102 @@ footer p {
   text-align: center;
   color: #6b584a; /* text-secondary */
   font-style: italic;
+}
+
+/* Адаптивність */
+@media (max-width: 992px) {
+  .navbar-nav {
+    padding: 10px 0;
+  }
+  
+  .auth-nav {
+    margin-top: 15px;
+    justify-content: center;
+  }
+  
+  .navbar-collapse {
+    background-color: #5e4c44;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .search-input, .btn-search {
+    height: 38px;
+  }
+  
+  .form-inline {
+    width: 100%;
+    margin: 15px 0;
+  }
+  
+  .input-group {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-brand span {
+    display: none;
+  }
+  
+  .content-container {
+    padding: 20px 10px;
+  }
+  
+  footer .text-right {
+    text-align: left !important;
+    margin-top: 10px;
+  }
+  
+  .auth-nav {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .auth-btn {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    padding: 8px 0;
+  }
+  
+  .navbar-brand img {
+    height: 36px;
+  }
+  
+  .content-container {
+    padding: 15px 8px;
+  }
+  
+  .search-results {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    max-height: 50vh;
+  }
+  
+  footer {
+    padding: 20px 0;
+  }
+}
+
+/* Виправлення для sticky footer */
+.router-outlet-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+router-outlet + * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }

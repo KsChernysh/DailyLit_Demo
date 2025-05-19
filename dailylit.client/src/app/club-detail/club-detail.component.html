@@ -1,0 +1,102 @@
+<div class="container mt-4" *ngIf="club && !loading">
+  <!-- Club info card with border -->
+  <div class="section-container club-info-section">
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h1 class="club-title">{{ club.name }}</h1>
+          <button class="btn btn-brown" [routerLink]="['/create-topic', club.id]">
+            <i class="bi bi-plus-circle me-2"></i> Створити тему
+          </button>
+        </div>
+        <!-- Genre with brown border -->
+        <div class="club-meta mb-4">
+          <span class="club-genre genre-badge">{{ club.genre }}</span>
+          <span class="club-date">Створено: {{ club.createdAt | date:'mediumDate' }}</span>
+        </div>
+        <p class="club-description">{{ club.description }}</p>
+        <div class="club-creator">
+          <img [src]="club.creatorImage || './assets/default-avatar.png'" class="creator-avatar" alt="Creator avatar">
+          <span>Засновник: <span class="creator-name">{{ club.creator }}</span></span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="club-image-card">
+          <div class="image-container">
+            <img [src]="club.image || './assets/default-club.png'" alt="{{ club.name }}" class="club-image">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Topics section with border -->
+  <div class="section-container topics-section">
+    <div class="topics-header">
+      <h3>Теми обговорення</h3>
+      <span class="topics-count" *ngIf="club.topics && club.topics.length > 0">{{ club.topics.length }} {{ club.topics.length | i18nPlural: {'=1': 'тема', 'few': 'теми', 'many': 'тем', 'other': 'тем'} }}</span>
+    </div>
+    
+    <div class="topics-table-container" *ngIf="club.topics && club.topics.length > 0">
+      <table class="topics-table">
+        <thead>
+          <tr>
+            <th>Назва теми</th>
+            <th>Автор</th>
+            <th class="text-center">Коментарі</th>
+            <th>Створено</th>
+            <th>Останній коментар</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let topic of club.topics" [routerLink]="['/topics', topic.id]" class="topic-row">
+            <td>
+              <h6 class="topic-title">{{ topic.title }}</h6>
+            </td>
+            <td class="topic-creator">{{ topic.creator }}</td>
+            <td class="text-center">
+              <span class="comments-badge">{{ topic.commentsCount || 0 }}</span>
+            </td>
+            <td class="topic-date">{{ topic.createdAt | date:'short' }}</td>
+            <td class="topic-date">{{ topic.lastActivityAt | date:'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div *ngIf="!club.topics || club.topics.length === 0" class="empty-topics">
+      <i class="bi bi-chat-left-text"></i>
+      <h5>У цьому клубі ще немає тем</h5>
+      <p>Станьте першим, хто створить тему для обговорення!</p>
+      <button class="btn btn-brown" [routerLink]="['/create-topic', club.id]">
+        Створити першу тему
+      </button>
+    </div>
+  </div>
+  
+  <div class="back-button-container">
+    <button class="btn btn-brown" routerLink="/community">
+      <i class="bi bi-arrow-left me-2"></i> До списку клубів
+    </button>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div class="loading-container" *ngIf="loading">
+  <div class="spinner">
+    <span class="visually-hidden">Завантаження...</span>
+  </div>
+  <p class="loading-text">Завантаження даних клубу...</p>
+</div>
+
+<!-- Error state -->
+<div class="container mt-4" *ngIf="error && !loading">
+  <div class="error-container section-container">
+    <div class="error-icon">
+      <i class="bi bi-exclamation-triangle"></i>
+    </div>
+    <h4>Помилка!</h4>
+    <p>{{ error }}</p>
+    <button class="btn btn-brown" routerLink="/community">До списку клубів</button>
+  </div>
+</div>

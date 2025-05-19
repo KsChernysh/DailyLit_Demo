@@ -9,6 +9,7 @@ namespace DailyLit.Server.Repository
        public  Task<Shelfs> AddShelfsAsync(string name);
        public  Task<BookUrls> AddBookAsync(BooksViewModel book, int key);
         public Task<List<Shelfs>> GetShelvesAsync();
+        public Task<List<BookUrls>> GetBooksByShelfAsync(string name);
         public Task<List<BookUrls>> GetBooksAsync(string name);
         public Task<BooksViewModel> GetBookAsync (string key, string shelfName);
         public Task<IActionResult> DeleteShelfAsync(string name);

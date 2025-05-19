@@ -54,8 +54,10 @@ export class GenresComponent implements OnInit {
 
   goTo(genre: string) {
     this.global.selectedGenre = genre;
+    this.selectedGenre = genre; // Update the selected genre immediately
+    console.log(`Loading books with covers for genre: ${genre}`);
     this.bookService.getBooks(genre).subscribe((items: any[]) => {
-      console.log('Fetched items:', items);
+      console.log('Fetched items with covers:', items);
       const formattedGenre = genre.replace(/\s+/g, '-');  // Замінюємо пробіли на дефіси
       this.router.navigate(['genre', formattedGenre]); // Зміна маршруту
     }, error => {
