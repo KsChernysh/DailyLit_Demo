@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BookService } from '../book.service';
@@ -11,6 +11,10 @@ import { GlobalVariablesService } from '../global.variables.service';
   styleUrls: ['./book-list.component.css']
 })
 export class BookListComponent implements OnInit, OnDestroy {
+  @Input() viewMode: string = '';
+  @Input() items: any[] = [];
+  @Input() selectedGenre: string = '';
+
   books: any[] = [];
   genre: string = '';
   BaseId: string = '';

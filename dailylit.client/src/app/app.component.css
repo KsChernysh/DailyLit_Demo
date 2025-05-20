@@ -218,13 +218,19 @@ footer p {
   opacity: 0.9;
 }
 
-/* Стилі пошуку */
+/* Стилі пошуку - ОНОВЛЕНІ */
+.search-container {
+  position: relative;
+  margin-right: 10px;
+}
+
 .search-input {
   background-color: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #f0e5d9; /* Світло-пісочний */
   transition: all 0.2s ease;
   border-radius: 6px 0 0 6px; /* border-radius-md */
+  width: 240px;
 }
 
 .search-input::placeholder {
@@ -236,6 +242,7 @@ footer p {
   border-color: #f8ece2; /* primary-light */
   box-shadow: 0 0 0 0.2rem rgba(249, 243, 236, 0.25);
   color: #f9f3ec; /* text-inverse */
+  width: 280px; /* Трохи розширюємо поле при фокусі */
 }
 
 .btn-search {
@@ -250,20 +257,59 @@ footer p {
   background-color: #b57a49; /* primary-dark */
 }
 
-/* Стилі пошуку з конкретними кольорами */
+/* ОНОВЛЕНІ стилі вікна результатів пошуку */
 .search-results {
   position: absolute;
-  top: 100%;
-  left: 0;
+  top: calc(100% + 5px);
   right: 0;
+  width: 350px; /* Фіксована ширина для більш компактного вигляду */
   background-color: #fcf9f5; /* bg-paper */
   border: 1px solid #d1c3b5; /* border-color */
-  border-radius: 6px; /* border-radius-md */
-  box-shadow: 0 8px 16px rgba(88, 69, 57, 0.15); /* shadow-lg */
-  max-height: 400px;
+  border-radius: 8px; /* border-radius-lg */
+  box-shadow: 0 8px 20px rgba(88, 69, 57, 0.2); /* Збільшена тінь */
+  max-height: 450px;
+  overflow: hidden;
+  z-index: 1050;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Заголовок результатів */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f0e5d9; /* accent-light */
+  color: #6b584a; /* text-secondary */
+  font-weight: 600;
+  border-bottom: 1px solid #e8dfd5; /* border-light */
+}
+
+.btn-close-results {
+  background: none;
+  border: none;
+  color: #9c8877; /* text-light */
+  cursor: pointer;
+  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.btn-close-results:hover {
+  background-color: #e8dfd5; /* border-light */
+  color: #3e3128; /* text-primary */
+}
+
+/* Контент результатів пошуку */
+.search-results-content {
   overflow-y: auto;
-  z-index: 1000;
-  margin-top: 4px;
+  max-height: 350px;
+  padding: 5px;
 }
 
 .book-item {
@@ -272,6 +318,7 @@ footer p {
   border-bottom: 1px solid #e8dfd5; /* border-light */
   cursor: pointer;
   transition: all 0.2s ease;
+  border-radius: 6px; /* border-radius-md */
 }
 
 .book-item:last-child {
@@ -280,40 +327,106 @@ footer p {
 
 .book-item:hover {
   background-color: #f8ece2; /* primary-light */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(88, 69, 57, 0.08);
 }
 
 .book-cover {
   width: 50px;
   height: 75px;
   object-fit: cover;
-  margin-right: 15px;
+  margin-right: 12px;
   border-radius: 4px; /* border-radius-sm */
-  box-shadow: 0 2px 4px rgba(88, 69, 57, 0.1); /* shadow-sm */
+  box-shadow: 0 2px 4px rgba(88, 69, 57, 0.15); /* shadow-sm */
 }
 
 .book-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0; /* Для правильного обрізання тексту */
 }
 
-.book-info h5 {
-  margin: 0 0 5px 0;
-  font-size: 16px;
+.book-title {
+  margin: 0 0 4px 0;
+  font-size: 15px;
   color: #3e3128; /* text-primary */
+  font-weight: 600;
+  /* Обрізання довгих назв */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-.book-info p {
-  margin: 0;
+.book-author {
+  margin: 0 0 4px 0;
   color: #6b584a; /* text-secondary */
+  font-size: 13px;
+  /* Обрізання довгих імен авторів */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.book-rating {
+  display: flex;
+  align-items: center;
+  color: #e9b872; /* warning-color - золотистий для зірочок */
+  font-size: 13px;
+}
+
+.book-rating i {
+  margin-right: 4px;
+}
+
+.no-results, .search-hint {
+  padding: 20px 10px;
+  text-align: center;
+  color: #9c8877; /* text-light */
+}
+
+.no-results i, .search-hint i {
+  font-size: 24px;
+  margin-bottom: 8px;
+  display: block;
+  opacity: 0.7;
+}
+
+.no-results p, .search-hint p {
+  margin: 5px 0 0;
   font-size: 14px;
 }
 
-.no-results {
-  padding: 15px;
+/* Футер результатів пошуку */
+.search-footer {
+  padding: 10px 15px;
+  border-top: 1px solid #e8dfd5; /* border-light */
   text-align: center;
-  color: #6b584a; /* text-secondary */
-  font-style: italic;
+}
+
+.view-all-results {
+  color: #d2905b; /* primary-color */
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.view-all-results:hover {
+  color: #b57a49; /* primary-dark */
+  text-decoration: underline;
+}
+
+/* Анімація появи вікна результатів */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Адаптивність */
@@ -347,6 +460,12 @@ footer p {
   .input-group {
     width: 100%;
   }
+  
+  .search-results {
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
 }
 
 @media (max-width: 768px) {
@@ -373,6 +492,18 @@ footer p {
     justify-content: center;
     margin-bottom: 8px;
   }
+  
+  .search-container {
+    width: 100%;
+  }
+  
+  .search-input {
+    width: 100%;
+  }
+  
+  .search-input:focus {
+    width: 100%;
+  }
 }
 
 @media (max-width: 576px) {
@@ -393,7 +524,9 @@ footer p {
     top: 70px;
     left: 0;
     right: 0;
-    max-height: 50vh;
+    max-height: 60vh;
+    width: 100%;
+    border-radius: 0 0 8px 8px;
   }
   
   footer {

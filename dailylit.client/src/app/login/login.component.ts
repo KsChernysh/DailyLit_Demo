@@ -27,7 +27,7 @@ export class LoginComponent {
       (response: any) => {
         // Handle successful login
         this.authService.setLoggedIn(true);
-        this.router.navigate(['/']);
+        this.router.navigate(['/profile']);
       },
       (error: any) => {
         // Handle login error

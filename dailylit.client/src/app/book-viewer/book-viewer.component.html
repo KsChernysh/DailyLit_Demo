@@ -137,14 +137,14 @@
     <!-- Контейнер для відображення EPUB -->
     <div class="epub-container" #epubViewer></div>
     
-    <!-- Екран завантаження файлу, коли книга не відкрита -->
+    <!-- Спрощений екран завантаження файлу -->
     <div class="upload-container" *ngIf="!bookLoaded">
       <div class="upload-content">
         <div class="upload-icon">
           <i class="fas fa-book-open"></i>
         </div>
-        <h2>Відкрийте електронну книгу</h2>
-        <p>Виберіть EPUB файл на вашому пристрої для початку читання</p>
+        <h2>Виберіть електронну книгу</h2>
+        <p>Оберіть EPUB файл на вашому пристрої для початку читання</p>
         
         <div class="upload-actions">
           <label for="bookUpload" class="upload-btn">
@@ -159,33 +159,13 @@
           >
         </div>
         
-        <!-- Нещодавно відкриті книги -->
-        <div *ngIf="recentBooks.length > 0" class="recent-books">
-          <h3>Нещодавно відкриті книги</h3>
-          <div class="recent-books-list">
-            <div *ngFor="let book of recentBooks" class="recent-book-item" (click)="openRecentBook(book)">
-              <div class="recent-book-cover">
-                <img [src]="book.cover || 'assets/images/default-book-cover.png'" [alt]="book.title">
-              </div>
-              <div class="recent-book-info">
-                <div class="recent-book-title">{{ book.title }}</div>
-                <div class="recent-book-author" *ngIf="book.author">{{ book.author }}</div>
-                <div class="recent-book-date">
-                  <i class="fas fa-clock"></i> {{ book.lastOpened | date:'short' }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
         <div class="upload-note">
           <i class="fas fa-info-circle"></i>
           <span>Підтримується формат EPUB</span>
         </div>
       </div>
     </div>
-
-   
+  </div>
   
   <!-- Нижня панель з кнопками навігації -->
   <div class="viewer-footer" *ngIf="bookLoaded">

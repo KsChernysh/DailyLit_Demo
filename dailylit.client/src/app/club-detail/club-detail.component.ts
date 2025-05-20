@@ -20,6 +20,7 @@ export class ClubDetailComponent implements OnInit {
   ];
   Math = Math; // Make Math available in template
   clubId: number | null = null;
+  isMember: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -126,5 +127,25 @@ export class ClubDetailComponent implements OnInit {
 
   navigateToTopic(topicId: number): void {
     this.router.navigate(['/topics', topicId]);
+  }
+
+  joinClub(): void {
+    if (!this.clubId) {
+      console.error('Club ID is not defined');
+      return;
+    }
+
+    this.http.post(`${this.apiUrl}/Clubs/${this.clubId}/Join`, {}, { withCredentials: true })
+      .subscribe({
+        next: (response: any) => {
+          console.log('Successfully joined the club:', response);
+          this.isMember = true;
+          this.club.membersCount += 1; // Increment member count
+        },
+        error: (error) => {
+          console.error('Error joining the club:', error);
+          alert(error.error?.error || 'Не вдалося приєднатися до клубу. Спробуйте пізніше.');
+        }
+      });
   }
 }

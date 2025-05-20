@@ -3,7 +3,7 @@
     <div class="auth-header">
       <i class="fa fa-user-plus auth-icon"></i>
       <h1>Створення облікового запису</h1>
-      <p>Зареєструйтесь для повного доступу до DailyLit</p>
+      <p>Зареєструйтесь та отримайте повний доступ до DailyLit</p>
     </div>
     
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
@@ -15,7 +15,7 @@
             id="name" 
             formControlName="name" 
             type="text" 
-            placeholder="Введіть бажане ім'я користувача"
+            placeholder="Введіть ім'я користувача"
             autocomplete="username"
             class="form-input"
           >

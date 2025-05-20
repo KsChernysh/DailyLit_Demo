@@ -37,10 +37,12 @@ namespace DailyLit.Server.Controllers
                     c.Description,
                     c.Genre,
                     c.Image,
+                    
                     Creator = c.Creator.UserName,
                     CreatorImage = c.Creator.ProfilePicture,
                     CreatedAt = c.CreatedAt,
-                    TopicsCount = c.Topics.Count
+                        TopicsCount = c.Topics.Count,
+                    MembersCount = _context.ClubMembers.Count(gm => gm.ClubId == c.Id) // Count members
                 })
                 .ToListAsync();
 
@@ -146,7 +148,8 @@ namespace DailyLit.Server.Controllers
                     CommentsCount = t.Comments.Count,
                     t.CreatedAt,
                     t.LastActivityAt
-                }).OrderByDescending(t => t.LastActivityAt)
+                }).OrderByDescending(t => t.LastActivityAt),
+                MembersCount = _context.GroupMembers.Count(gm => gm.GroupId == club.Id) // Count members
             };
 
             return Ok(result);
@@ -720,6 +723,43 @@ namespace DailyLit.Server.Controllers
                 .ToListAsync();
 
             return Ok(topics);
+        }
+
+        // POST: api/Community/Clubs/{id}/Join
+        [HttpPost("Clubs/{id}/Join")]
+        public async Task<IActionResult> JoinClub(int id)
+        {
+            var user = await _context.Profiles.FirstOrDefaultAsync(u => u.UserName == _userName);
+            if (user == null)
+            {
+                return BadRequest(new { error = "User not found. You must be logged in to join a club." });
+            }
+            var profile = await _context.Profiles.FirstOrDefaultAsync(u => u.UserName == _userName);
+
+            var club = await _context.Clubs.FirstOrDefaultAsync(x => x.Id == id);
+            if (club == null)
+            {
+                return NotFound(new { error = "Club not found." });
+            }
+
+            var existingMembership = await _context.GroupMembers.FirstOrDefaultAsync(gm => gm.GroupId == id && gm.UserId == user.Id);
+            if (existingMembership != null)
+            {
+                return BadRequest(new { error = "You are already a member of this club." });
+            }
+
+            var membership = new ClubMembers
+            {
+                ClubId = id,
+                UserId = profile.Id,
+                UserProfile = profile,
+                Club = club,
+            };
+
+            _context.ClubMembers.Add(membership);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Successfully joined the club." });
         }
     }
 }

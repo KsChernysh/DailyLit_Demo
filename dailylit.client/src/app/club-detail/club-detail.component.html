@@ -1,102 +1,167 @@
-<div class="container mt-4" *ngIf="club && !loading">
+<div class="club-detail-container" *ngIf="club && !loading">
+  <!-- Хлібні крихти -->
+  <div class="breadcrumbs">
+    <a routerLink="/" class="breadcrumb-item">Головна</a>
+    <span class="separator"><i class="fa fa-chevron-right"></i></span>
+    <a routerLink="/community" class="breadcrumb-item">Спільнота</a>
+    <span class="separator"><i class="fa fa-chevron-right"></i></span>
+    <span class="breadcrumb-item current">{{ club.name }}</span>
+  </div>
+
   <!-- Club info card with border -->
-  <div class="section-container club-info-section">
-    <div class="row mb-4">
-      <div class="col-md-8">
+  <div class="section-card club-info-section">
+    <div class="club-header-wrapper">
+      <div class="club-header-content">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h1 class="club-title">{{ club.name }}</h1>
-          <button class="btn btn-brown" [routerLink]="['/create-topic', club.id]">
-            <i class="bi bi-plus-circle me-2"></i> Створити тему
-          </button>
+          <div class="club-actions">
+            <button class="btn primary-btn" *ngIf="!isMember" (click)="joinClub()">
+              <i class="fa fa-user-plus"></i>
+              <span>Приєднатися</span>
+            </button>
+            <div class="member-badge" *ngIf="isMember">
+              <i class="fa fa-check-circle"></i>
+              <span>Ви учасник</span>
+            </div>
+            <button class="btn primary-btn" [routerLink]="['/create-topic', club.id]">
+              <i class="fa fa-plus-circle"></i>
+              <span>Створити тему</span>
+            </button>
+          </div>
         </div>
-        <!-- Genre with brown border -->
-        <div class="club-meta mb-4">
-          <span class="club-genre genre-badge">{{ club.genre }}</span>
-          <span class="club-date">Створено: {{ club.createdAt | date:'mediumDate' }}</span>
+        
+        <!-- Метадані клубу -->
+        <div class="club-meta-stats">
+          <span class="club-genre-badge">
+            <i class="fa fa-bookmark"></i>
+            <span>{{ club.genre }}</span>
+          </span>
+          <span class="stat-item">
+            <i class="fa fa-users"></i>
+            <span>{{ club.membersCount }} учасників</span>
+          </span>
+          <span class="stat-item">
+            <i class="fa fa-calendar"></i>
+            <span>Створено: {{ club.createdAt | date:'mediumDate' }}</span>
+          </span>
         </div>
-        <p class="club-description">{{ club.description }}</p>
-        <div class="club-creator">
+        
+        <!-- Опис клубу -->
+        <div class="club-description-wrapper">
+          <p class="club-description">{{ club.description }}</p>
+        </div>
+        
+        <!-- Засновник клубу -->
+        <div class="creator-info">
           <img [src]="club.creatorImage || './assets/default-avatar.png'" class="creator-avatar" alt="Creator avatar">
-          <span>Засновник: <span class="creator-name">{{ club.creator }}</span></span>
+          <div class="creator-details">
+            <span class="creator-label">Засновник:</span>
+            <span class="creator-name">{{ club.creator }}</span>
+          </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="club-image-card">
-          <div class="image-container">
-            <img [src]="club.image || './assets/default-club.png'" alt="{{ club.name }}" class="club-image">
+      
+      <!-- Зображення клубу -->
+      <div class="club-image-wrapper">
+        <div class="club-image-container">
+          <img *ngIf="club.image" [src]="club.image" alt="{{ club.name }}" class="club-image">
+          <div *ngIf="!club.image" class="default-club-image">
+            <i class="fa fa-book"></i>
+            <span>Немає зображення</span>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Topics section with border -->
-  <div class="section-container topics-section">
-    <div class="topics-header">
-      <h3>Теми обговорення</h3>
-      <span class="topics-count" *ngIf="club.topics && club.topics.length > 0">{{ club.topics.length }} {{ club.topics.length | i18nPlural: {'=1': 'тема', 'few': 'теми', 'many': 'тем', 'other': 'тем'} }}</span>
+  <!-- Topics section with cards -->
+  <div class="section-card topics-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fa fa-comments section-icon"></i>
+        <span>Теми обговорення</span>
+        <span class="topics-count" *ngIf="club.topics && club.topics.length > 0">
+          ({{ club.topics.length }})
+        </span>
+      </h2>
+      
+      <button class="btn primary-btn mobile-create-btn" [routerLink]="['/create-topic', club.id]">
+        <i class="fa fa-plus-circle"></i>
+        <span>Нова тема</span>
+      </button>
     </div>
     
-    <div class="topics-table-container" *ngIf="club.topics && club.topics.length > 0">
-      <table class="topics-table">
-        <thead>
-          <tr>
-            <th>Назва теми</th>
-            <th>Автор</th>
-            <th class="text-center">Коментарі</th>
-            <th>Створено</th>
-            <th>Останній коментар</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let topic of club.topics" [routerLink]="['/topics', topic.id]" class="topic-row">
-            <td>
-              <h6 class="topic-title">{{ topic.title }}</h6>
-            </td>
-            <td class="topic-creator">{{ topic.creator }}</td>
-            <td class="text-center">
-              <span class="comments-badge">{{ topic.commentsCount || 0 }}</span>
-            </td>
-            <td class="topic-date">{{ topic.createdAt | date:'short' }}</td>
-            <td class="topic-date">{{ topic.lastActivityAt | date:'short' }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Topics as cards -->
+    <div class="cards-grid" *ngIf="club.topics && club.topics.length > 0">
+      <div class="topic-card-wrapper" *ngFor="let topic of club.topics">
+        <div class="topic-card" [routerLink]="['/topics', topic.id]">
+          <div class="topic-content">
+            <h3 class="topic-title">{{ topic.title }}</h3>
+            <div class="topic-meta">
+              <span class="topic-author">
+                <i class="fa fa-user"></i>
+                <span>{{ topic.creator }}</span>
+              </span>
+              <span class="topic-date">
+                <i class="fa fa-calendar"></i>
+                <span>{{ topic.createdAt | date:'short' }}</span>
+              </span>
+            </div>
+          </div>
+          
+          <div class="topic-footer">
+            <div class="topic-stats">
+              <span class="stat-item">
+                <i class="fa fa-comment"></i>
+                <span>{{ topic.commentsCount || 0 }} коментарів</span>
+              </span>
+            </div>
+            <button class="btn view-btn">
+              <i class="fa fa-eye"></i>
+              <span>Переглянути</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     
-    <div *ngIf="!club.topics || club.topics.length === 0" class="empty-topics">
-      <i class="bi bi-chat-left-text"></i>
-      <h5>У цьому клубі ще немає тем</h5>
+    <!-- Empty state -->
+    <div *ngIf="!club.topics || club.topics.length === 0" class="empty-container">
+      <div class="empty-icon">
+        <i class="fa fa-comments-o"></i>
+      </div>
+      <h3>У цьому клубі ще немає тем</h3>
       <p>Станьте першим, хто створить тему для обговорення!</p>
-      <button class="btn btn-brown" [routerLink]="['/create-topic', club.id]">
-        Створити першу тему
+      <button class="btn primary-btn" [routerLink]="['/create-topic', club.id]">
+        <i class="fa fa-plus-circle"></i>
+        <span>Створити першу тему</span>
       </button>
     </div>
   </div>
   
+  <!-- Back button -->
   <div class="back-button-container">
-    <button class="btn btn-brown" routerLink="/community">
-      <i class="bi bi-arrow-left me-2"></i> До списку клубів
+    <button class="btn secondary-btn" routerLink="/community">
+      <i class="fa fa-arrow-left"></i>
+      <span>До списку клубів</span>
     </button>
   </div>
 </div>
 
 <!-- Loading state -->
 <div class="loading-container" *ngIf="loading">
-  <div class="spinner">
-    <span class="visually-hidden">Завантаження...</span>
-  </div>
-  <p class="loading-text">Завантаження даних клубу...</p>
+  <div class="loading-spinner"></div>
+  <p>Завантаження даних клубу...</p>
 </div>
 
 <!-- Error state -->
-<div class="container mt-4" *ngIf="error && !loading">
-  <div class="error-container section-container">
+<div class="club-detail-container" *ngIf="error && !loading">
+  <div class="error-container">
     <div class="error-icon">
-      <i class="bi bi-exclamation-triangle"></i>
+      <i class="fa fa-exclamation-triangle"></i>
     </div>
-    <h4>Помилка!</h4>
+    <h3>Помилка!</h3>
     <p>{{ error }}</p>
-    <button class="btn btn-brown" routerLink="/community">До списку клубів</button>
+    <button class="btn secondary-btn" routerLink="/community">До списку клубів</button>
   </div>
 </div>

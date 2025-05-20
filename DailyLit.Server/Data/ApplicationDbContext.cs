@@ -12,6 +12,7 @@ namespace DailyLit.Server.Data
         {
         }
         public DbSet<UserProfile> Profiles { get; set; }
+        public DbSet<ClubMembers> ClubMembers { get; set; }
         public DbSet<Goals> Goals { get; set; }
         public DbSet<Friends> Friends { get; set; }
         public DbSet<GroupMembers> GroupMembers { get; set; }

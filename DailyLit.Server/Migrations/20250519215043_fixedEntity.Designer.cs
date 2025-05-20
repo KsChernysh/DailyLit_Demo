@@ -4,6 +4,7 @@ using DailyLit.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DailyLit.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250519215043_fixedEntity")]
+    partial class fixedEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,29 +226,6 @@ namespace DailyLit.Server.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("Clubs");
-                });
-
-            modelBuilder.Entity("DailyLit.Server.Models.ClubMembers", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClubId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClubId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ClubMembers");
                 });
 
             modelBuilder.Entity("DailyLit.Server.Models.Comment", b =>
@@ -771,25 +751,6 @@ namespace DailyLit.Server.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("DailyLit.Server.Models.ClubMembers", b =>
-                {
-                    b.HasOne("DailyLit.Server.Models.Club", "Club")
-                        .WithMany()
-                        .HasForeignKey("ClubId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DailyLit.Server.Models.UserProfile", "UserProfile")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Club");
-
-                    b.Navigation("UserProfile");
-                });
-
             modelBuilder.Entity("DailyLit.Server.Models.Comment", b =>
                 {
                     b.HasOne("DailyLit.Server.Models.Comment", "ReplyToComment")
@@ -840,13 +801,13 @@ namespace DailyLit.Server.Migrations
 
             modelBuilder.Entity("DailyLit.Server.Models.GroupMembers", b =>
                 {
-                    b.HasOne("DailyLit.Server.Models.UserProfile", "UserProfile")
+                    b.HasOne("DailyLit.Server.Models.UserProfile", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UserProfile");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DailyLit.Server.Models.Groups", b =>

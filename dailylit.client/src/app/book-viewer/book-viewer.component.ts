@@ -1,6 +1,24 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 
+// Adding missing TypeScript interfaces to match EPUBJS structure
+interface DisplayedLocation {
+  displayed: {
+    page: number;
+    total: number;
+  };
+  href: string;
+  location?: number; // Optional as it may not always exist
+  percentage?: number; // Optional as it may not always exist
+  cfi: string;
+}
+
+interface NavigationItem {
+  href: string;
+  label: string;
+  subitems?: NavigationItem[];
+}
+
 interface TocItem {
   href: string;
   label: string;
@@ -15,25 +33,7 @@ interface RecentBook {
   lastOpened: Date;
   filePath?: string;
   progress?: number;
-}
-
-interface DisplayedPage {
-  page: number;
-  // Інші поля, якщо вони є
-}
-
-interface LocationStart {
-  displayed?: DisplayedPage;
-  location?: number;
-  percentage?: number;
-  href?: string;
-  cfi?: string;
-}
-
-interface EpubLocation {
-  start: LocationStart;
-  end?: LocationStart;
-  total?: number;
+  cfi?: string; // Додаємо CFI для точної навігації
 }
 
 @Component({
@@ -66,14 +66,15 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
   settingsVisible: boolean = false;
   tocItems: TocItem[] = [];
   loadingTOC: boolean = false;
+  isLoading: boolean = false;
   
   // Налаштування
   fontSize: number = 100;
   currentTheme: 'light' | 'sepia' | 'dark' = 'light';
   margins: number = 20;
   
-  // Нещодавні книги
-  recentBooks: RecentBook[] = [];
+  // Поточна книга - ключ localStorage для зберігання
+  private currentBookKey: string = '';
   
   private themes = {
     light: {
@@ -96,80 +97,97 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
     }
   };
 
-  constructor() {
-    // Завантаження списку нещодавніх книг з локального сховища
-    this.loadRecentBooks();
-  }
+  constructor() { }
 
   ngAfterViewInit() {
-    // Початково відображаємо екран завантаження книги
+    // Перевіряємо, чи є книга в локальному сховищі
+    this.checkForStoredBook();
   }
   
   ngOnDestroy() {
-    // Закриваємо книгу при знищенні компонента
     if (this.book) {
+      // Зберігаємо позицію перед закриттям
+      this.saveCurrentPosition();
       this.book.destroy();
     }
+    
+    // Видаляємо обробник клавіш при знищенні компонента
+    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
   }
   
-  loadRecentBooks() {
-    const recentBooksJson = localStorage.getItem('recentBooks');
-    if (recentBooksJson) {
-      try {
-        this.recentBooks = JSON.parse(recentBooksJson);
-      } catch (error) {
-        console.error('Error parsing recent books from localStorage', error);
-        this.recentBooks = [];
+  // Перевіряємо наявність збереженої книги в localStorage
+  checkForStoredBook() {
+    const lastBookKey = localStorage.getItem('lastBookKey');
+    if (lastBookKey) {
+      this.currentBookKey = lastBookKey;
+      const storedBook = localStorage.getItem(`book_${lastBookKey}`);
+      
+      if (storedBook) {
+        try {
+          const bookData = JSON.parse(storedBook);
+          this.bookTitle = bookData.title || 'Без назви';
+          this.bookAuthor = bookData.author || '';
+          
+          // Для тесту, щоб бачити що відбувається
+          console.log('Found stored book:', bookData.title);
+        } catch (error) {
+          console.error('Error parsing stored book data', error);
+        }
       }
     }
   }
   
-  saveRecentBooks() {
-    localStorage.setItem('recentBooks', JSON.stringify(this.recentBooks));
-  }
-  
-  addToRecentBooks(book: RecentBook) {
-    // Видаляємо книгу зі списку, якщо вона вже є
-    this.recentBooks = this.recentBooks.filter(b => b.id !== book.id);
+  // Зберігаємо поточну позицію в книзі до localStorage
+  saveCurrentPosition() {
+    if (!this.book || !this.currentBookKey) return;
     
-    // Додаємо книгу на початок списку
-    this.recentBooks.unshift(book);
-    
-    // Обмежуємо список до 5 книг
-    if (this.recentBooks.length > 5) {
-      this.recentBooks = this.recentBooks.slice(0, 5);
+    try {
+      const location = this.rendition.currentLocation();
+      // Fix: Ensure we're using the correct property access
+      const currentCfi = location?.cfi || '';
+      
+      if (currentCfi) {
+        const storedBookJson = localStorage.getItem(`book_${this.currentBookKey}`);
+        
+        if (storedBookJson) {
+          const storedBook = JSON.parse(storedBookJson);
+          storedBook.cfi = currentCfi;
+          storedBook.progress = this.readingProgress;
+          storedBook.lastOpened = new Date();
+          
+          localStorage.setItem(`book_${this.currentBookKey}`, JSON.stringify(storedBook));
+          console.log('Saved reading position:', currentCfi);
+        }
+      }
+    } catch (error) {
+      console.error('Error saving current position', error);
     }
-    
-    // Зберігаємо оновлений список
-    this.saveRecentBooks();
   }
   
   async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     
     if (input.files && input.files.length > 0) {
+      this.isLoading = true;
       this.bookFile = input.files[0];
+      
+      // Генеруємо унікальний ключ для цієї книги
+      this.currentBookKey = Date.now().toString();
+      localStorage.setItem('lastBookKey', this.currentBookKey);
       
       // Читаємо файл як ArrayBuffer
       const reader = new FileReader();
       reader.onload = async (e: any) => {
         this.bookData = e.target.result;
         await this.initReader();
+        this.isLoading = false;
+      };
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
+        this.isLoading = false;
+        alert('Помилка читання файлу. Спробуйте інший файл.');
       };
       reader.readAsArrayBuffer(this.bookFile);
-    }
-  }
-  
-  async openRecentBook(book: RecentBook) {
-    if (book.filePath) {
-      try {
-        // Тут логіка для відкриття з файлової системи, але це не можливо з безпекою браузера
-        // Натомість просто показуємо повідомлення
-        alert('Завантажте книгу знову');
-      } catch (error) {
-        console.error('Error opening recent book', error);
-        alert('Помилка при відкритті книги. Завантажте файл знову.');
-      }
     }
   }
 
@@ -211,21 +229,26 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
         console.warn('Cover not available');
       }
       
-      // Додаємо до нещодавніх книг
-      const bookId = Date.now().toString();
-      this.addToRecentBooks({
-        id: bookId,
+      // Зберігаємо інформацію про книгу в localStorage
+      const bookInfo = {
+        id: this.currentBookKey,
         title: this.bookTitle,
         author: this.bookAuthor,
         cover: coverUrl,
         lastOpened: new Date(),
-        progress: 0
-      });
+        progress: 0,
+        cfi: ''
+      };
+      
+      localStorage.setItem(`book_${this.currentBookKey}`, JSON.stringify(bookInfo));
       
       // Перевіряємо наявність елемента для рендерингу
       if (!this.epubViewer || !this.epubViewer.nativeElement) {
         throw new Error('EPUB viewer element not found');
       }
+      
+      // Очищаємо контейнер перед створенням нового рендерингу
+      this.epubViewer.nativeElement.innerHTML = '';
       
       // Створюємо рендеринг
       this.rendition = this.book.renderTo(this.epubViewer.nativeElement, {
@@ -235,46 +258,28 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
         flow: 'paginated'
       });
       
-      // Перш ніж відобразити книгу, спробуємо згенерувати локації
-      try {
-        // Генеруємо спрощені локації для швидшого старту
-        await this.book.locations.generate(500);
-        console.log('Basic locations generated');
-      } catch (err) {
-        console.warn('Could not generate basic locations');
-      }
+      // Перш ніж відобразити книгу, генеруємо локації
+      await this.book.locations.generate(1024);
+      console.log('Locations generated:', this.book.locations.length());
       
-      // Встановлюємо обробники подій ДО відображення книги
+      // Встановлюємо обробники подій
       this.setupEventHandlers();
       
-      // Відображаємо першу сторінку
-      await this.rendition.display();
-      
-      // Позначаємо, що книга завантажена
+      // Позначаємо, що книга завантажена і зберігаємо налаштування
       this.bookLoaded = true;
-      
-      // Застосовуємо налаштування відображення
       this.applySettings();
       
-      // Завантажуємо зміст у фоновому режимі
+      // Завантажуємо зміст
       this.loadTOC();
       
-      // Запускаємо повну генерацію локацій у фоновому режимі для кращої навігації
-      setTimeout(async () => {
-        try {
-          // Генеруємо більш точні локації у фоні
-          await this.book.locations.generate(1024);
-          console.log('Full locations generated');
-          // Перевіряємо доступність locations.total
-          console.log('Locations:', this.book.locations);
-          // Оновлюємо інформацію про сторінку
-          this.updatePageInfo();
-        } catch (err) {
-          console.warn('Could not generate full locations');
-        }
-      }, 100);
+      // Відображаємо перший екран
+      await this.rendition.display();
+      
+      // Оновлюємо інформацію про сторінку
+      this.updatePageInfo();
     } catch (error) {
       console.error('Error initializing EPUB reader:', error);
+      this.isLoading = false;
       alert('Помилка при відкритті EPUB файлу. Спробуйте інший файл.');
     }
   }
@@ -298,140 +303,104 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
     }
   }
   
-  // Оновіть цей метод
   setupEventHandlers() {
     if (!this.rendition) {
       console.warn('Cannot setup event handlers: rendition not ready');
       return;
     }
     
-    // Використовуємо правильний тип для параметра location
-    this.rendition.on('relocated', (location: EpubLocation) => {
-      console.log('Page changed:', location);
+    this.rendition.on('relocated', (location: DisplayedLocation) => {
+      console.log('Page relocated:', location);
       
-      // Безпечне отримання даних про розташування
-      if (location && location.start) {
-        // Використовуємо безпечне читання властивостей
-        const page = location.start.displayed && location.start.displayed.page || 
-                     location.start.location || 
-                     0;
-                     
-        // Отримуємо загальну кількість сторінок
-        let total = location.total || 0;
+      // Fix: Adapt to the actual structure of location object
+      if (location) {
+        // Get the current page number from location
+        const page = location.location || 0;
         
-        // Якщо total все ще 0, спробуємо отримати з book.locations
-        if (total === 0 && this.book && this.book.locations) {
-          // Використовуємо as any для обходу перевірки типів
-          const locationsTotal = (this.book.locations as any).total;
-          if (typeof locationsTotal === 'number') {
-            total = locationsTotal;
-          }
-        }
-        
+        // Update state
         this.currentPageNum = page;
-        this.totalPages = total;
-        this.currentHref = location.start.href || '';
+        this.totalPages = this.book.locations.length();
+        this.currentHref = location.href || '';
         this.currentPage = `Сторінка ${page}`;
         
-        // Розраховуємо прогрес
-        if (total > 0) {
-          this.readingProgress = Math.round((page / total) * 100);
-        } else if (location.start.percentage) {
-          // Альтернативний спосіб через відсоток
-          this.readingProgress = Math.round(location.start.percentage * 100);
-        } else {
-          this.readingProgress = 0;
+        // Calculate progress
+        const totalPages = this.book.locations.length();
+        if (totalPages > 0) {
+          this.readingProgress = Math.round((page / totalPages) * 100);
+        } else if (location.percentage) {
+          this.readingProgress = Math.round(location.percentage * 100);
         }
         
-        // Статус першої/останньої сторінки
+        // First/last page status
         this.isFirstPage = page <= 1;
-        this.isLastPage = (total > 0 && page >= total) || this.readingProgress >= 99;
+        this.isLastPage = page >= totalPages;
         
-        // Зберігаємо прогрес
-        this.updateReadingProgress();
+        // Save position
+        this.saveCurrentPosition();
       }
     });
     
-    // Решта коду залишається без змін
+    // Обробка натискання клавіш
+    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    
+    // Обробка посилань
     this.rendition.on('linkClicked', (href: string) => {
       if (href) this.rendition.display(href);
     });
-    
-    this.rendition.on('keyup', (event: KeyboardEvent) => {
-      if (event.key === 'ArrowRight') {
-        this.nextPage();
-      } else if (event.key === 'ArrowLeft') {
-        this.prevPage();
-      }
-    });
   }
   
-  updateReadingProgress() {
-    if (this.recentBooks.length > 0) {
-      const book = this.recentBooks[0];
-      book.progress = this.readingProgress;
-      book.lastOpened = new Date();
-      this.saveRecentBooks();
+  handleKeyDown(event: KeyboardEvent) {
+    if (!this.bookLoaded) return;
+    
+    if (event.key === 'ArrowRight') {
+      this.nextPage();
+      event.preventDefault();
+    } else if (event.key === 'ArrowLeft') {
+      this.prevPage();
+      event.preventDefault();
     }
   }
   
   navigateToChapter(href: string) {
-    if (this.rendition) {
+    if (this.rendition && href) {
       this.rendition.display(href);
-      // Закриваємо сайдбар після навігації на мобільних пристроях
-      if (window.innerWidth < 768) {
-        this.tocVisible = false;
-      }
+      this.tocVisible = false;
     }
   }
   
-  // Спрощена функція для оновлення інформації про сторінку
+  // Оновлена інформація про сторінку
   updatePageInfo() {
-    if (!this.rendition || !this.bookLoaded) return;
+    if (!this.rendition || !this.bookLoaded || !this.book.locations) return;
     
-    const location = this.rendition.currentLocation() as unknown as EpubLocation;
-    
-    if (location && location.start) {
-      // Безпечне отримання даних
-      const page = location.start.displayed && location.start.displayed.page || 
-                   location.start.location || 
-                   0;
-      
-      // Спершу спробуємо отримати total з location
-      let total = location.total || 0;
-      
-      // Якщо total все ще 0, спробуємо отримати з book.locations
-      if (total === 0 && this.book && this.book.locations) {
-        // Використовуємо as any для обходу перевірки типів
-        const locationsTotal = (this.book.locations as any).total;
-        if (typeof locationsTotal === 'number') {
-          total = locationsTotal;
+    try {
+      const location = this.rendition.currentLocation() as DisplayedLocation;
+      if (location) {
+        // Fix: Use the correct property access for the location object
+        const page = location.location || 0;
+        const total = this.book.locations.length();
+        
+        this.currentPageNum = page;
+        this.totalPages = total;
+        this.currentPage = `Сторінка ${page}`;
+        
+        if (total > 0) {
+          this.readingProgress = Math.round((page / total) * 100);
         }
+        
+        this.isFirstPage = page <= 1;
+        this.isLastPage = page >= total;
       }
-      
-      this.currentPageNum = page;
-      this.totalPages = total;
-      this.currentPage = `Сторінка ${page}`;
-      
-      if (total > 0) {
-        this.readingProgress = Math.round((page / total) * 100);
-      } else if (location.start.percentage) {
-        this.readingProgress = Math.round(location.start.percentage * 100);
-      }
-      
-      this.isFirstPage = page <= 1;
-      this.isLastPage = (total > 0 && page >= total) || this.readingProgress >= 99;
+    } catch (error) {
+      console.error('Error updating page info:', error);
     }
   }
   
-  // Покращені методи навігації
+  // Покращена стабільна навігація
   nextPage() {
     if (!this.bookLoaded || !this.rendition) return;
     
     try {
-      // Відстежуємо успішність навігації
-      const result = this.rendition.next();
-      console.log('Next page result:', result);
+      this.rendition.next();
     } catch (error) {
       console.error('Error navigating to next page:', error);
     }
@@ -441,39 +410,28 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
     if (!this.bookLoaded || !this.rendition) return;
     
     try {
-      // Відстежуємо успішність навігації
-      const result = this.rendition.prev();
-      console.log('Previous page result:', result);
+      this.rendition.prev();
     } catch (error) {
       console.error('Error navigating to previous page:', error);
     }
   }
   
-  // Покращений метод переходу на конкретну сторінку
+  // Перехід на конкретну сторінку
   goToPage(event: Event) {
-    if (!this.bookLoaded || !this.rendition || !this.book) return;
+    if (!this.bookLoaded || !this.rendition || !this.book.locations) return;
     
     const input = event.target as HTMLInputElement;
     const pageNumber = parseInt(input.value, 10);
     
-    if (isNaN(pageNumber) || pageNumber < 1) {
+    if (isNaN(pageNumber) || pageNumber < 1 || pageNumber > this.totalPages) {
       input.value = this.currentPageNum.toString();
       return;
     }
     
     try {
-      // Використовуємо percentage для надійнішої навігації
-      const percentage = Math.min((pageNumber - 1) / Math.max(this.totalPages, 1), 1);
-      
-      if (this.book.locations && typeof this.book.locations.cfiFromPercentage === 'function') {
-        // Якщо у нас є локації, використовуємо їх для точнішої навігації
-        const cfi = this.book.locations.cfiFromPercentage(percentage);
-        if (cfi) {
-          this.rendition.display(cfi);
-        }
-      } else {
-        // Інакше використовуємо відсоток
-        this.rendition.display(percentage);
+      const cfi = this.book.locations.cfiFromLocation(pageNumber - 1);
+      if (cfi) {
+        this.rendition.display(cfi);
       }
     } catch (error) {
       console.error('Error navigating to page:', error);
@@ -510,7 +468,7 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
   }
   
   applyFontSize() {
-    if (this.rendition) {
+    if (this.rendition && this.rendition.themes) {
       this.rendition.themes.fontSize(`${this.fontSize}%`);
     }
   }
@@ -544,13 +502,13 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
   }
   
   applyMargins() {
-    if (this.rendition) {
+    if (this.rendition && this.rendition.themes) {
       this.rendition.themes.override('margin', `0 ${this.margins}px`);
     }
   }
   
   applySettings() {
-    if (this.rendition) {
+    if (this.rendition && this.rendition.themes) {
       // Розмір шрифту
       this.applyFontSize();
       
@@ -562,7 +520,6 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
     }
   }
   
-  // Спрощений метод завантаження файлу без file-saver
   downloadBook() {
     if (!this.bookFile) {
       console.warn('No book file available for download');
@@ -570,19 +527,14 @@ export class BookViewerComponent implements AfterViewInit, OnDestroy {
     }
 
     try {
-      // Створюємо URL
       const url = URL.createObjectURL(this.bookFile);
-      
-      // Створюємо посилання для завантаження
       const a = document.createElement('a');
       a.href = url;
       a.download = this.bookFile.name || `${this.bookTitle?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'book'}.epub`;
       
-      // Додаємо, клікаємо і видаляємо
       document.body.appendChild(a);
       a.click();
       
-      // Очищаємо через 100мс
       setTimeout(() => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
