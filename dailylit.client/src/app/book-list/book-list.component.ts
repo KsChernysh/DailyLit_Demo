@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BookService } from '../book.service';
@@ -23,7 +23,12 @@ export class BookListComponent implements OnInit, OnDestroy {
   totalPages: number = 1;
 
   routeSubscription!: Subscription;
-  constructor(private route: ActivatedRoute, private bookService: BookService, private global: GlobalVariablesService, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    @Inject(BookService) private bookService: BookService,
+    private global: GlobalVariablesService,
+    private router: Router
+  ) {
     console.log('BookListComponent constructed');
   }
 

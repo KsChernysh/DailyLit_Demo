@@ -33,58 +33,56 @@
               <div class="book-genre" *ngIf="book.genre">{{ book.genre }}</div>
             </div>
           </div>
-          
+
           <!-- Форма редагування та деталі (не клікабельна) -->
           <div class="book-details" (click)="$event.stopPropagation()">
             <div class="book-status">
               <label for="status-{{book.id}}">Статус:</label>
-              <input id="status-{{book.id}}" 
-                [(ngModel)]="book.status" 
-                type="text" 
-                placeholder="Статус" 
-                [disabled]="!book.isEditing"
-              />
+              <input id="status-{{book.id}}"
+                     [(ngModel)]="book.status"
+                     type="text"
+                     placeholder="Статус"
+                     [disabled]="!book.isEditing" />
             </div>
-            
+
             <!-- Заміна FA іконок на Unicode зірки -->
             <div class="book-rating">
               <label>Рейтинг:</label>
               <div class="star-rating">
                 <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
-                  <span class="star" 
-                        [class.filled]="book.rating >= star" 
+                  <span class="star"
+                        [class.filled]="(book.rating ?? 0) >= star"
                         (click)="book.isEditing && setRating(book, star)">
-                    {{ book.rating >= star ? '★' : '☆' }}
+                    {{ (book.rating ?? 0) >= star ? '★' : '☆' }}
                   </span>
                 </ng-container>
               </div>
             </div>
-            
+
             <div class="book-dates">
               <div class="added-date">
                 <label>Додано:</label>
                 <span>{{book.booksadded | date:'dd.MM.yyyy'}}</span>
               </div>
-              
+
               <div class="read-date">
                 <label for="date-{{book.id}}">Дата прочитання:</label>
-                <input id="date-{{book.id}}" 
-                  [(ngModel)]="book.dateread" 
-                  type="date" 
-                  [disabled]="!book.isEditing"
-                >
+                <input id="date-{{book.id}}"
+                       [(ngModel)]="book.dateread"
+                       type="date"
+                       [disabled]="!book.isEditing">
               </div>
             </div>
-            
+
             <!-- Кнопки дій -->
             <div class="book-actions">
               <button class="btn edit-btn" *ngIf="!book.isEditing" (click)="enableEditing(book.key)">
                 <i class="fa fa-edit"></i> Редагувати
               </button>
-              <button class="btn save-btn" *ngIf="book.isEditing" [disabled]="!book.isEditing" (click)="updateBook(book)">
+              <button class="btn save-btn" *ngIf="book.isEditing" (click)="updateBook(book)">
                 <i class="fa fa-check"></i> Зберегти
               </button>
-              <button class="btn delete-btn" (click)="deleteBook(book.key)">
+              <button class="btn delete-btn" (click)="deleteBook(book)">
                 <i class="fa fa-trash"></i> Видалити
               </button>
               <button class="btn analyze-btn" *ngIf="!book.isEditing" (click)="analyzeBookWithGemini(book)">
@@ -97,14 +95,24 @@
     </div>
   </div>
 
-  <!-- Секція рекомендацій переміщена сюди, внизу сторінки, після книг -->
-  <div class="recommendations-section">
+  <!-- Секція рекомендацій переміщена сюди, внизу сторінки, після книг -->  <div class="recommendations-section">
     <h2 class="section-title">
       Рекомендації для вас
-      <button class="refresh-recommendations" (click)="getRecommendations()">
-        <i class="fa fa-refresh"></i>
+      <button class="refresh-recommendations" (click)="getAdvancedRecommendations()" title="Отримати розширені рекомендації">
+        <i class="fa fa-cogs"></i> <!-- Змінена іконка та метод -->
       </button>
     </h2>
+    
+    <!-- Персоналізований інсайт користувача -->
+    <div *ngIf="books.length > 0 && recommendationEngine" class="user-insight-panel">
+      <div class="insight-header">
+        <i class="fa fa-user-circle"></i>
+      
+      </div>
+     
+
+    <!-- Пояснення системи оцінювання (для розширених рекомендацій) -->
+   
     
     <!-- Попередження про API обмеження -->
     <div *ngIf="apiQuotaExceeded" class="api-quota-warning">
@@ -117,57 +125,137 @@
       <div class="spinner"></div>
       <p>Підбираємо книги спеціально для вас...</p>
     </div>
-    
-    <!-- Немає рекомендацій -->
-    <div *ngIf="!isLoadingRecommendations && recommendedBooks.length === 0 && !showFallbackRecommendations" class="empty-recommendations">
-      <i class="fa fa-lightbulb-o"></i>
-      <p>Коли ви додасте більше книг або оціните існуючі, тут з'являться рекомендації.</p>
-      <button class="btn primary-btn" (click)="getDefaultRecommendations()">
-        Показати популярні книги
-      </button>
-    </div>
-    
-    <!-- Основні рекомендації -->
-    <div *ngIf="!isLoadingRecommendations && recommendedBooks.length > 0" class="recommendation-grid">
-      <div *ngFor="let book of recommendedBooks" class="recommendation-card">
-        <div class="recommendation-cover" (click)="apicall(book.key)">
-          <img [src]="book.cover_url" [alt]="book.title" onerror="this.src='assets/no-cover.png'">
-        </div>
-        <div class="recommendation-info">
-          <h4 class="recommendation-title">{{ book.title }}</h4>
-          <p class="recommendation-author">{{ book.author_name }}</p>
-          <div class="recommendation-tags">
-            <span class="tag" *ngIf="book.genre">{{ book.genre }}</span>
+
+    <!-- Розширені Рекомендації -->
+    <div *ngIf="!isLoadingRecommendations && showAdvancedRecommendations">
+      <div *ngIf="advancedRecommendedBooks.length > 0" class="recommendation-grid advanced-recommendations">
+        <div *ngFor="let book of advancedRecommendedBooks" class="recommendation-card advanced">
+          <div class="recommendation-cover" (click)="navigateToBookDetail(book.key)">
+            <img [src]="book.cover_url" [alt]="book.title" onerror="this.src='assets/no-cover.png'">
           </div>
-          <button class="btn details-btn" (click)="apicall(book.key)">
-            <i class="fa fa-info-circle"></i> Деталі
-          </button>
+          <div class="recommendation-info">
+            <h4 class="recommendation-title">{{ book.title }}</h4>
+            <p class="recommendation-author">{{ book.author_name }}</p>
+            <div class="recommendation-tags">
+              <span class="tag" *ngIf="book.genre">{{ book.genre }}</span>
+              <span *ngFor="let kw of book.keywords?.slice(0, 2)" class="tag keyword-tag">{{ kw }}</span>
+            </div>
+
+            <!-- Оцінки -->
+            <div *ngIf="getDetailedScores(book.key) as scores" class="recommendation-scores">
+              <div class="score-item hybrid" title="Загальний бал: {{scores.hybrid}}%">
+              ⭐ BestMatch <i class="fa fa-star"></i> {{scores.hybrid}}%
+              </div>
+              <div class="score-breakdown" title="Деталізація: Контент / Колаборативний / Популярність">
+                <span class="score-detail content">{{scores.content}}%</span> /
+                <span class="score-detail collaborative">{{scores.collaborative}}%</span> /
+                <span class="score-detail demographic">{{scores.demographic}}%</span>
+              </div>
+            </div>
+
+            <!-- Пояснення -->
+            <p *ngIf="getRecommendationExplanation(book.key) as explanation" class="recommendation-explanation">
+              <i class="fa fa-commenting-o"></i> {{ explanation }}
+            </p>
+
+
+          </div>
         </div>
       </div>
+      <div *ngIf="advancedRecommendedBooks.length === 0 && !isLoadingRecommendations" class="empty-recommendations">
+        <i class="fa fa-meh-o"></i>
+        <p>Не вдалося підібрати розширені рекомендації. Спробуйте додати більше книг на полиці або оцінити існуючі.</p>
+        <button class="btn primary-btn" (click)="getDefaultRecommendations()">
+          Показати популярні книги
+        </button>
+      </div>
     </div>
-    
-    <!-- Запасні рекомендації для випадку проблем з API -->
-    <div *ngIf="showFallbackRecommendations && fallbackRecommendations.length > 0" class="recommendation-grid">
-      <div *ngFor="let book of fallbackRecommendations" class="recommendation-card">
-        <div class="recommendation-cover" (click)="apicall(book.key)">
-          <img [src]="book.cover_url" [alt]="book.title" onerror="this.src='assets/no-cover.png'">
+      <!-- Прості/Запасні Рекомендації (якщо розширені не активні) -->
+    <div *ngIf="!isLoadingRecommendations && !showAdvancedRecommendations">
+      
+      <!-- Пояснення для базових рекомендацій -->
+      <div *ngIf="recommendedBooks.length > 0" class="basic-recommendations-explanation">
+        <div class="explanation-header">
+          <i class="fa fa-info-circle"></i>
+          <span>Про наші рекомендації</span>
         </div>
-        <div class="recommendation-info">
-          <h4 class="recommendation-title">{{ book.title }}</h4>
-          <p class="recommendation-author">{{ book.author_name }}</p>
-          <div class="recommendation-tags">
-            <span class="tag" *ngIf="book.genre">{{ book.genre }}</span>
+        <div class="explanation-content">
+          <p>Ці книги підібрані на основі популярності серед читачів, високих рейтингів та загальних літературних тенденцій. 
+             Додайте більше книг та оцінок до своєї полиці для отримання персоналізованих рекомендацій.</p>
+        </div>
+      </div>
+      
+      <!-- Немає рекомендацій (оригінальний блок) -->
+      <div *ngIf="recommendedBooks.length === 0 && !showFallbackRecommendations" class="empty-recommendations">
+        <i class="fa fa-lightbulb-o"></i>
+        <p>Коли ви додасте більше книг або оціните існуючі, тут з'являться рекомендації.</p>
+        <button class="btn primary-btn" (click)="getDefaultRecommendations()">
+          Показати популярні книги
+        </button>
+      </div>
+        <!-- Основні рекомендації (покращений блок) -->
+      <div *ngIf="recommendedBooks.length > 0" class="recommendation-grid basic-recommendations">
+        <div *ngFor="let book of recommendedBooks" class="recommendation-card basic">
+          <div class="recommendation-cover" (click)="navigateToBookDetail(book.key)">
+            <img [src]="book.cover_url" [alt]="book.title" onerror="this.src='assets/no-cover.png'">
+            <!-- Індикатор популярності -->
+            <div class="popularity-badge" *ngIf="book.rating && book.rating >= 4.0">
+              <i class="fa fa-star"></i> {{book.rating.toFixed(1)}}
+            </div>
           </div>
-          <button class="btn details-btn" (click)="apicall(book.key)">
-            <i class="fa fa-info-circle"></i> Деталі
-          </button>
+          <div class="recommendation-info">
+            <h4 class="recommendation-title">{{ book.title }}</h4>
+            <p class="recommendation-author">{{ book.author_name }}</p>
+            
+            <!-- Розширені теги -->
+            <div class="recommendation-tags">
+              <span class="tag genre-tag" *ngIf="book.genre">
+                <i class="fa fa-bookmark"></i> {{ book.genre }}
+              </span>
+              <span *ngFor="let kw of book.keywords?.slice(0, 2)" class="tag keyword-tag">
+                <i class="fa fa-tag"></i> {{ kw }}
+              </span>
+            </div>
+
+            <!-- Рейтинг книги -->
+            <div class="book-rating-display" *ngIf="book.rating">
+              <div class="rating-stars">
+                <span *ngFor="let star of [1, 2, 3, 4, 5]" 
+                      class="star" 
+                      [class.filled]="book.rating >= star">
+                  {{ book.rating >= star ? '★' : '☆' }}
+                </span>
+                <span class="rating-text">({{book.rating.toFixed(1)}})</span>
+              </div>
+            </div>
+
+            <!-- Базова інформація про рекомендацію -->
+            <div class="recommendation-basic-info">
+              <div class="recommendation-type">
+                <i class="fa fa-lightbulb-o"></i> 
+                <span>Популярна рекомендація</span>
+              </div>
+              
+              <!-- Час читання -->
+              <div class="reading-time" title="Приблизний час читання">
+                {{ getReadingTimeRecommendation(book) }}
+              </div>
+            </div>
+
+          
+
+            <div class="recommendation-actions">
+              <button class="btn details-btn" (click)="navigateToBookDetail(book.key)">
+                <i class="fa fa-info-circle"></i> Деталі книги
+              </button>
+              <button class="btn like-btn" title="Додати до бажаних">
+                <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
   
-  <!-- Повідомлення про статус операції -->
-  <div class="toast-message" [class.show]="message">
-    {{ message }}
-  </div>
 </div>

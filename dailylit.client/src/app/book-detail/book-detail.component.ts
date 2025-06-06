@@ -33,12 +33,11 @@ export class BookDetailComponent implements OnInit {
       if (this.corectId) {
         this.bookService.getBookDetails(this.corectId).subscribe(
           (book: BookDetails) => {
-            if (book) {
-              this.book = {
+            if (book) {              this.book = {
                 key: this.corectId || 'No Key',
                 title: book.title || 'No Title',
                 author_name: book.author_name || 'No Author',
-                genre: book.genre || 'Fiction',
+                genre: book.genre || 'Unknown Genre',
                 cover_url: book.cover_url || 'assets/no-cover.png',
                 description: this.stripHtmlTags(book.description || 'No Description Available'),
                 pages: book.pages || 0,

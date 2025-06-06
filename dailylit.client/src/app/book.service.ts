@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of, BehaviorSubject, merge } from 'rxjs';
 import { map, catchError, mergeMap, tap, switchMap, delay } from 'rxjs/operators';
-import { Book } from './book.model';
 import { BookDetails } from './book-details.model';
 import { GlobalVariablesService } from './global.variables.service';
 import { GeminiService } from './gemini.service';
@@ -35,8 +34,7 @@ export class BookService {
   private baseApiUrl = 'https://www.googleapis.com/books/v1/volumes?q=';
   private ApiUrl = 'https://www.googleapis.com/books/v1/volumes/';
   private openLibraryApi = 'https://openlibrary.org/search.json';
-  private gutendexApi = 'https://gutendex.com/books';
-  
+
   // Розширений список жанрів з більш точними пошуковими термінами
   genres: string[] = [
     'Fantasy', 'Science Fiction', 'Mystery', 'Non Fiction', 'Romance',
